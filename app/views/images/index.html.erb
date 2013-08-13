@@ -1,0 +1,57 @@
+<h1>Listing images</h1>
+
+<table>
+  <tr>
+    <th>Raw latitude</th>
+    <th>Raw longitude</th>
+    <th>Raw altitude</th>
+    <th>Best latitude</th>
+    <th>Best longitude</th>
+    <th>Best altitude</th>
+    <th>Raw yaw</th>
+    <th>Raw pitch</th>
+    <th>Raw roll</th>
+    <th>Best yaw</th>
+    <th>Best pitch</th>
+    <th>Best roll</th>
+    <th>Description</th>
+    <th>Category</th>
+    <th>User</th>
+    <th>Camera</th>
+    <th>Heading</th>
+    <th>Image</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @images.each do |image| %>
+  <tr>
+    <td><%= image.raw_latitude %></td>
+    <td><%= image.raw_longitude %></td>
+    <td><%= image.raw_altitude %></td>
+    <td><%= image.best_latitude %></td>
+    <td><%= image.best_longitude %></td>
+    <td><%= image.best_altitude %></td>
+    <td><%= image.raw_yaw %></td>
+    <td><%= image.raw_pitch %></td>
+    <td><%= image.raw_roll %></td>
+    <td><%= image.best_yaw %></td>
+    <td><%= image.best_pitch %></td>
+    <td><%= image.best_roll %></td>
+    <td><%= image.description %></td>
+    <td><%= image.category %></td>
+    <td><%= image.user %></td>
+    <td><%= image.camera %></td>
+    <td><%= image.heading %></td>
+    <td><%= image_tag image.image.url :thumb %></td>
+    <td><%= link_to 'Show', image %></td>
+    <td><%= link_to 'Edit', edit_image_path(image) %></td>
+    <td><%= link_to 'Destroy', image, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Image', new_image_path %>

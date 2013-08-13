@@ -1,0 +1,95 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Raw latitude:</b>
+  <%= @image.raw_latitude %>
+</p>
+
+<p>
+  <b>Raw longitude:</b>
+  <%= @image.raw_longitude %>
+</p>
+
+<p>
+  <b>Raw altitude:</b>
+  <%= @image.raw_altitude %>
+</p>
+
+<p>
+  <b>Best latitude:</b>
+  <%= @image.best_latitude %>
+</p>
+
+<p>
+  <b>Best longitude:</b>
+  <%= @image.best_longitude %>
+</p>
+
+<p>
+  <b>Best altitude:</b>
+  <%= @image.best_altitude %>
+</p>
+
+<p>
+  <b>Raw yaw:</b>
+  <%= @image.raw_yaw %>
+</p>
+
+<p>
+  <b>Raw pitch:</b>
+  <%= @image.raw_pitch %>
+</p>
+
+<p>
+  <b>Raw roll:</b>
+  <%= @image.raw_roll %>
+</p>
+
+<p>
+  <b>Best yaw:</b>
+  <%= @image.best_yaw %>
+</p>
+
+<p>
+  <b>Best pitch:</b>
+  <%= @image.best_pitch %>
+</p>
+
+<p>
+  <b>Best roll:</b>
+  <%= @image.best_roll %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @image.description %>
+</p>
+
+<p>
+  <b>Category:</b>
+  <%= @image.category %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @image.user %>
+</p>
+
+<p>
+  <b>Camera:</b>
+  <%= @image.camera %>
+</p>
+
+<p>
+  <b>Heading:</b>
+  <%= @image.heading %>
+</p>
+
+<p>
+  <b>Image:</b>
+  <%= image_tag @image.image.url :thumb %>
+</p>
+
+
+<%= link_to 'Edit', edit_image_path(@image) %> |
+<%= link_to 'Back', images_path %>

@@ -1,0 +1,89 @@
+<%= form_for(@image) do |f| %>
+  <% if @image.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:</h2>
+
+      <ul>
+      <% @image.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :raw_latitude %><br />
+    <%= f.text_field :raw_latitude %>
+  </div>
+  <div class="field">
+    <%= f.label :raw_longitude %><br />
+    <%= f.text_field :raw_longitude %>
+  </div>
+  <div class="field">
+    <%= f.label :raw_altitude %><br />
+    <%= f.text_field :raw_altitude %>
+  </div>
+  <div class="field">
+    <%= f.label :best_latitude %><br />
+    <%= f.text_field :best_latitude %>
+  </div>
+  <div class="field">
+    <%= f.label :best_longitude %><br />
+    <%= f.text_field :best_longitude %>
+  </div>
+  <div class="field">
+    <%= f.label :best_altitude %><br />
+    <%= f.text_field :best_altitude %>
+  </div>
+  <div class="field">
+    <%= f.label :raw_yaw %><br />
+    <%= f.text_field :raw_yaw %>
+  </div>
+  <div class="field">
+    <%= f.label :raw_pitch %><br />
+    <%= f.text_field :raw_pitch %>
+  </div>
+  <div class="field">
+    <%= f.label :raw_roll %><br />
+    <%= f.text_field :raw_roll %>
+  </div>
+  <div class="field">
+    <%= f.label :best_yaw %><br />
+    <%= f.text_field :best_yaw %>
+  </div>
+  <div class="field">
+    <%= f.label :best_pitch %><br />
+    <%= f.text_field :best_pitch %>
+  </div>
+  <div class="field">
+    <%= f.label :best_roll %><br />
+    <%= f.text_field :best_roll %>
+  </div>
+  <div class="field">
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </div>
+  <div class="field">
+    <%= f.label :category_id %><br />
+    <%= f.text_field :category_id %>
+  </div>
+  <div class="field">
+    <%= f.label :user_id %><br />
+    <%= f.text_field :user_id %>
+  </div>
+  <div class="field">
+    <%= f.label :camera_id %><br />
+    <%= f.text_field :camera_id %>
+  </div>
+  <div class="field">
+    <%= f.label :heading %><br />
+    <%= f.text_field :heading %>
+  </div>
+  <div class="field">
+    <%= f.label :image %><br />
+    <%= f.file_field :image %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

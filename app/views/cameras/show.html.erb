@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @camera.user %>
+</p>
+
+<p>
+  <b>Model:</b>
+  <%= @camera.model %>
+</p>
+
+<p>
+  <b>Deviceid:</b>
+  <%= @camera.deviceid %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @camera.description %>
+</p>
+
+<p>
+  <b>Nickname:</b>
+  <%= @camera.nickname %>
+</p>
+
+
+<%= link_to 'Edit', edit_camera_path(@camera) %> |
+<%= link_to 'Back', cameras_path %>
