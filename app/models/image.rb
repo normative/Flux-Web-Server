@@ -26,12 +26,12 @@ class Image < ActiveRecord::Base
   def pitch; raw_pitch; end
   def roll; raw_roll; end
 
-  def latitude= longitude; raw_latitude = best_latitude = latitude; end
-  def longitude= latitude; raw_longitude = best_longitude = longitude; end
-  def altitude= altitude; raw_altitude = best_altitude = altitude; end
-  def yaw= yaw; raw_yaw = best_yaw = yaw; end
-  def pitch= pitch ; raw_pitch = best_pitch = pitch; end
-  def roll= roll; raw_roll = best_roll = roll; end
+  def latitude= latitude; self.raw_latitude = self.best_latitude = latitude; end
+  def longitude= longitude; self.raw_longitude = self.best_longitude = longitude; end
+  def altitude= altitude; self.raw_altitude = self.best_altitude = altitude; end
+  def yaw= yaw; self.raw_yaw = self.best_yaw = yaw; end
+  def pitch= pitch ; self.raw_pitch = self.best_pitch = pitch; end
+  def roll= roll; self.raw_roll = self.best_roll = roll; end
 
   def self.within lat, lng, radius
     where("(6371 * acos(cos(radians(#{lat})) * cos(radians(raw_latitude)) * cos(radians(raw_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(raw_latitude)))) < #{radius}")
