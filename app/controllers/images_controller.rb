@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @images }
+      format.json { render json: @images.inject({}) { |h,v| h[v.id] = v; h } }
     end
   end
 
@@ -16,7 +16,7 @@ class ImagesController < ApplicationController
 
     respond_to do |format|
       format.html { render 'index' }
-      format.json { render json: @images }
+      format.json { render json: @images.inject({}) { |h,v| h[v.id] = v; h } }
     end
   end
 
