@@ -5,8 +5,9 @@ class Image < ActiveRecord::Base
   belongs_to :camera
   belongs_to :category
   has_and_belongs_to_many :tags
-  has_attached_file :image, styles: { thumb: "200x200" }, dependent: :destroy
-
+  has_attached_file :image, styles: { thumb: "200x200", oriented: '100%' }, dependent: :destroy, convert_options: {
+    oriented: "-auto-orient"
+  }
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll, :user, :camera, :category, :heading, :image
 
   def as_json(options = {})
