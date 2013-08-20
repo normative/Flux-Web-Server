@@ -34,7 +34,7 @@ class ImagesController < ApplicationController
   # GET /images/1/image
   def image
     @image = Image.find(params[:id])
-    send_file @image.image.path, disposition: :attachment
+    send_file @image.image.path(params[:size]), disposition: :attachment
   end
 
   # GET /images/new
