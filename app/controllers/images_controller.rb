@@ -20,6 +20,20 @@ class ImagesController < ApplicationController
     end
   end
 
+  # GET /images/filtered?lat=...&long=...&radius=...&minalt=...&maxalt=...
+  #                     &mintime=...&maxtime=...
+  #                     &taglist="tag1 tag2 tag3...tagN"
+  #                     &userlist="user1 user2 user3...userN"
+  #                     &catlist="cat1 cat2...catN"
+  def filtered
+    @images = Image.within(params[:lat], params[:long], params[:radius]).limit(100)
+
+    respond_to do |format|
+      format.html { render 'index' }
+      format.json { render json: @images }
+    end
+  end
+
   # GET /images/1
   # GET /images/1.json
   def show
