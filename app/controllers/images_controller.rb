@@ -117,6 +117,6 @@ class ImagesController < ApplicationController
     # params.require(:person).permit(:name, :age)
     # Also, you can specialize this method with per-user checking of permissible attributes.
     def image_params
-      params.require(:image).permit(:altitude, :latitude, :longitude, :pitch, :roll, :yaw, :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw, :camera_id, :category_id, :description, :heading, :image, :raw_altitude, :raw_latitude, :raw_longitude, :raw_pitch, :raw_roll, :raw_yaw, :user_id)
+      params.require(:image).permit(:altitude, :latitude, :longitude, :pitch, :roll, :yaw, :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw, :camera_id, :category_id, :description, :heading, :image, :raw_altitude, :raw_latitude, :raw_longitude, :raw_pitch, :raw_roll, :raw_yaw, :user_id, :time_stamp)
     end
 end
