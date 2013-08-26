@@ -8,7 +8,7 @@ class Image < ActiveRecord::Base
   has_attached_file :image, styles: { thumb: "200x200", oriented: '100%' }, dependent: :destroy, convert_options: {
     oriented: "-auto-orient"
   }
-  validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll, :user, :camera, :heading, :image
+  validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll, :user, :camera, :heading, :image, :time_stamp
 
   def as_json(options = {})
     super(options.merge(
