@@ -15,7 +15,7 @@ class Image < ActiveRecord::Base
                         except: [ :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                                   :best_latitude, :best_longitude, :best_altitude, :best_yaw, :best_pitch, :best_roll,
                                   :image_file_name, :image_content_type, :image_file_size, :image_updated_at ],
-                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll ]
+                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll, :friendly_date ]
                         ))
     
   end
@@ -36,6 +36,10 @@ class Image < ActiveRecord::Base
 
   def self.within lat, lng, radius
     where("(6371 * acos(cos(radians(#{lat})) * cos(radians(raw_latitude)) * cos(radians(raw_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(raw_latitude)))) < #{radius}")
+  end
+
+  def friendly_date
+    time_stamp.strftime '%b %-d, %Y'
   end
 
   def to_s; image.original_filename; end
