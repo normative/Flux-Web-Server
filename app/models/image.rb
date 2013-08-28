@@ -37,6 +37,10 @@ class Image < ActiveRecord::Base
   def self.within lat, lng, radius
     where("(6371 * acos(cos(radians(#{lat})) * cos(radians(raw_latitude)) * cos(radians(raw_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(raw_latitude)))) < #{radius}")
   end
+  
+  def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
+    from("filteredquery(#{lat}, #{lon}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
+  end
 
   def to_s; image.original_filename; end
 end
