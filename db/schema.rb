@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130823185544) do
+ActiveRecord::Schema.define(:version => 20130828212257) do
 
   create_table "cameras", :force => true do |t|
     t.integer  "user_id",                    :null => false
@@ -65,6 +65,14 @@ ActiveRecord::Schema.define(:version => 20130823185544) do
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
     t.datetime "time_stamp"
+    t.float    "raw_q1"
+    t.float    "raw_q2"
+    t.float    "raw_q3"
+    t.float    "raw_q4"
+    t.float    "best_q1"
+    t.float    "best_q2"
+    t.float    "best_q3"
+    t.float    "best_q4"
   end
 
   add_index "images", ["best_latitude"], :name => "image_latitude_idx"
