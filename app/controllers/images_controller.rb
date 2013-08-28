@@ -12,7 +12,7 @@ class ImagesController < ApplicationController
 
   # GET /images/closest?lat=...&long=...&radius=...
   def closest
-    @images = Image.within(params[:lat], params[:long], params[:radius]).limit(100)
+    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
 
     respond_to do |format|
       format.html { render 'index' }
@@ -26,7 +26,7 @@ class ImagesController < ApplicationController
   #                     &userlist="user1 user2 user3...userN"
   #                     &catlist="cat1 cat2...catN"
   def filtered
-    @images = Image.within(params[:lat], params[:long], params[:radius]).limit(100)
+    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
 
     respond_to do |format|
       format.html { render 'index' }
@@ -113,10 +113,10 @@ class ImagesController < ApplicationController
 
   private
 
-    # Use this method to whitelist the permissible parameters. Example:
-    # params.require(:person).permit(:name, :age)
-    # Also, you can specialize this method with per-user checking of permissible attributes.
-    def image_params
-      params.require(:image).permit(:altitude, :latitude, :longitude, :pitch, :roll, :yaw, :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw, :camera_id, :category_id, :description, :heading, :image, :raw_altitude, :raw_latitude, :raw_longitude, :raw_pitch, :raw_roll, :raw_yaw, :user_id, :time_stamp)
-    end
+  # Use this method to whitelist the permissible parameters. Example:
+  # params.require(:person).permit(:name, :age)
+  # Also, you can specialize this method with per-user checking of permissible attributes.
+  def image_params
+    params.require(:image).permit(:altitude, :latitude, :longitude, :pitch, :roll, :yaw, :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw, :camera_id, :category_id, :description, :heading, :image, :raw_altitude, :raw_latitude, :raw_longitude, :raw_pitch, :raw_roll, :raw_yaw, :user_id, :time_stamp)
+  end
 end
