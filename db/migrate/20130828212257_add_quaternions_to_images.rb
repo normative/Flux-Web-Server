@@ -1,12 +1,12 @@
 class AddQuaternionsToImages < ActiveRecord::Migration
   def change
-    add_column :images, :raw_q1, :float
-    add_column :images, :raw_q2, :float
-    add_column :images, :raw_q3, :float
-    add_column :images, :raw_q4, :float
-    add_column :images, :best_q1, :float
-    add_column :images, :best_q2, :float
-    add_column :images, :best_q3, :float
-    add_column :images, :best_q4, :float
+    add_column :images, :raw_qw, :float
+    add_column :images, :raw_qx, :float
+    add_column :images, :raw_qy, :float
+    add_column :images, :raw_qz, :float
+    add_column :images, :best_qw, :float
+    add_column :images, :best_qx, :float
+    add_column :images, :best_qy, :float
+    add_column :images, :best_qz, :float
   end
 end

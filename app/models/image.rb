@@ -9,17 +9,18 @@ class Image < ActiveRecord::Base
     oriented: "-auto-orient"
   }
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
-                        :raw_q1, :raw_q2, :raw_q3, :raw_q4,  
+                        :raw_qw, :raw_qx, :raw_qy, :raw_qz,  
                         :user, :camera, :heading, :image, :time_stamp
 
   def as_json(options = {})
     super(options.merge(
                         except: [ :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
-                                  :raw_q1, :raw_q2, :raw_q3, :raw_q4,
+                                  :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                                   :best_latitude, :best_longitude, :best_altitude, :best_yaw, :best_pitch, :best_roll,
-                                  :best_q1, :best_q2, :best_q3, :best_q4,
+                                  :best_qw, :best_qx, :best_qy, :best_qz,
                                   :image_file_name, :image_content_type, :image_file_size, :image_updated_at ],
-                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll, :friendly_date ]
+                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll, :friendly_date,
+                                    :qw, :qx, :qy, :qz ]
                         ))
     
   end
@@ -30,10 +31,10 @@ class Image < ActiveRecord::Base
   def yaw; raw_yaw; end
   def pitch; raw_pitch; end
   def roll; raw_roll; end
-  def q1; raw_q1; end
-  def q2; raw_q2; end
-  def q3; raw_q3; end
-  def q4; raw_q4; end
+  def qw; raw_qw; end
+  def qx; raw_qx; end
+  def qy; raw_qy; end
+  def qz; raw_qz; end
 
   def latitude= latitude; self.raw_latitude = self.best_latitude = latitude; end
   def longitude= longitude; self.raw_longitude = self.best_longitude = longitude; end
@@ -41,10 +42,10 @@ class Image < ActiveRecord::Base
   def yaw= yaw; self.raw_yaw = self.best_yaw = yaw; end
   def pitch= pitch ; self.raw_pitch = self.best_pitch = pitch; end
   def roll= roll; self.raw_roll = self.best_roll = roll; end
-  def q1= q1; self.raw_q1 = self.best_q1 = q1; end
-  def q2= q2; self.raw_q2 = self.best_q2 = q2; end
-  def q3= q3; self.raw_q3 = self.best_q3 = q3; end
-  def q4= q4; self.raw_q4 = self.best_q4 = q4; end
+  def qw= qw; self.raw_qw = self.best_qw = qw; end
+  def qx= qx; self.raw_qx = self.best_qx = qx; end
+  def qy= qy; self.raw_qy = self.best_qy = qy; end
+  def qz= qz; self.raw_qz = self.best_qz = qz; end
 
   def self.within lat, lng, radius
     where("(6371 * acos(cos(radians(#{lat})) * cos(radians(raw_latitude)) * cos(radians(raw_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(raw_latitude)))) < #{radius}")
