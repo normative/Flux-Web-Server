@@ -12,7 +12,8 @@ class ImagesController < ApplicationController
 
   # GET /images/closest?lat=...&long=...&radius=...
   def closest
-    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
+    #@images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
+    @images = Image.find_by_sql("SELECT i.*, u.nickname nickname FROM images i JOIN users u ON i.user_id = u.id").within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
 
     respond_to do |format|
       format.html { render 'index' }
