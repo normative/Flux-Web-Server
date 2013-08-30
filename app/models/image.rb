@@ -48,7 +48,7 @@ class Image < ActiveRecord::Base
   def qz= qz; self.raw_qz = self.best_qz = qz; end
 
   def self.within lat, lng, radius
-    where("(6371 * acos(cos(radians(#{lat})) * cos(radians(raw_latitude)) * cos(radians(raw_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(raw_latitude)))) < #{radius}")
+    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
   end
   
   def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
