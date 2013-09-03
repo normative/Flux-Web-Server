@@ -2,7 +2,7 @@ class ImagesController < ApplicationController
   # GET /images
   # GET /images.json
   def index
-    @images = params[:ids].present? ? Image.where(id: params[:ids].split(',')) : Image.all
+    @images = params[:ids].present? ? Image.where(id: params[:ids].split(',')) : Image.order("time_stamp DESC")
 
     respond_to do |format|
       format.html # index.html.erb
