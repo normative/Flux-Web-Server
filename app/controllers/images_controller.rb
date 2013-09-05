@@ -114,6 +114,23 @@ class ImagesController < ApplicationController
     end
   end
 
+  # DELETE /images/nuke.json?lat=...&long=...&radius=...
+  def nuke
+    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
+      @images.each do |i|
+        i.destroy
+      end
+
+    respond_to do |format|
+      format.html { redirect_to images_url }
+      format.json { head :no_content }
+    end
+#    respond_to do |format|
+#      format.html { render 'index' }
+#      format.json { render json: @images }
+#    end
+  end
+
   private
 
   # Use this method to whitelist the permissible parameters. Example:
