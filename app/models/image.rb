@@ -52,7 +52,7 @@ class Image < ActiveRecord::Base
   end
   
   def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
-    from("filteredquery(#{lat}, #{lon}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
+    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
   end
 
   def friendly_date
