@@ -1,0 +1,19 @@
+<h1>Listing tags</h1>
+
+<table>
+  <tr>
+    <th>Tag text</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @tags.each do |tag| %>
+  <tr>
+    <td><%= tag.tagtext %></td>
+    <td><%= link_to 'Show', tag %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
