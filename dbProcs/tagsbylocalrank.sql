@@ -1,10 +1,10 @@
 ﻿-- return the set of tags found in local imagery and return ranked in order of highest count
 
 /*
-DROP FUNCTION tagsbylocalrank(lat double precision, lon double precision, radius double precision);
+DROP FUNCTION tagsbylocalrank(lat double precision, lon double precision, radius double precision, maxcount integer);
 */
 
-CREATE OR REPLACE FUNCTION tagsbylocalrank(lat double precision, lon double precision, radius double precision)
+CREATE OR REPLACE FUNCTION tagsbylocalrank(lat double precision, lon double precision, radius double precision, maxcount integer)
 RETURNS TABLE (tagtext varchar, rank bigint)
 AS
 $$
@@ -14,7 +14,11 @@ DECLARE
 	skiploc boolean;
 
 BEGIN
-	skiploc = (radius <= 0);
+	skiploc = ((radius <= 0) OR (radius IS NULL));
+
+	IF (maxcount IS NULL) THEN
+		maxcount = 20;
+	END IF;
 
 RETURN QUERY	
 	SELECT	t.tagtext, count(imt.image_id) AS rank
@@ -37,7 +41,7 @@ RETURN QUERY
 
 	GROUP BY t.tagtext
 	ORDER BY rank DESC, MAX(i.time_stamp), t.tagtext
-	LIMIT 20;
+	LIMIT maxcount;
 
 END;
 $$ LANGUAGE plpgsql;

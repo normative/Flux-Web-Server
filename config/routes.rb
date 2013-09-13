@@ -1,4 +1,5 @@
 Web::Application.routes.draw do
+
   resources :images do
     collection do
       get 'filtered'  # more comprehensive filtering of queries
@@ -20,4 +21,16 @@ Web::Application.routes.draw do
 
 
   resources :users
+
+
+  resources :tags do
+    collection do
+      get 'localbyrank'
+      get 'byrank'
+    end
+    member do
+      get 'tag'
+    end
+  end
+  
 end

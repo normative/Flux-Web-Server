@@ -7,8 +7,8 @@ class Tag < ActiveRecord::Base
 
   def to_s; tag_text; end
 
-  def self.getlocalbyrank lat, lng, radius
-    select("*").from("tagsbylocalrank(#{lat}, #{lng}, #{radius})") 
+  def self.getlocalbyrank lat, lng, radius, count
+    select("*").from("tagsbylocalrank(#{lat}, #{lng}, #{radius}, #{count})") 
   end
 
 end

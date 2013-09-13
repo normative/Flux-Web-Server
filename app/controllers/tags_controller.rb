@@ -2,7 +2,7 @@ class TagsController < ApplicationController
   # GET /tags
   # GET /tags.json
   def index
-    @tags = Tag.all
+    @tags = Tag.order("tagtext ASC")
 
     respond_to do |format|
       format.html # index.html.erb
@@ -12,10 +12,20 @@ class TagsController < ApplicationController
 
   # GET /tags/localbyrank?lat=...&long=...&radius=...
   def localbyrank
-    @tags = Tag.getlocalbyrank(params[:lat], params[:long], params[:radius])
+    @tags = Tag.getlocalbyrank(params[:lat], params[:long], params[:radius], params[:count])
 
     respond_to do |format|
       format.html { render 'index' }
+      format.json { render json: @tags }
+    end
+  end
+  
+  # GET /tags/byrank
+  def byrank
+    @tags = Tag.getlocalbyrank(0.0, 0.0, 0.0, params[:count])
+
+    respond_to do |format|
+      format.html { render 'byrank' }
       format.json { render json: @tags }
     end
   end
@@ -36,14 +46,5 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
   end
 
-  # GET /tags/toptwenty?lat=...&long=...&radius=...
-  def closest
-    @tags = Tag.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
-  
-    respond_to do |format|
-      format.html { render 'index' }
-      format.json { render json: @tags }
-    end
-  end
 end
 
