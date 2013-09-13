@@ -6,4 +6,9 @@ class Tag < ActiveRecord::Base
   validates_presence_of :tag_text
 
   def to_s; tag_text; end
+
+  def self.getlocalbyrank lat, lng, radius
+    select("*").from("tagsbylocalrank(#{lat}, #{lng}, #{radius})") 
+  end
+
 end
