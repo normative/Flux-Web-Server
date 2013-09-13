@@ -16,10 +16,6 @@ DECLARE
 BEGIN
 	skiploc = ((radius <= 0) OR (radius IS NULL));
 
-	IF (maxcount IS NULL) THEN
-		maxcount = 20;
-	END IF;
-
 RETURN QUERY	
 	SELECT	t.tagtext, count(imt.image_id) AS rank
 	FROM	
