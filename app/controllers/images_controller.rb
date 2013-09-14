@@ -37,6 +37,39 @@ class ImagesController < ApplicationController
     end
   end
 
+  def filteredtimebucket
+    @images = Image.filteredtimebucket(params[:lat], params[:long], params[:radius], 
+                                params[:altmin], params[:altmax], 
+                                params[:timemin], params[:timemax], 
+                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+
+    respond_to do |format|
+#      format.html { render 'index' }
+      format.json { render json: @images }
+    end
+  end
+  
+  def filteredmeta
+    @images = Image.filteredmeta(params[:lat], params[:long], params[:radius], 
+                                params[:altmin], params[:altmax], 
+                                params[:timemin], params[:timemax], 
+                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+
+    respond_to do |format|
+#      format.html { render 'index' }
+      format.json { render json: @images }
+    end
+  end
+  
+  def extendedmeta
+    @images = Image.extendedmeta(params[:idlist]).limit(100)
+
+    respond_to do |format|
+#      format.html { render 'index' }
+      format.json { render json: @images }
+    end
+  end
+
   # GET /images/1
   # GET /images/1.json
   def show

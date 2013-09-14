@@ -43,7 +43,7 @@ DECLARE
 
 	skiploc boolean;
 
-	maxbucketsize interval;
+	maxbucketsize double precision;
 	maxbucketsizeseconds double precision;
 
 BEGIN
@@ -103,49 +103,37 @@ BEGIN
 		
 		ORDER by i.time_stamp;
 	
-	SELECT EXTRACT(EPOCH FROM (MAX(fi.time_stamp) - MIN(fi.time_stamp)) / maxbucketcount)
-		INTO maxbucketsize
+	SELECT EXTRACT(EPOCH FROM (MAX(fi.time_stamp) - MIN(fi.time_stamp)) / maxbucketcount), MIN(fi.time_stamp)
+		INTO maxbucketsize, mintime
 		FROM filtimages fi;
+		
 -- -- bucket sizes: 1s, 1m, 5m, 10m, 15m, 30m, 1h, 6h, 12h, 1d, 1w, 2w, 1m, 3m, 4m, 6m, 1y
 
 	IF (maxbucketsize <= 1.0) THEN
 		-- use a 1s bucket
 	ELSIF (maxbucketsize <= 30.0) THEN
 		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-	ELSIF (maxbucketsize <= 30.0) THEN
-		-- use a 30s bucket
-
--- -- bucket sizes: 1s, 1m, 5m, 10m, 15m, 30m, 1h, 6h, 12h, 1d, 1w, 2w, 1m, 3m, 4m, 6m, 1y
-		
---	maxbucketsizeseconds = maxbucketsize AS float8);
+	ELSIF (maxbucketsize <= 60.0) THEN
+		-- use a 1m bucket
+	ELSIF (maxbucketsize <= 300.0) THEN
+		-- use a 5m bucket
+	ELSIF (maxbucketsize <= 600.0) THEN
+		-- use a 10m bucket
+	ELSIF (maxbucketsize <= 900.0) THEN
+		-- use a 15m bucket
+	ELSIF (maxbucketsize <= 1800.0) THEN
+		-- use a 30m bucket
+	ELSIF (maxbucketsize <= 3600.0) THEN
+		-- use a 1h bucket
+	ELSIF (maxbucketsize <= 21600.0) THEN
+		-- use a 6h bucket
+	ELSIF (maxbucketsize <= 43200.0) THEN
+		-- use a 12h bucket
+	ELSIF (maxbucketsize <= 86400.0) THEN
+		-- use a 1d bucket
+	ELSIF (maxbucketsize <= 604800.0) THEN
+		-- use a 1w bucket
+	END IF;
 
 RETURN QUERY
 	SELECT * from filtimages;

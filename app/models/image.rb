@@ -5,7 +5,7 @@ class Image < ActiveRecord::Base
   belongs_to :camera
   belongs_to :category
   has_and_belongs_to_many :tags
-  has_attached_file :image, styles: { thumb: "200x200", oriented: '100%' }, dependent: :destroy, convert_options: {
+  has_attached_file :image, styles: { thumb: "200x200", quarterhd: "960x960", oriented: '100%' }, dependent: :destroy, convert_options: {
     oriented: "-auto-orient"
   }
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
@@ -53,6 +53,18 @@ class Image < ActiveRecord::Base
   
   def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
     select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
+  end
+
+  def self.filteredtimebucket lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
+    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
+  end
+
+  def self.filteredmeta lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
+    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
+  end
+
+  def self.extendedmeta idlist
+    select("*").from("filteredquery(#{idlist})") 
   end
 
   def friendly_date
