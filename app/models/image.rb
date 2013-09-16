@@ -64,7 +64,7 @@ class Image < ActiveRecord::Base
   end
 
   def self.extendedmeta idlist
-    select("*").from("filteredquery(#{idlist})") 
+    select("*").from("getextendedmeta(#{idlist})") 
   end
 
   def friendly_date
