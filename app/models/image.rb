@@ -60,7 +60,7 @@ class Image < ActiveRecord::Base
   end
 
   def self.filteredmeta lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
-    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
+    select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
   end
 
   def self.extendedmeta idlist

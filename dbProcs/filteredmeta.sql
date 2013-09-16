@@ -55,8 +55,8 @@ BEGIN
 		
 
 RETURN QUERY
-	SELECT	i.id, i.time_stamp, i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
-				i.heading, i.best_yaw as yas, i.best_pitch as pitch, i.best_roll as roll, 
+	SELECT	DISTINCT(i.id), i.time_stamp, i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
+				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
 				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
 	FROM	
 		(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
