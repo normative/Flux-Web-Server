@@ -27,8 +27,8 @@ Web::Application.routes.draw do
 
   resources :tags do
     collection do
-      get 'localbyrank'
-      get 'byrank'
+      get 'localbycount'
+      get 'bycount'
     end
     member do
       get 'tag'

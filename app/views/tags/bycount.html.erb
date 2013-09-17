@@ -1,9 +1,9 @@
-<h1>Listing tags by rank</h1>
+<h1>Listing tags by count</h1>
 
 <table>
   <tr>
     <th>Tag</th>
-    <th>Rank</th>
+    <th>Count</th>
     <th></th>
     <th></th>
     <th></th>
@@ -12,7 +12,7 @@
 <% @tags.each do |tag| %>
   <tr>
     <td><%= tag.tagtext %></td>
-    <td><%= tag.rank %></td>
+    <td><%= tag.count %></td>
   </tr>
 <% end %>
 </table>

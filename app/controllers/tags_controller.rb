@@ -10,22 +10,22 @@ class TagsController < ApplicationController
     end
   end
 
-  # GET /tags/localbyrank?lat=...&long=...&radius=...
-  def localbyrank
-    @tags = Tag.getlocalbyrank(params[:lat], params[:long], params[:radius], params[:maxcount])
+  # GET /tags/localbycount?lat=...&long=...&radius=...
+  def localbycount
+    @tags = Tag.getlocalbycount(params[:lat], params[:long], params[:radius], params[:maxrows])
 
     respond_to do |format|
-      format.html { render 'index' }
+      format.html { render 'bycount' }
       format.json { render json: @tags }
     end
   end
   
-  # GET /tags/byrank
-  def byrank
-    @tags = Tag.getlocalbyrank(0.0, 0.0, 0.0, params[:maxcount])
+  # GET /tags/bycount
+  def bycount
+    @tags = Tag.getlocalbycount(0.0, 0.0, 0.0, params[:maxrows])
 
     respond_to do |format|
-      format.html { render 'byrank' }
+      format.html { render 'bycount' }
       format.json { render json: @tags }
     end
   end
