@@ -1,4 +1,5 @@
 ﻿-- Function: getextendedmeta(bigint[])
+-- http://<host>/images/extendedmeta?idlist='%7b203%7d'
 
 -- DROP FUNCTION getextendedmeta(bigint[]);
 
