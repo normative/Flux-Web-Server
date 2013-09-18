@@ -4,11 +4,19 @@
 -- DROP FUNCTION getextendedmeta(bigint[]);
 
 CREATE OR REPLACE FUNCTION getextendedmeta(IN idlist bigint[])
-  RETURNS TABLE(id bigint, description character varying, categoryname character varying, cameraname character varying, username character varying, hashtags text,
-			best_latitude double precision, best_longitude double precision, best_altitude double precision, 
-			best_yaw double precision, best_pitch double precision, best_roll double precision,
-			best_qw double precision, best_qx double precision, best_qy double precision, best_qz double precision)   
---   RETURNS TABLE(description character varying) 
+--  RETURNS TABLE(id integer, description character varying, categoryname character varying, cameraname character varying, username character varying, hashtags text,
+--			best_latitude double precision, best_longitude double precision, best_altitude double precision, 
+--			best_yaw double precision, best_pitch double precision, best_roll double precision,
+--			best_qw double precision, best_qx double precision, best_qy double precision, best_qz double precision
+--			)   
+   RETURNS TABLE(
+   id integer,
+   description character varying, 
+   categoryname character varying, 
+   cameraname character varying, 
+   username character varying, 
+   hashtags text
+   ) 
 AS
 $$
 DECLARE
@@ -38,11 +46,11 @@ BEGIN
 
 	
 RETURN QUERY
-	SELECT	imid.id, i.description, c.cat_text AS categoryname, cam.nickname AS cameraname, u.nickname as username, imid.hashstr as hashtags,
-		0.0::float8 as best_latitude, 0.0::float8 as best_longitude, 0.0::float8 as best_altitude, 
-		0.0::float8 as best_yaw, 0.0::float8 as best_pitch, 0.0::float8 as best_roll, 
-		0.0::float8 as best_qw, 0.0::float8 as best_qx, 0.0::float8 as best_qy, 0.0::float8 as best_qz
---	SELECT	i.description --, c.cat_text AS category, cam.nickname AS camera, u.nickname as username, imid.hashstr as hashtags
+--	SELECT	i.id, i.description, c.cat_text AS categoryname, cam.nickname AS cameraname, u.nickname as username, imid.hashstr as hashtags,
+--		0.0::float8 as best_latitude, 0.0::float8 as best_longitude, 0.0::float8 as best_altitude, 
+--		0.0::float8 as best_yaw, 0.0::float8 as best_pitch, 0.0::float8 as best_roll, 
+--		0.0::float8 as best_qw, 0.0::float8 as best_qx, 0.0::float8 as best_qy, 0.0::float8 as best_qz
+	SELECT	i.id, i.description, c.cat_text AS categoryname, cam.nickname AS cameraname, u.nickname as username, imid.hashstr as hashtags
 	FROM	
 		images i
 		JOIN imageids imid ON i.id = imid.id
