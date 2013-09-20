@@ -12,7 +12,7 @@ class TagsController < ApplicationController
 
   # GET /tags/localbycountfiltered?lat=...&long=...&radius=...
   def localbycountfiltered
-    @tags = Tag.localbycountfiltered(params[:lat], params[:long], params[:radius], 
+    @tags = Tag.getlocalbycountfiltered(params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], params[:catlist]).limit(params[:maxcount])

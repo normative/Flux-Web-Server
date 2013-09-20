@@ -7,12 +7,12 @@ class Tag < ActiveRecord::Base
 
   def to_s; tag_text; end
 
-  def self.getlocalbycount lat, lng, radius, maxrows
-    select("*").from("tagsbylocalcount(#{lat}, #{lng}, #{radius}, #{maxrows})") 
+  def self.getlocalbycount lat, lng, radius, maxcount
+    select("*").from("tagsbylocalcount(#{lat}, #{lng}, #{radius}, #{maxcount})") 
   end
 
-  def self.getlocalbycountfiltered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
-    select("*").from("tagsbylocalcountfiltered(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
+  def self.getlocalbycountfiltered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
+    select("*").from("tagsbylocalcountfiltered(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
   end
   
 end
