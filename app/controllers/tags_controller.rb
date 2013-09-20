@@ -12,10 +12,10 @@ class TagsController < ApplicationController
 
   # GET /tags/localbycountfiltered?lat=...&long=...&radius=...
   def localbycountfiltered
-    @tags = Tag.getlocalbycountfiltered(params[:lat], params[:long], params[:radius], 
+    @tags = Tag.localbycountfiltered(params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist]).limit(params[]:maxcount])
+                                params[:taglist], params[:userlist], params[:catlist]).limit(params[:maxcount])
     respond_to do |format|
       format.html { render 'bycount' }
       format.json { render json: @tags }
@@ -24,7 +24,7 @@ class TagsController < ApplicationController
   
   # GET /tags/localbycount?lat=...&long=...&radius=...
   def localbycount
-    @tags = Tag.getlocalbycount(params[:lat], params[:long], params[:radius], params[:maxrows])
+    @tags = Tag.getlocalbycount(params[:lat], params[:long], params[:radius], params[:maxcount])
 
     respond_to do |format|
       format.html { render 'bycount' }
@@ -34,7 +34,7 @@ class TagsController < ApplicationController
   
   # GET /tags/bycount
   def bycount
-    @tags = Tag.getlocalbycount(0.0, 0.0, 0.0, params[:maxrows])
+    @tags = Tag.getlocalbycount(0.0, 0.0, 0.0, params[:maxcount])
 
     respond_to do |format|
       format.html { render 'bycount' }
@@ -59,4 +59,5 @@ class TagsController < ApplicationController
   end
 
 end
+
 
