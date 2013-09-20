@@ -29,7 +29,7 @@ class ImagesController < ApplicationController
     @images = Image.filtered(params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist]).limit(100)
+                                params[:taglist], params[:userlist], params[:catlist]).limit(params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }

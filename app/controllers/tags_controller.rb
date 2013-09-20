@@ -10,6 +10,18 @@ class TagsController < ApplicationController
     end
   end
 
+  # GET /tags/localbycountfiltered?lat=...&long=...&radius=...
+  def localbycount
+    @tags = Tag.getlocalbycount(params[:lat], params[:long], params[:radius], 
+                                params[:altmin], params[:altmax], 
+                                params[:timemin], params[:timemax], 
+                                params[:taglist], params[:userlist], params[:catlist]).limit(params[]:maxcount])
+    respond_to do |format|
+      format.html { render 'bycount' }
+      format.json { render json: @tags }
+    end
+  end
+  
   # GET /tags/localbycount?lat=...&long=...&radius=...
   def localbycount
     @tags = Tag.getlocalbycount(params[:lat], params[:long], params[:radius], params[:maxrows])

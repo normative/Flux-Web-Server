@@ -27,6 +27,7 @@ Web::Application.routes.draw do
 
   resources :tags do
     collection do
+      get 'localbycountfiltered'
       get 'localbycount'
       get 'bycount'
     end
