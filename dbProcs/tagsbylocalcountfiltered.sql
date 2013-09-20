@@ -1,7 +1,15 @@
 ﻿-- return the set of tags found in local imagery and return ranked in order of highest count
 
 /*
-DROP FUNCTION tagsbylocalcount(lat double precision, lon double precision, radius double precision, maxcount integer);
+DROP FUNCTION tagsbylocalcountfiltered(lat double precision, lon double precision, radius double precision,
+							minalt double precision, maxalt double precision,
+							mintime timestamp, maxtime timestamp,
+							taglist text,
+							userlist text,
+							catlist text,
+							maxcount integer
+						    )
+
 */
 
 CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(lat double precision, lon double precision, radius double precision,
