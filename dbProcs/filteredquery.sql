@@ -81,7 +81,7 @@ RETURN QUERY
 		-- categories
 		 AND 	((catarraylen IS NULL) OR (catarraylen = 0) OR (c.cat_text = ANY (catset)))
 		 )
-	ORDER by i.id;
+	ORDER by i.time_stamp DESC;
 
 END;
 $$ LANGUAGE plpgsql;
