@@ -82,7 +82,7 @@ RETURN QUERY
 		    AND	 ((maxtime IS NULL) OR (i.time_stamp <= maxtime))
 			)
 		-- tags
-		 AND 	((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
+		 AND 	(((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset))) AND (t.tagtext IS NOT NULL))
 		-- users
 		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.nickname = ANY (userset)))
 		-- categories
