@@ -1,4 +1,4 @@
-﻿-- Function: getfilteredmeta(
+﻿-- Function: getfilteredmeta()
 -- http://54.221.222.71/images/filteredmeta.json?lat=0.0&long=0.0&radius=0.0&altmin=-10000&altmax=10000&timemin=NULL&timemax=NULL&taglist=NULL&userlist=NULL&catlist=NULL&maxcount=1
 
 /*
@@ -20,15 +20,10 @@ CREATE OR REPLACE FUNCTION getfilteredmeta(lat double precision, lon double prec
 						catlist text,
 						maxcount integer
 						)
-RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
+RETURNS table (id integer, time_stamp timestamp, user_id integer,
+			latitude double precision, longitude double precision, altitude double precision, 
 			heading double precision, yaw double precision, pitch double precision, roll double precision,
 			qw double precision, qx double precision, qy double precision, qz double precision)
---RETURNS table (id integer, time_stamp timestamp, best_latitude double precision, best_longitude double precision, best_altitude double precision, 
---			heading double precision, best_yaw double precision, best_pitch double precision, best_roll double precision,
---			best_qw double precision, best_qx double precision, best_qy double precision, best_qz double precision)
---RETURNS table (id integer, time_stamp timestamp, b_latitude double precision, b_longitude double precision, b_altitude double precision, 
---			heading double precision, b_yaw double precision, b_pitch double precision, b_roll double precision,
---			b_qw double precision, b_qx double precision, b_qy double precision, b_qz double precision)
 AS $$
 DECLARE
 	tagset text[];
@@ -63,12 +58,10 @@ BEGIN
 		
 
 RETURN QUERY
---	SELECT	DISTINCT(i.id), i.time_stamp, i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
---				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
---				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
-	SELECT	DISTINCT(i.id), i.time_stamp, i.best_latitude, i.best_longitude, i.best_altitude,
-				i.heading, i.best_yaw, i.best_pitch, i.best_roll, 
-				i.best_qw, i.best_qx, i.best_qy, i.best_qz
+	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id,
+				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
+				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
+				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
 	FROM	
 		(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
 		images i
