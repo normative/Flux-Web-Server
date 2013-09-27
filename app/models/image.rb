@@ -14,7 +14,8 @@ class Image < ActiveRecord::Base
 
   def as_json(options = {})
     super(options.merge(
-                        except: [ :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
+#                        except: [ :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
+                         except: [ :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                                   :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                                   :best_latitude, :best_longitude, :best_altitude, :best_yaw, :best_pitch, :best_roll,
                                   :best_qw, :best_qx, :best_qy, :best_qz,
@@ -36,8 +37,10 @@ class Image < ActiveRecord::Base
   def qy; best_qy; end
   def qz; best_qz; end
 
-  def latitude= latitude; self.raw_latitude = self.best_latitude = latitude; end
-  def longitude= longitude; self.raw_longitude = self.best_longitude = longitude; end
+#  def latitude= latitude; self.raw_latitude = self.best_latitude = latitude; end
+#  def longitude= longitude; self.raw_longitude = self.best_longitude = longitude; end
+  def latitude= latitude; self.best_latitude = latitude; end
+  def longitude= longitude; self.best_longitude = longitude; end
   def altitude= altitude; self.raw_altitude = self.best_altitude = altitude; end
   def yaw= yaw; self.raw_yaw = self.best_yaw = yaw; end
   def pitch= pitch ; self.raw_pitch = self.best_pitch = pitch; end
