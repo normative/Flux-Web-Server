@@ -29,6 +29,9 @@
     <th>Camera</th>
     <th>Heading</th>
     <th>Image</th>
+    <th>Horiz Acc</th>
+    <th>Vert Acc</th>
+    <th>Location Conf</th>
     <th></th>
     <th></th>
     <th></th>
@@ -63,6 +66,9 @@
     <td><%= image.camera %></td>
     <td><%= image.heading %></td>
     <td><%= image_tag image.image.url :thumb %></td>
+    <td><%= image.horiz_accuracy %></td>
+    <td><%= image.vert_accuracy %></td>
+    <td><%= image.location_confidence %></td>
     <td><%= link_to 'Show', image %></td>
     <td><%= link_to 'Edit', edit_image_path(image) %></td>
     <td><%= link_to 'Destroy', image, method: :delete, data: { confirm: 'Are you sure?' } %></td>

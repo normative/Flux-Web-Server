@@ -24,6 +24,14 @@
     <%= f.text_field :raw_altitude %>
   </div>
   <div class="field">
+    <%= f.label :horiz_accuracy %><br />
+    <%= f.text_field :horiz_accuracy %>
+  </div>
+  <div class="field">
+    <%= f.label :vert_accuracy %><br />
+    <%= f.text_field :vert_accuracy %>
+  </div>
+  <div class="field">
     <%= f.label :best_latitude %><br />
     <%= f.text_field :best_latitude %>
   </div>
@@ -34,6 +42,10 @@
   <div class="field">
     <%= f.label :best_altitude %><br />
     <%= f.text_field :best_altitude %>
+  </div>
+  <div class="field">
+    <%= f.label :location_confidence %><br />
+    <%= f.text_field :location_confidence %>
   </div>
   <div class="field">
     <%= f.label :raw_yaw %><br />
