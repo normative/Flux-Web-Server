@@ -18,6 +18,7 @@ class Image < ActiveRecord::Base
                                   :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                                   :best_latitude, :best_longitude, :best_altitude, :best_yaw, :best_pitch, :best_roll,
                                   :best_qw, :best_qx, :best_qy, :best_qz,
+                                  :horiz_accuracy, :vert_accuracy,
                                   :image_file_name, :image_content_type, :image_file_size, :image_updated_at, :image_created_at ],
                         methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll,
                                     :qw, :qx, :qy, :qz ]

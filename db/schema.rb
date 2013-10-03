@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130828212257) do
+ActiveRecord::Schema.define(:version => 20131003173047) do
 
   create_table "cameras", :force => true do |t|
     t.integer  "user_id",                    :null => false
@@ -41,25 +41,25 @@ ActiveRecord::Schema.define(:version => 20130828212257) do
   add_index "friends", ["user_id"], :name => "index_friends_on_user_id"
 
   create_table "images", :force => true do |t|
-    t.float    "raw_latitude",                                       :null => false
-    t.float    "raw_longitude",                                      :null => false
-    t.float    "raw_altitude",                                       :null => false
+    t.float    "raw_latitude",                                        :null => false
+    t.float    "raw_longitude",                                       :null => false
+    t.float    "raw_altitude",                                        :null => false
     t.float    "best_latitude"
     t.float    "best_longitude"
     t.float    "best_altitude"
-    t.float    "raw_yaw",                                            :null => false
-    t.float    "raw_pitch",                                          :null => false
-    t.float    "raw_roll",                                           :null => false
+    t.float    "raw_yaw",                                             :null => false
+    t.float    "raw_pitch",                                           :null => false
+    t.float    "raw_roll",                                            :null => false
     t.float    "best_yaw"
     t.float    "best_pitch"
     t.float    "best_roll"
-    t.string   "description",        :limit => 256
-    t.integer  "category_id",                                        :null => false
-    t.integer  "user_id",                                            :null => false
-    t.integer  "camera_id",                                          :null => false
-    t.float    "heading",                           :default => 0.0, :null => false
-    t.datetime "created_at",                                         :null => false
-    t.datetime "updated_at",                                         :null => false
+    t.string   "description",         :limit => 256
+    t.integer  "category_id",                                         :null => false
+    t.integer  "user_id",                                             :null => false
+    t.integer  "camera_id",                                           :null => false
+    t.float    "heading",                            :default => 0.0, :null => false
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
     t.string   "image_file_name"
     t.string   "image_content_type"
     t.integer  "image_file_size"
@@ -73,18 +73,24 @@ ActiveRecord::Schema.define(:version => 20130828212257) do
     t.float    "best_qx"
     t.float    "best_qy"
     t.float    "best_qz"
+    t.float    "horiz_accuracy",                     :default => 0.0
+    t.float    "vert_accuracy",                      :default => 0.0
+    t.float    "location_confidence",                :default => 0.0
   end
 
   add_index "images", ["best_latitude"], :name => "image_latitude_idx"
   add_index "images", ["best_longitude"], :name => "image_longitude_idx"
-  add_index "images", ["created_at"], :name => "image_created_at_cluster_idx"
+  add_index "images", ["time_stamp"], :name => "image_timestamp_cluster_idx"
 
   create_table "images_tags", :force => true do |t|
-    t.integer  "image_id",   :null => false
-    t.integer  "tag_id",     :null => false
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "image_id",   :limit => 8, :null => false
+    t.integer  "tag_id",                  :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
   end
+
+  add_index "images_tags", ["image_id"], :name => "images_tags_image_id_idx"
+  add_index "images_tags", ["tag_id"], :name => "images_tags_tag_id_idx"
 
   create_table "tags", :force => true do |t|
     t.string   "tagtext",    :limit => 32, :null => false
