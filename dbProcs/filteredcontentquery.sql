@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
 DROP FUNCTION filteredcontentquery(lat double precision, lon double precision, radius double precision, 
 						minalt double precision, maxalt double precision,
 						mintime timestamp, maxtime timestamp,
@@ -9,7 +8,10 @@ DROP FUNCTION filteredcontentquery(lat double precision, lon double precision, r
 						maxcount integer
 						)
 */
-
+/*
+raw json call:
+http://54.221.254.230/images/filteredcontent.json?lat=43.32485&long=-79.81303&radius=500.0&altmin=-1000.0&altmax=1000.0&timemin=NULL&timemax=NULL&taglist=''&userlist=''&catlist=''&maxcount=10
+*/
 CREATE OR REPLACE FUNCTION filteredcontentquery(lat double precision, lon double precision, radius double precision, 
 						minalt double precision, maxalt double precision,
 						mintime timestamp, maxtime timestamp,
