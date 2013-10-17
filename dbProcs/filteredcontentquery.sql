@@ -5,7 +5,8 @@ DROP FUNCTION filteredcontentquery(lat double precision, lon double precision, r
 						mintime timestamp, maxtime timestamp,
 						taglist text,
 						userlist text,
-						catlist text
+						catlist text,
+						maxcount integer
 						)
 */
 
@@ -14,7 +15,8 @@ CREATE OR REPLACE FUNCTION filteredcontentquery(lat double precision, lon double
 						mintime timestamp, maxtime timestamp,
 						taglist text,
 						userlist text,
-						catlist text
+						catlist text,
+						maxcount integer
 						)
 RETURNS TABLE(id bigint, content_type integer, latitude double precision, longitude double precision, altitude double precision)
 AS $$
@@ -81,7 +83,8 @@ RETURN QUERY
 		-- categories
 		 AND 	((catarraylen IS NULL) OR (catarraylen = 0) OR (c.cat_text = ANY (catset)))
 		 )
-	ORDER by i.time_stamp DESC;
+	ORDER by i.id DESC
+	LIMIT maxcount;
 
 END;
 $$ LANGUAGE plpgsql;
