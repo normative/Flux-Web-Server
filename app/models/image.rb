@@ -55,6 +55,10 @@ class Image < ActiveRecord::Base
     select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
   end
 
+  def self.filteredcontent lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
+    select("*").from("filteredcontentquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
+  end
+
   def self.filteredtimebucket lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
     select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
   end

@@ -6,6 +6,7 @@ Web::Application.routes.draw do
       get 'filteredmeta'  # set of (base metadata based on filtered image set)
       get 'extendedmeta'  # set of (remainder of metadata not passed in <filteredmeta>, including hash tag list)
       get 'closest'
+      get 'content'       # filtered but returning only lat, lon, alt, imageid, type
 #      delete 'nuke'
       get 'nuke'
     end
