@@ -18,23 +18,23 @@ class Image < ActiveRecord::Base
                                   :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                                   :best_latitude, :best_longitude, :best_altitude, :best_yaw, :best_pitch, :best_roll,
                                   :best_qw, :best_qx, :best_qy, :best_qz,
-                                  :image_file_name, :image_content_type, :image_file_size, :image_updated_at, :image_created_at ]
-#                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll,
-#                                    :qw, :qx, :qy, :qz ]
+                                  :image_file_name, :image_content_type, :image_file_size, :image_updated_at, :image_created_at ],
+                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll,
+                                    :qw, :qx, :qy, :qz ]
                         ))
     
   end
 
-#  def latitude; best_latitude; end
-#    def longitude; best_longitude; end
-#  def altitude; best_altitude; end
-#  def yaw; best_yaw; end
-#  def pitch; best_pitch; end
-#  def roll; best_roll; end
-#  def qw; best_qw; end
-#  def qx; best_qx; end
-#  def qy; best_qy; end
-#  def qz; best_qz; end
+  def latitude; best_latitude; end
+  def longitude; best_longitude; end
+  def altitude; best_altitude; end
+  def yaw; best_yaw; end
+  def pitch; best_pitch; end
+  def roll; best_roll; end
+  def qw; best_qw; end
+  def qx; best_qx; end
+  def qy; best_qy; end
+  def qz; best_qz; end
 
   def latitude= latitude; self.raw_latitude = self.best_latitude = latitude; end
   def longitude= longitude; self.raw_longitude = self.best_longitude = longitude; end

@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION filteredcontentquery(lat double precision, lon double
 						catlist text,
 						maxcount integer
 						)
-RETURNS TABLE(id bigint, content_type integer, latitude double precision, longitude double precision, altitude double precision)
+RETURNS TABLE(id bigint, content_type integer, best_latitude double precision, best_longitude double precision, best_altitude double precision)
 AS $$
 DECLARE
 	tagset text[];
@@ -55,7 +55,7 @@ BEGIN
 		
 
 RETURN QUERY
-	SELECT	DISTINCT i.id AS id, 1::integer AS content_type, i.best_latitude AS latitude, i.best_longitude AS longitude, i.best_altitude AS altitude
+	SELECT	DISTINCT i.id AS id, 1::integer AS content_type, i.best_latitude AS best_latitude, i.best_longitude AS best_longitude, i.best_altitude AS best_altitude
 	FROM	
 		(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
 		images i
