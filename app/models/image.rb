@@ -49,11 +49,11 @@ class Image < ActiveRecord::Base
 
   def self.within lat, lng, radius
 #    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
-    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, NULL)") 
+    select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, NULL, 100)") 
   end
   
   def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
-    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})") 
+    select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, 100)") 
   end
 
   def self.filteredcontent lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount

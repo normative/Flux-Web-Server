@@ -27,10 +27,14 @@ class ImagesController < ApplicationController
   #                     &userlist="user1 user2 user3...userN"
   #                     &catlist="cat1 cat2...catN"
   def filtered
-    @images = Image.filtered(params[:lat], params[:long], params[:radius], 
+#    @images = Image.filtered(params[:lat], params[:long], params[:radius], 
+#                                params[:altmin], params[:altmax], 
+#                                params[:timemin], params[:timemax], 
+#                                params[:taglist], params[:userlist], params[:catlist]).limit(params[:maxcount])
+    @images = Image.filteredmeta(params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist]).limit(params[:maxcount])
+                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }
