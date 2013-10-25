@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION filteredmeta(lat double precision, lon double precisi
 --RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
 --			heading double precision, yaw double precision, pitch double precision, roll double precision,
 --			qw double precision, qx double precision, qy double precision, qz double precision)
-RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
+RETURNS table (id bigint, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
 			heading double precision, yaw double precision, pitch double precision, roll double precision,
 			qw double precision, qx double precision, qy double precision, qz double precision)
 AS $$
