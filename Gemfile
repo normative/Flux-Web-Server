@@ -9,6 +9,10 @@ gem 'pg'
 gem 'paperclip'
 gem 'strong_parameters'
 
+# Authentication
+gem 'devise', '~> 3'
+gem 'cancan'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
