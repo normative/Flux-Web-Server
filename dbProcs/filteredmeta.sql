@@ -21,7 +21,8 @@ CREATE OR REPLACE FUNCTION filteredmeta(lat double precision, lon double precisi
 --RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
 --			heading double precision, yaw double precision, pitch double precision, roll double precision,
 --			qw double precision, qx double precision, qy double precision, qz double precision)
-RETURNS table (id bigint, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
+RETURNS table (id bigint, time_stamp timestamp, user_id integer, description character varying, username character varying,
+			latitude double precision, longitude double precision, altitude double precision, 
 			heading double precision, yaw double precision, pitch double precision, roll double precision,
 			qw double precision, qx double precision, qy double precision, qz double precision)
 AS $$
@@ -58,7 +59,8 @@ BEGIN
 		
 
 RETURN QUERY
-	SELECT	DISTINCT(i.id), i.time_stamp, i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
+	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.nickname as username,
+				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
 				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
 				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
 --	SELECT	DISTINCT(i.id), i.time_stamp, i.best_latitude, i.best_longitude, i.best_altitude,

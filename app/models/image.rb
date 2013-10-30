@@ -47,11 +47,13 @@ class Image < ActiveRecord::Base
   def qy= qy; self.raw_qy = self.best_qy = qy; end
   def qz= qz; self.raw_qz = self.best_qz = qz; end
 
+    # deprecated!!
   def self.within lat, lng, radius
 #    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
     select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, NULL, 100)") 
   end
   
+  # deprecated!!
   def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
     select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, 100)") 
   end
