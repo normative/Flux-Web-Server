@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :registerable, :recoverable, :trackable, :validatable, :timeoutable, :omniauthable, :omniauth_providers => [:facebook]
+  devise :database_authenticatable, :registerable, :recoverable, :trackable, :validatable, :timeoutable #, :omniauthable, :omniauth_providers => [:facebook]
 
   include ActiveModel::ForbiddenAttributesProtection
 
