@@ -30,7 +30,8 @@ group :staging do
 end
 
 gem 'jquery-rails'
-gem 'capistrano'
+gem 'capistrano', '~> 2'
+gem 'rvm-capistrano'
 
 gem 'awesome_print'
 gem 'debugger'
