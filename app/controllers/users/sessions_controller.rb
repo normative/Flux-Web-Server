@@ -2,7 +2,6 @@ class Users::SessionsController < Devise::SessionsController
   respond_to :json
 
   def create
-    debugger
     self.resource = warden.authenticate!(auth_options)
     sign_in(resource_name, resource)
     resource.save!
