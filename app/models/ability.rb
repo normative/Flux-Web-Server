@@ -6,6 +6,9 @@ class Ability
 
     if user.persisted?
       can :manage, Camera
+      can :manage, Image
+      can :manage, Tag
+      can :manage, Category
     end
   end
 end
