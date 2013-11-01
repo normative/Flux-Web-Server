@@ -8,5 +8,11 @@ FactoryGirl.define do
       ([firstname.to_s, firstname.to_s[0]].sample + ['.', '', '_'].sample + lastname.to_s).downcase
     }
     privacy false
+    email {
+      ([firstname.to_s, firstname.to_s[0]].sample + ['.', '', '_'].sample + lastname.to_s + generate(:number) + "@").downcase +
+        %w{example.com gmail.com yahoo.com uwaterloo.ca}.sample
+    }
+    password "pass12"
+    password_confirmation "pass12"
   end
 end

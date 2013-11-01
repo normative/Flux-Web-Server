@@ -1,5 +1,7 @@
 Web::Application.routes.draw do
 
+  devise_for :users, controllers: { sessions: "users/sessions", passwords: "users/passwords", registrations: "users/registrations" }
+
   resources :images do
     collection do
       get 'filtered'  # more comprehensive filtering of queries
@@ -21,9 +23,6 @@ Web::Application.routes.draw do
 
 
   resources :cameras
-
-
-  resources :users
 
 
   resources :tags do

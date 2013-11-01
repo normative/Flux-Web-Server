@@ -10,7 +10,7 @@ module Rails
   class Server
     alias :default_options_alias :default_options
     def default_options
-      default_options_alias.merge!(:Port => 3001)
+      default_options_alias.merge!(:Port => 3101)
     end    
   end
 end
