@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
 
   before_save :ensure_authentication_token
   before_create do
-    self.privacy = false
+#    self.privacy = false
     true
   end
 
@@ -29,5 +29,5 @@ class User < ActiveRecord::Base
     end
   end
   
-  def to_s; nickname; end
+  def to_s; username; end
 end
