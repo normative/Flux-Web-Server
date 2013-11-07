@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131106181021) do
+ActiveRecord::Schema.define(version: 20131106203159) do
 
   create_table "cameras", force: true do |t|
     t.integer  "user_id",                 null: false
@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(version: 20131106181021) do
     t.float    "horiz_accuracy",                  default: 0.0
     t.float    "vert_accuracy",                   default: 0.0
     t.float    "location_confidence",             default: 0.0
+    t.integer  "privacy",                         default: 0,   null: false
   end
 
   add_index "images", ["best_latitude"], name: "image_latitude_idx", using: :btree

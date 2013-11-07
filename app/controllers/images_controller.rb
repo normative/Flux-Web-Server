@@ -204,6 +204,7 @@ class ImagesController < ApplicationController
                                   :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw, 
                                   :best_qw, :best_qx, :best_qy, :best_qz,
                                   :camera_id, :category_id, :description, :heading, :image, 
-                                  :user_id, :time_stamp, :horiz_accuracy, :vert_accuracy)
+                                  :user_id, :time_stamp, :horiz_accuracy, :vert_accuracy,
+                                  :privacy )
   end
 end

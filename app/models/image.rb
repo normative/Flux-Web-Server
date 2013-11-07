@@ -10,7 +10,7 @@ class Image < ActiveRecord::Base
   }
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,  
-                        :user, :camera, :heading, :image, :time_stamp 
+                        :user, :camera, :heading, :image, :time_stamp
 
   def as_json(options = {})
     super(options.merge(
@@ -73,10 +73,6 @@ class Image < ActiveRecord::Base
 
   def self.extendedmeta idlist
     select("*").from("getextendedmeta(#{idlist})") 
-  end
-
-  def friendly_date
-    time_stamp.strftime '%b %-d, %Y'
   end
 
   def to_s; image.original_filename; end
