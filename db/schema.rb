@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20131107144401) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "cameras", force: true do |t|
     t.integer  "user_id",                 null: false
     t.string   "model",       limit: 32
@@ -114,8 +117,8 @@ ActiveRecord::Schema.define(version: 20131107144401) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"

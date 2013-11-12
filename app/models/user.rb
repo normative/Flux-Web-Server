@@ -17,6 +17,12 @@ class User < ActiveRecord::Base
     true
   end
 
+  validates(:username,
+            presence: true,
+            uniqueness: { message: 'is taken', case_sensitive: false },
+            format: { with: /\A[a-zA-Z0-9_\-\.]*\Z/, message: 'must contain only letters, numbers, underscores, periods or dashes' },
+            length: { in: 4..16 })
+
   def ensure_authentication_token
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token
