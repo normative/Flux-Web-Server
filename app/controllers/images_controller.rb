@@ -177,7 +177,8 @@ class ImagesController < ApplicationController
 
   # DELETE /images/nuke.json?lat=...&long=...&radius=...
   def nuke
-    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
+      @images = Image.oldwithin(params[:lat], params[:long], params[:radius])
+#      @images = Image.execute_procedure("imagesinradius", params[:lat], params[:long], params[:radius])
       @images.each do |i|
         i.destroy
       end
