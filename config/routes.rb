@@ -23,6 +23,14 @@ Web::Application.routes.draw do
 
 
   resources :cameras
+    collection do
+      get 'bydevice'  # camera that matches specified deviceid
+    end
+    member do
+      get 'camera'
+      
+    end
+  end
 
 
   resources :tags do

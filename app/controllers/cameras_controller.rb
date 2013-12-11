@@ -26,6 +26,18 @@ class CamerasController < ApplicationController
     end
   end
 
+  # GET /cameras/bydevice?deviceid=xxx
+  # GET /cameras/bydevice.json?deviceid=xxx
+  def bydevice
+    @camera = Camera.where("deviceid: ?", params[:deviceid])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @camera }
+    end
+  end
+
+  
   # GET /cameras/new
   # GET /cameras/new.json
   def new

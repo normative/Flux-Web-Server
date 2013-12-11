@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   has_many :images, dependent: :destroy
   has_many :connections, class_name: 'Friend', dependent: :destroy
   has_many :friends, through: :connections, source: :user, class_name: 'User'
-  has_attached_file :avatar, styles: { thumb: "120x120", oriented: '100%' }, dependent: :destroy, convert_options: {
+  has_attached_file :avatar, styles: { thumb: "140x140", smallthumb: "40x40", oriented: '100%' }, dependent: :destroy, convert_options: {
     oriented: "-auto-orient"
   }
 
