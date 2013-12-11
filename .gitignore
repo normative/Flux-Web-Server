@@ -4,6 +4,9 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile ~/.gitignore_global
 
+# Ignore eclipse config
+/.metadata
+
 # Ignore bundler config
 /.bundle
 
@@ -16,3 +19,4 @@
 .DS_Store
 
 /public/system
+/RemoteSystemsTempFiles
