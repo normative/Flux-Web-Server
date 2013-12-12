@@ -22,13 +22,12 @@ Web::Application.routes.draw do
   resources :categories
 
 
-  resources :cameras
+  resources :cameras do
     collection do
       get 'bydevice'  # camera that matches specified deviceid
     end
     member do
       get 'camera'
-      
     end
   end
 

@@ -57,7 +57,8 @@ class CamerasController < ApplicationController
   # POST /cameras
   # POST /cameras.json
   def create
-    @camera = Camera.new(camera_params)
+#    @camera = Camera.new(camera_params)
+    @camera = Camera.where(deviceid: camera_params[:deviceid]).first_or_create(camera_params)
 
     respond_to do |format|
       if @camera.save

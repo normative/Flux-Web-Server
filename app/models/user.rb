@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
 
   validates(:username,
             presence: true,
-            uniqueness: { message: 'is taken', case_sensitive: false },
+            uniqueness: { message: 'is taken', case_sensitive: true },
             format: { with: /\A[a-zA-Z0-9_\-\.]*\Z/, message: 'must contain only letters, numbers, underscores, periods or dashes' },
             length: { in: 4..16 })
 
