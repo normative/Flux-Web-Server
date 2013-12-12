@@ -37,7 +37,7 @@ BEGIN
 
 	
 RETURN QUERY
-	SELECT	imid.id, i.description, c.cat_text AS categoryname, cam.nickname AS cameraname, u.nickname as username, imid.hashstr as hashtags,
+	SELECT	imid.id, i.description, c.cat_text AS categoryname, cam.nickname AS cameraname, u.username as username, imid.hashstr as hashtags,
 		0.0::float8 as best_latitude, 0.0::float8 as best_longitude, 0.0::float8 as best_altitude, 
 		0.0::float8 as best_yaw, 0.0::float8 as best_pitch, 0.0::float8 as best_roll, 
 		0.0::float8 as best_qw, 0.0::float8 as best_qx, 0.0::float8 as best_qy, 0.0::float8 as best_qz

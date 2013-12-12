@@ -42,5 +42,9 @@ class User < ActiveRecord::Base
     select("*").from("usernameisunique('#{uname}')") 
   end
 
+#  def self.getprofile auth, userid
+#    select("*").from("getprofileforuser('#{auth}', #{userid})")     
+#  end
+
   def to_s; username; end
 end
