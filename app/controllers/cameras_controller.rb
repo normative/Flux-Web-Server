@@ -26,9 +26,9 @@ class CamerasController < ApplicationController
     end
   end
 
-  # GET /cameras/bydevice?deviceid=xxx
-  # GET /cameras/bydevice.json?deviceid=xxx
-  def bydevice
+  # GET /cameras/lookupbydevid?deviceid=xxx
+  # GET /cameras/lookupbydevid.json?deviceid=xxx
+  def lookupbydevid
     @camera = Camera.where(deviceid: params[:deviceid])
 
     respond_to do |format|

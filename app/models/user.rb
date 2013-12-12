@@ -38,5 +38,9 @@ class User < ActiveRecord::Base
     end
   end
   
+  def self.usernameisunique uname
+    select("*").from("usernameisunique('#{uname}')") 
+  end
+
   def to_s; username; end
 end

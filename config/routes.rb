@@ -2,6 +2,10 @@ Web::Application.routes.draw do
 
   devise_for :users, controllers: { sessions: "users/sessions", passwords: "users/passwords", registrations: "users/registrations" }
 
+  devise_scope :user do
+    get 'users/suggestuniqueuname', :to => "users/registrations#suggestuniqueuname"
+  end
+  
   resources :images do
     collection do
       get 'filtered'  # more comprehensive filtering of queries
@@ -9,6 +13,7 @@ Web::Application.routes.draw do
       get 'extendedmeta'  # set of (remainder of metadata not passed in <filteredmeta>, including hash tag list)
       get 'closest'
       get 'filteredcontent' # filtered but returning only lat, lon, alt, imageid, type
+      get 'getimagelistforuser'    # returns list of [id, description] pairs, ordered by time_stamp [DESC] with the given userid
 #      delete 'nuke'
       get 'nuke'
     end
@@ -24,7 +29,7 @@ Web::Application.routes.draw do
 
   resources :cameras do
     collection do
-      get 'bydevice'  # camera that matches specified deviceid
+      get 'lookupbydevid'  # camera that matches specified deviceid
     end
     member do
       get 'camera'

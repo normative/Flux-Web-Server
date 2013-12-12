@@ -14,6 +14,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  # GET /users/registrations/suggestuniqueuname.json?username=...
+  def suggestuniqueuname
+#    @count = User.where(username: params[:username]).select("id").count
+    @result = User.usernameisunique(params[:username])
+    render json: @result
+    return
+  end
+  
   def resource_params
     params.require(:user).permit :email, :username, :name, :password, :bio
   end
