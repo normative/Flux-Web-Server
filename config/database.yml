@@ -13,15 +13,13 @@ development:
 staging:
   adapter: postgresql
   database: flux
-  host: localhost
+  host: 54.221.254.230
   username: postgres
-  password: postgres
   timeout: 5000
 
-staging2:
+test:
   adapter: postgresql
   database: flux
-  host: localhost
+  host: 54.221.222.71
   username: postgres
-  password: tnamtass
   timeout: 5000
