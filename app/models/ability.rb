@@ -5,7 +5,7 @@ class Ability
     user ||= User.new # anon
 
     if user.persisted?
-      can :read, User
+      can [:read, :profile], User
       can :manage, User, { id: user.id }
       can :manage, Camera
       can :manage, Image
