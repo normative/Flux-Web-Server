@@ -1,12 +1,12 @@
 Web::Application.routes.draw do
-
-  get 'profiles/:id', :to => "profiles#fetch"
   
   devise_for :users, controllers: { sessions: "users/sessions", passwords: "users/passwords", registrations: "users/registrations" }
 
   devise_scope :user do
     get 'users/suggestuniqueuname', :to => "users/registrations#suggestuniqueuname"
   end
+
+  resources :users, only: [ :show, :update ]
   
   resources :images do
     collection do
