@@ -23,6 +23,16 @@ class User < ActiveRecord::Base
             format: { with: /\A[a-zA-Z0-9_\-\.]*\Z/, message: 'must contain only letters, numbers, underscores, periods or dashes' },
             length: { in: 4..16 })
 
+  def as_json(options = {})
+    super(options.merge(
+                        except: [ :encrypted_password, :reset_password_token, :reset_password_sent_at, 
+                                  :authentication_token, :created_at, :updated_at, 
+                                  :avatar_file_name, :avatar_content_type, :avatar_file_size, :avatar_updated_at
+                                  ]
+                         ))
+  end
+  
+  
   def ensure_authentication_token
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token

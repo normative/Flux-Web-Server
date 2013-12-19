@@ -6,9 +6,12 @@ Web::Application.routes.draw do
     get 'users/suggestuniqueuname', :to => "users/registrations#suggestuniqueuname"
   end
 
-  resources :users, only: [ :show, :update, :profile ] do
+#  resources :users, only: [ :show, :update, :profile, :edit, :index ] do
+  resources :users do
     member do
       get 'profile'
+      get 'user'
+      get 'avatar'
     end
   end
     
