@@ -5,7 +5,7 @@ DROP FUNCTION getprofileforuser(myauthtoken text, userid integer)
 
 CREATE OR REPLACE FUNCTION getprofileforuser(myauthtoken text, userid integer)
 
-RETURNS table (id integer, username character varying, bio character varying, 
+RETURNS table (id integer, username character varying, bio character varying, has_pic boolean,
 		member_since timestamp, follower_count integer, following_count integer, 
 		image_count integer, friend boolean, amifollowing boolean, aretheyfollowing boolean 
 		)
@@ -38,7 +38,7 @@ BEGIN
 	aretheyfollowing := false;
 
 RETURN QUERY
-	SELECT	DISTINCT(u.id), u.username AS username, u.bio AS bio, 
+	SELECT	DISTINCT(u.id), u.username AS username, u.bio AS bio, ((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic, 
 		u.created_at AS member_since, follower_count,  following_count, 
 		image_count, friend, amifollowing, aretheyfollowing
 	FROM
