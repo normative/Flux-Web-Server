@@ -2,10 +2,9 @@
 
 <table>
   <tr>
-    <th>Firstname</th>
-    <th>Lastname</th>
-    <th>Privacy</th>
-    <th>Nickname</th>
+    <th>User name</th>
+    <th>Name</th>
+    <th>bio</th>
     <th></th>
     <th></th>
     <th></th>
@@ -13,10 +12,9 @@
 
 <% @users.each do |user| %>
   <tr>
-    <td><%= user.firstname %></td>
-    <td><%= user.lastname %></td>
-    <td><%= user.privacy %></td>
-    <td><%= user.nickname %></td>
+    <td><%= user.username %></td>
+    <td><%= user.name %></td>
+    <td><%= user.bio %></td>
     <td><%= link_to 'Show', user %></td>
     <td><%= link_to 'Edit', edit_user_path(user) %></td>
     <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -25,5 +23,3 @@
 </table>
 
 <br />
-
-<%= link_to 'New User', new_user_path %>
