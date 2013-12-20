@@ -59,7 +59,7 @@ BEGIN
 		
 
 RETURN QUERY
-	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.nickname as username,
+	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.username as username,
 				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
 				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
 				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
@@ -87,7 +87,7 @@ RETURN QUERY
 		-- tags
 		 AND 	((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
 		-- users
-		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.nickname = ANY (userset)))
+--		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.username = ANY (userset)))
 --		-- categories
 --		 AND 	((catarraylen IS NULL) OR (catarraylen = 0) OR (c.cat_text = ANY (catset)))
 		 )

@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
   end
 
   def self.getprofile auth, userid
-    select("*").from("getprofileforuser(#{auth}, #{userid})")     
+    select("*").from("getprofileforuser('#{auth}', #{userid})")     
   end
 
   def to_s; username; end
