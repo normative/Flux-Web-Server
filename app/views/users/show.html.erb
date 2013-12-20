@@ -1,23 +1,32 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Firstname:</b>
-  <%= @user.firstname %>
+  <b>User name:</b>
+  <%= @user.username %>
 </p>
 
 <p>
-  <b>Lastname:</b>
-  <%= @user.lastname %>
+  <b>Name:</b>
+  <%= @user.name %>
 </p>
 
 <p>
-  <b>Privacy:</b>
-  <%= @user.privacy %>
+  <b>bio:</b>
+  <%= @user.bio %>
 </p>
 
 <p>
-  <b>Nickname:</b>
-  <%= @user.nickname %>
+  <b>member since:</b>
+  <%= @user.created_at %>
+</p>
+
+<p>
+  <b>Profile pic:</b>
+  <%= image_tag @user.avatar.url :thumb %>
+</p>
+<p>
+  <b>Mini-Profile pic:</b>
+  <%= image_tag @user.avatar.url :smallthumb %>
 </p>
 
 

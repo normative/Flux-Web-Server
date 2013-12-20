@@ -1,10 +1,20 @@
 Web::Application.routes.draw do
-
+  
   devise_for :users, controllers: { sessions: "users/sessions", passwords: "users/passwords", registrations: "users/registrations" }
 
   devise_scope :user do
     get 'users/suggestuniqueuname', :to => "users/registrations#suggestuniqueuname"
   end
+
+#  resources :users, only: [ :show, :update, :profile, :edit, :index ] do
+  resources :users do
+    member do
+      get 'profile'
+      get 'user'
+      get 'avatar'
+    end
+  end
+    
   
   resources :images do
     collection do

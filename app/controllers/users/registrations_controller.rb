@@ -14,7 +14,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  # GET /users/registrations/suggestuniqueuname.json?username=...
+  # GET /users/suggestuniqueuname.json?username=...
   def suggestuniqueuname
 #    @count = User.where(username: params[:username]).select("id").count
     @result = User.usernameisunique(params[:username])
@@ -22,7 +22,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
     return
   end
   
+#  # GET /users/profile/1.json
+#  def profile
+#    #    @profile = User.getprofile(params[:auth_token], params[:id])
+#
+#    # setup the query but don't execute yet...
+#    query = User.getprofile(params[:auth_token], params[:id])
+#    # This will issue a query, but only with the attributes we selected above.
+#    # It also returns a simple Hash, which is significantly more efficient than a
+#    # full blown ActiveRecord model.
+#    results = ActiveRecord::Base.connection.select_all(query)
+#    #=> [{"id" => 1, "member_since" => 2013-02-26 01:28:08 UTC}, etc...]    
+#    render json: results
+#    return
+#  end
+#  
   def resource_params
-    params.require(:user).permit :email, :username, :name, :password, :bio
+    params.require(:user).permit :email, :username, :name, :password, :bio, :follower_count, :following_count
   end
 end
