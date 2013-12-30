@@ -10,14 +10,15 @@ DROP FUNCTION filteredmeta(lat double precision, lon double precision, radius do
 						)
 */
 
-CREATE OR REPLACE FUNCTION filteredmeta(lat double precision, lon double precision, radius double precision, 
-						minalt double precision, maxalt double precision,
-						mintime timestamp, maxtime timestamp,
-						taglist text,
-						userlist text,
-						catlist text,
-						maxcount integer
-						)
+CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
+					lat double precision, lon double precision, radius double precision, 
+					minalt double precision, maxalt double precision,
+					mintime timestamp, maxtime timestamp,
+					taglist text,
+					userlist text,
+					catlist text,
+					maxcount integer
+					)
 --RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
 --			heading double precision, yaw double precision, pitch double precision, roll double precision,
 --			qw double precision, qx double precision, qy double precision, qz double precision)
@@ -29,10 +30,11 @@ AS $$
 DECLARE
 	tagset text[];
 	tagarraylen integer;
+
 	userset text[];
 	userarraylen integer;
-	catset text[];
-	catarraylen integer;
+
+	myid integer;
 
 	skiploc boolean;
 
@@ -40,15 +42,16 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
+	SELECT id INTO myid 
+	FROM users 
+	WHERE authentication_token = mytoken;
+
 	tagset = string_to_array(trim(both ' ' from taglist), ' ');
 	tagarraylen = array_length(tagset, 1);
 	
 	userset = string_to_array(trim(both ' ' from userlist), ' ');
 	userarraylen = array_length(userset, 1);
 	
-	catset = string_to_array(trim(both ' ' from catlist), ' ');
-	catarraylen = array_length(catset, 1);
-
 	IF (mintime IS NULL) THEN
 		mintime = '-infinity'::timestamp;
 	END IF;
@@ -68,7 +71,6 @@ RETURN QUERY
 		images i
 		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
---		JOIN categories c ON i.category_id = c.id
 		JOIN users u ON i.user_id = u.id
 	WHERE	( 
 		-- location
@@ -88,8 +90,6 @@ RETURN QUERY
 		 AND 	((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
 		-- users
 --		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.username = ANY (userset)))
---		-- categories
---		 AND 	((catarraylen IS NULL) OR (catarraylen = 0) OR (c.cat_text = ANY (catset)))
 		 )
 	ORDER by i.time_stamp desc
 	LIMIT maxcount;

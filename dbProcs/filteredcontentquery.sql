@@ -12,12 +12,12 @@ DROP FUNCTION filteredcontentquery(lat double precision, lon double precision, r
 raw json call:
 http://54.221.254.230/images/filteredcontent.json?lat=43.32485&long=-79.81303&radius=500.0&altmin=-1000.0&altmax=1000.0&timemin=NULL&timemax=NULL&taglist=''&userlist=''&catlist=''&maxcount=10
 */
-CREATE OR REPLACE FUNCTION filteredcontentquery(lat double precision, lon double precision, radius double precision, 
+CREATE OR REPLACE FUNCTION filteredcontentquery(mytoken text,
+						lat double precision, lon double precision, radius double precision, 
 						minalt double precision, maxalt double precision,
 						mintime timestamp, maxtime timestamp,
 						taglist text,
 						userlist text,
-						catlist text,
 						maxcount integer
 						)
 --RETURNS TABLE(id bigint, content_type integer, best_latitude double precision, best_longitude double precision, best_altitude double precision)
@@ -26,16 +26,21 @@ AS $$
 DECLARE
 	tagset text[];
 	tagarraylen integer;
+	
 	userset text[];
 	userarraylen integer;
-	catset text[];
-	catarraylen integer;
 
+	myid integer;
+	
 	skiploc boolean;
 
 BEGIN
 
 	skiploc = (radius <= 0);
+
+	SELECT id INTO myid 
+	FROM users 
+	WHERE authentication_token = mytoken;
 
 	tagset = string_to_array(trim(both ' ' from taglist), ' ');
 	tagarraylen = array_length(tagset, 1);
@@ -43,9 +48,6 @@ BEGIN
 	userset = string_to_array(trim(both ' ' from userlist), ' ');
 	userarraylen = array_length(userset, 1);
 	
-	catset = string_to_array(trim(both ' ' from catlist), ' ');
-	catarraylen = array_length(catset, 1);
-
 	IF (mintime IS NULL) THEN
 		mintime = '-infinity'::timestamp;
 	END IF;
@@ -56,14 +58,12 @@ BEGIN
 		
 
 RETURN QUERY
---	SELECT	DISTINCT i.id AS id, 1::integer AS content_type, i.best_latitude AS best_latitude, i.best_longitude AS best_longitude, i.best_altitude AS best_altitude
 	SELECT	DISTINCT i.id AS id, 1::integer AS content_type, i.best_latitude AS latitude, i.best_longitude AS longitude, i.best_altitude AS altitude
 	FROM	
 		(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
 		images i
 		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
---		JOIN categories c ON i.category_id = c.id
 		JOIN users u ON i.user_id = u.id
 	WHERE	( 
 		-- location
@@ -84,8 +84,6 @@ RETURN QUERY
 		 AND 	((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
 		-- users
 --		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.username = ANY (userset)))
---		-- categories
---		 AND 	((catarraylen IS NULL) OR (catarraylen = 0) OR (c.cat_text = ANY (catset)))
 		 )
 	ORDER by i.id DESC
 	LIMIT maxcount;

@@ -12,7 +12,8 @@ DROP FUNCTION tagsbylocalcountfiltered(lat double precision, lon double precisio
 
 */
 
-CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(lat double precision, lon double precision, radius double precision,
+CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(mytoken text,
+							lat double precision, lon double precision, radius double precision,
 							minalt double precision, maxalt double precision,
 							mintime timestamp, maxtime timestamp,
 							taglist text,
@@ -28,16 +29,21 @@ $$
 DECLARE
 	tagset text[];
 	tagarraylen integer;
+	
 	userset text[];
 	userarraylen integer;
-	catset text[];
-	catarraylen integer;
-
+	
+	myid integer;
+	
 	skiploc boolean;
 
 BEGIN
 
 	skiploc = (radius <= 0);
+
+	SELECT id INTO myid 
+	FROM users 
+	WHERE authentication_token = mytoken;
 
 	tagset = string_to_array(trim(both ' ' from taglist), ' ');
 	tagarraylen = array_length(tagset, 1);
@@ -45,9 +51,6 @@ BEGIN
 	userset = string_to_array(trim(both ' ' from userlist), ' ');
 	userarraylen = array_length(userset, 1);
 	
-	catset = string_to_array(trim(both ' ' from catlist), ' ');
-	catarraylen = array_length(catset, 1);
-
 	IF (mintime IS NULL) THEN
 		mintime = '-infinity'::timestamp;
 	END IF;
@@ -64,7 +67,6 @@ RETURN QUERY
 		images i
 		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
---		JOIN categories c ON i.category_id = c.id
 		JOIN users u ON i.user_id = u.id
 	WHERE	( 
 		-- location
@@ -85,8 +87,6 @@ RETURN QUERY
 		 AND 	(((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset))) AND (t.tagtext IS NOT NULL))
 		-- users
 --		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.username = ANY (userset)))
-		-- categories
---		 AND 	((catarraylen IS NULL) OR (catarraylen = 0) OR (c.cat_text = ANY (catset)))
 		 )
 	GROUP BY t.tagtext
 	ORDER BY "count" DESC, MAX(i.time_stamp), t.tagtext
