@@ -13,31 +13,28 @@
 
 ActiveRecord::Schema.define(version: 20131210211341) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "cameras", force: true do |t|
     t.integer  "user_id",                 null: false
     t.string   "model",       limit: 32
     t.string   "deviceid",    limit: 64,  null: false
     t.string   "description", limit: 256
     t.string   "nickname",    limit: 64
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "categories", force: true do |t|
     t.string   "cat_description", limit: 128, null: false
     t.string   "cat_text",        limit: 32,  null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "friends", force: true do |t|
     t.integer  "user_id",    null: false
     t.integer  "friend_id",  null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "friends", ["friend_id"], name: "index_friends_on_friend_id", using: :btree
@@ -61,8 +58,8 @@ ActiveRecord::Schema.define(version: 20131210211341) do
     t.integer  "user_id",                                       null: false
     t.integer  "camera_id",                                     null: false
     t.float    "heading",                         default: 0.0, null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "image_file_name"
     t.string   "image_content_type"
     t.integer  "image_file_size"
@@ -89,8 +86,8 @@ ActiveRecord::Schema.define(version: 20131210211341) do
   create_table "images_tags", force: true do |t|
     t.integer  "image_id",   limit: 8, null: false
     t.integer  "tag_id",               null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "images_tags", ["image_id"], name: "images_tags_image_id_idx", using: :btree
@@ -98,8 +95,8 @@ ActiveRecord::Schema.define(version: 20131210211341) do
 
   create_table "tags", force: true do |t|
     t.string   "tagtext",    limit: 32, null: false
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "tags", ["tagtext"], name: "tags_tagtext_cluster_idx", unique: true, using: :btree
