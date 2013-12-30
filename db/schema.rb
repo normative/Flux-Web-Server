@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131107144401) do
+ActiveRecord::Schema.define(version: 20131210211341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20131107144401) do
   create_table "cameras", force: true do |t|
     t.integer  "user_id",                 null: false
     t.string   "model",       limit: 32
-    t.string   "deviceid",    limit: 32,  null: false
+    t.string   "deviceid",    limit: 64,  null: false
     t.string   "description", limit: 256
     t.string   "nickname",    limit: 64
     t.datetime "created_at",              null: false
@@ -117,8 +117,8 @@ ActiveRecord::Schema.define(version: 20131107144401) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
-    t.datetime "created_at",                                      null: false
-    t.datetime "updated_at",                                      null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
