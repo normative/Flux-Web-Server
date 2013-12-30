@@ -5,9 +5,14 @@ class Image < ActiveRecord::Base
   belongs_to :camera
   belongs_to :category
   has_and_belongs_to_many :tags
-  has_attached_file :image, styles: { thumb: "200x200", quarterhd: "960x960", oriented: '100%' }, dependent: :destroy, convert_options: {
-    oriented: "-auto-orient"
-  }
+  has_attached_file :image, styles: { thumb: "200x200", 
+                                  quarterhd: "960x960", 
+                                   oriented: '100%', 
+                                 extraction: {processors: :feature_extractor}
+                                    }, 
+                         dependent: :destroy, 
+                   convert_options: { oriented: "-auto-orient" }
+                              
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,  
                         :user, :camera, :heading, :image, :time_stamp
