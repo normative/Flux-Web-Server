@@ -15,28 +15,14 @@ class ImagesController < ApplicationController
     end
   end
 
-  # GET /images/closest?lat=...&long=...&radius=...
-  def closest
-#    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
-    @images = Image.within(params[:lat], params[:long], params[:radius]).limit(100)
-
-    respond_to do |format|
-      format.html { render 'index' }
-      format.json { render json: @images }
-    end
-  end
-
   # GET /images/filtered?lat=...&long=...&radius=...&minalt=...&maxalt=...
   #                     &mintime=...&maxtime=...
   #                     &taglist="tag1 tag2 tag3...tagN"
   #                     &userlist="user1 user2 user3...userN"
   #                     &catlist="cat1 cat2...catN"
   def filtered
-#    @images = Image.filtered(params[:lat], params[:long], params[:radius], 
-#                                params[:altmin], params[:altmax], 
-#                                params[:timemin], params[:timemax], 
-#                                params[:taglist], params[:userlist], params[:catlist]).limit(params[:maxcount])
-    @images = Image.filteredmeta(params[:lat], params[:long], params[:radius], 
+    myid = 
+    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
@@ -54,7 +40,7 @@ class ImagesController < ApplicationController
   #                     &catlist="cat1 cat2...catN"
   #                     &maxcount=...
   def filteredcontent
-    @images = Image.filteredcontent(params[:lat], params[:long], params[:radius], 
+    @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
@@ -65,20 +51,8 @@ class ImagesController < ApplicationController
     end
   end
 
-  def filteredtimebucket
-    @images = Image.filteredtimebucket(params[:lat], params[:long], params[:radius], 
-                                params[:altmin], params[:altmax], 
-                                params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
-
-    respond_to do |format|
-#      format.html { render 'index' }
-      format.json { render json: @images }
-    end
-  end
-  
   def filteredmeta
-    @images = Image.filteredmeta(params[:lat], params[:long], params[:radius], 
+    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
@@ -89,15 +63,6 @@ class ImagesController < ApplicationController
     end
   end
   
-  def extendedmeta
-    @images = Image.extendedmeta(params[:idlist]).limit(100)
-
-    respond_to do |format|
-#      format.html { render 'index' }
-      format.json { render json: @images }
-    end
-  end
-
   # GET /images/getimagelistforuser?userid=...
   # GET /images/getimagelistforuser.json?userid=...
   def getimagelistforuser
@@ -146,7 +111,8 @@ class ImagesController < ApplicationController
   # POST /images
   # POST /images.json
   def create
-    @image = Image.new(image_params)
+    logger.debug "Into Images#create"
+   @image = Image.new(image_params)
 
     respond_to do |format|
       if @image.save
@@ -189,7 +155,7 @@ class ImagesController < ApplicationController
 
   # DELETE /images/nuke.json?lat=...&long=...&radius=...
   def nuke
-      @images = Image.oldwithin(params[:lat], params[:long], params[:radius])
+      @images = Image.within(params[:auth_token], params[:lat], params[:long], params[:radius])
 #      @images = Image.execute_procedure("imagesinradius", params[:lat], params[:long], params[:radius])
       @images.each do |i|
         i.destroy
@@ -199,11 +165,39 @@ class ImagesController < ApplicationController
       format.html { redirect_to images_url }
       format.json { head :no_content }
     end
-#    respond_to do |format|
-#      format.html { render 'index' }
-#      format.json { render json: @images }
-#    end
   end
+
+  #  # GET /images/closest?lat=...&long=...&radius=...
+  #  def closest
+  ##    @images = Image.within(params[:lat], params[:long], params[:radius]).order("created_at DESC").limit(100)
+  #    @images = Image.within(params[:lat], params[:long], params[:radius]).limit(100)
+  #
+  #    respond_to do |format|
+  #      format.html { render 'index' }
+  #      format.json { render json: @images }
+  #    end
+  #  end
+    
+  #  def filteredtimebucket
+  #    @images = Image.filteredtimebucket(params[:lat], params[:long], params[:radius], 
+  #                                params[:altmin], params[:altmax], 
+  #                                params[:timemin], params[:timemax], 
+  #                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+  #
+  #    respond_to do |format|
+  ##      format.html { render 'index' }
+  #      format.json { render json: @images }
+  #    end
+  #  end
+      
+  #  def extendedmeta
+  #    @images = Image.extendedmeta(params[:idlist]).limit(100)
+  #
+  #    respond_to do |format|
+  ##      format.html { render 'index' }
+  #      format.json { render json: @images }
+  #    end
+  #  end
 
   private
 

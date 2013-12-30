@@ -52,36 +52,37 @@ class Image < ActiveRecord::Base
   def qy= qy; self.raw_qy = self.best_qy = qy; end
   def qz= qz; self.raw_qz = self.best_qz = qz; end
 
-    # deprecated!!
-  def self.within lat, lng, radius
-#    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
-    select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, NULL, 100)") 
-  end
-  
-  def self.oldwithin lat, lng, radius
-    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
-  end
-  
-  def self.filtered lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
-    select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, 100)") 
+  def self.filtered myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist
+    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, 100)") 
   end
 
-  def self.filteredcontent lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
+  def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
  #   select("*").from(      "filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})")
-    select("*").from("filteredcontentquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
+    select("*").from("filteredcontentquery(#{myid}, #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
   end
 
-  def self.filteredtimebucket lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
-    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
-  end
-
-  def self.filteredmeta lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
-    select("*").from("filteredmeta(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
-  end
-
-  def self.extendedmeta idlist
-    select("*").from("getextendedmeta(#{idlist})") 
+  def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
+    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
   end
 
   def to_s; image.original_filename; end
+
+  # still used for nuke
+  def self.within lat, lng, radius
+#    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
+    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, NULL, 1000)") 
+  end
+
+#  def self.oldwithin lat, lng, radius
+#    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
+#  end
+
+#  def self.filteredtimebucket myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
+#    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
+#  end
+
+#  def self.extendedmeta idlist
+#    select("*").from("getextendedmeta(#{idlist})") 
+#  end
+
 end
