@@ -50,18 +50,6 @@ class ImagesController < ApplicationController
       format.json { render json: @images }
     end
   end
-
-  def filteredmeta
-    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
-                                params[:altmin], params[:altmax], 
-                                params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
-
-    respond_to do |format|
-#      format.html { render 'index' }
-      format.json { render json: @images }
-    end
-  end
   
   # GET /images/getimagelistforuser?userid=...
   # GET /images/getimagelistforuser.json?userid=...
@@ -166,6 +154,18 @@ class ImagesController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  #  def filteredmeta
+  #    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
+  #                                params[:altmin], params[:altmax], 
+  #                                params[:timemin], params[:timemax], 
+  #                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+  #
+  #    respond_to do |format|
+  ##      format.html { render 'index' }
+  #      format.json { render json: @images }
+  #    end
+  #  end
 
   #  # GET /images/closest?lat=...&long=...&radius=...
   #  def closest

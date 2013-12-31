@@ -18,11 +18,11 @@ Web::Application.routes.draw do
   
   resources :images do
     collection do
-      get 'filteredmeta'  # set of (base metadata based on filtered image set)
+      get 'filtered'  # more comprehensive filtering of queries
       get 'filteredcontent' # filtered but returning only lat, lon, alt, imageid, type
       get 'getimagelistforuser'    # returns list of [id, description] pairs, ordered by time_stamp [DESC] with the given userid
       get 'nuke'
-#      get 'filtered'  # more comprehensive filtering of queries
+#      get 'filteredmeta'  # set of (base metadata based on filtered image set)
 #      get 'extendedmeta'  # set of (remainder of metadata not passed in <filteredmeta>, including hash tag list)
 #      get 'closest'
 #      delete 'nuke'
