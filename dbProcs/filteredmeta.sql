@@ -42,8 +42,8 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
-	SELECT id INTO myid 
-	FROM users 
+	SELECT u.id INTO myid 
+	FROM users AS u 
 	WHERE authentication_token = mytoken;
 
 	tagset = string_to_array(trim(both ' ' from taglist), ' ');
