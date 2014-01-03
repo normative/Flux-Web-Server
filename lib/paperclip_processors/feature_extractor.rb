@@ -19,7 +19,7 @@ class FeatureExtractor < Paperclip::Processor
 #    logger.debug "Into FeatureExtractor#make"
     src = @file
 #      dst = Tempfile.new([@basename, @format ? ".#{@format}" : ''])
-    dst = Tempfile.new([@basename, ".fex"])
+    dst = Tempfile.new([@basename, ".xml"])
     dst.binmode
 
     begin
@@ -29,7 +29,7 @@ class FeatureExtractor < Paperclip::Processor
 
       parameters = parameters.flatten.compact.join(" ").strip.squeeze(" ")
 
-      success = extract(parameters, :source => "#{File.expand_path(src.path)}[0]", :dest => File.expand_path(dst.path))
+      success = extract(parameters, :source => "#{File.expand_path(src.path)}", :dest => File.expand_path(dst.path))
     rescue Cocaine::ExitStatusError => e
       raise Paperclip::Error, "There was an error processing the extraction for @basename"
     rescue Cocaine::CommandNotFoundError => e
@@ -42,7 +42,7 @@ class FeatureExtractor < Paperclip::Processor
   # The extract method runs the feature_extract binary with the provided arguments.
   # See Paperclip.run for the available options.
   def extract(arguments = "", local_options = {})
-    Paperclip.run('feature_extract', arguments, local_options)
+    Paperclip.run('descriptor_extract', arguments, local_options)
   end
 
 end
