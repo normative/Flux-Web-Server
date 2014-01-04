@@ -8,7 +8,7 @@ class Image < ActiveRecord::Base
   has_attached_file :image, styles: { thumb: "200x200", 
                                   quarterhd: "960x960", 
                                    oriented: '100%', 
-                                 extraction: {:processors => [:feature_extractor], :format => :xml}
+                                   features: {:processors => [:feature_extractor], :format => :xml}
                                     }, 
                          dependent: :destroy, 
                    convert_options: { oriented: "-auto-orient" }
