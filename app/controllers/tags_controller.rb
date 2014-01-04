@@ -20,7 +20,7 @@ class TagsController < ApplicationController
     @tags = Tag.getlocalbycountfiltered(params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+                                params[:taglist], params[:userlist], params[:maxcount])
     respond_to do |format|
       format.html { render 'bycount' }
       format.json { render json: @tags }

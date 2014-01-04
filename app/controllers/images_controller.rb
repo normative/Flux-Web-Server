@@ -25,7 +25,7 @@ class ImagesController < ApplicationController
     @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+                                params[:taglist], params[:userlist], params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }
@@ -43,7 +43,7 @@ class ImagesController < ApplicationController
     @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
+                                params[:taglist], params[:userlist], params[:maxcount])
 
     respond_to do |format|
     #  format.html { render 'index' }

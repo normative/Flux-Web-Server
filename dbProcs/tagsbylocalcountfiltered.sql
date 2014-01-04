@@ -18,7 +18,6 @@ CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(mytoken text,
 							mintime timestamp, maxtime timestamp,
 							taglist text,
 							userlist text,
-							catlist text,
 							maxcount integer
 						    )
 

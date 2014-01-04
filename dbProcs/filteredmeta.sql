@@ -16,7 +16,6 @@ CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					mintime timestamp, maxtime timestamp,
 					taglist text,
 					userlist text,
-					catlist text,
 					maxcount integer
 					)
 --RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
