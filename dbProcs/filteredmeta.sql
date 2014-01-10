@@ -1,13 +1,13 @@
 ﻿
 /*
-DROP FUNCTION filteredmeta(lat double precision, lon double precision, radius double precision, 
-						minalt double precision, maxalt double precision,
-						mintime timestamp, maxtime timestamp,
-						taglist text,
-						userlist text,
-						catlist text,
-						maxcount integer
-						)
+DROP FUNCTION filteredmeta(mytoken text,
+					lat double precision, lon double precision, radius double precision, 
+					minalt double precision, maxalt double precision,
+					mintime timestamp, maxtime timestamp,
+					taglist text,
+					userlist text,
+					maxcount integer
+					)
 */
 
 CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
@@ -18,10 +18,8 @@ CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					userlist text,
 					maxcount integer
 					)
---RETURNS table (id integer, time_stamp timestamp, latitude double precision, longitude double precision, altitude double precision, 
---			heading double precision, yaw double precision, pitch double precision, roll double precision,
---			qw double precision, qx double precision, qy double precision, qz double precision)
-RETURNS table (id bigint, time_stamp timestamp, user_id integer, description character varying, username character varying,
+RETURNS table (id bigint, time_stamp timestamp, user_id integer, description character varying, 
+			username character varying, camera_model character varying,
 			latitude double precision, longitude double precision, altitude double precision, 
 			heading double precision, yaw double precision, pitch double precision, roll double precision,
 			qw double precision, qx double precision, qy double precision, qz double precision)
@@ -61,7 +59,7 @@ BEGIN
 		
 
 RETURN QUERY
-	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.username as username,
+	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.username as username, c.model as camera_model,
 				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
 				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
 				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
@@ -70,6 +68,7 @@ RETURN QUERY
 		images i
 		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
+		LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
 		JOIN users u ON i.user_id = u.id
 	WHERE	( 
 		-- location

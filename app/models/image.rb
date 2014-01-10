@@ -10,13 +10,23 @@ class Image < ActiveRecord::Base
 #                                   oriented: '100%', 
 #                                   features: {:processors => [:feature_extractor], :format => :xml}
 #                                    }, 
-  has_attached_file :image, styles: { thumb: "200x200", 
-                                  quarterhd: "960x960", 
-                                   oriented: '100%', 
-                                   features: { :format => :xml,
-                                               :chain_to => :oriented,
-                                               :processors => [:chainable, :feature_extractor]
-                                             } 
+#  has_attached_file :image, styles: { thumb: "200x200", 
+#                                  quarterhd: "960x960", 
+#                                   oriented: '100%', 
+#                                   features: { :format => :xml,
+#                                               :chain_to => :oriented,
+#                                               :processors => [:chainable, :feature_extractor]
+#                                             } 
+#                                    }, 
+  has_attached_file :image, styles: { thumbcrop: "184x184#", 
+                                  quarterhdcrop: "540x540#", 
+                                          thumb: "200x200", 
+                                      quarterhd: "960x960", 
+                                       oriented: '100%', 
+                                       features: { :format => :xml,
+                                                   :chain_to => :oriented,
+                                                   :processors => [:chainable, :feature_extractor]
+                                                 } 
                                     }, 
                          dependent: :destroy, 
                    convert_options: { oriented: "-auto-orient" }

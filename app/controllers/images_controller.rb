@@ -21,7 +21,6 @@ class ImagesController < ApplicationController
   #                     &userlist="user1 user2 user3...userN"
   #                     &catlist="cat1 cat2...catN"
   def filtered
-    myid = 
     @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
