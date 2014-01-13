@@ -26,6 +26,9 @@ class FeatureExtractor < Paperclip::Processor
       parameters = []
       parameters << ":source"
       parameters << ":dest"
+      parameters << "--auto_threshold"
+      parameters << "--min_thresh 1000"
+      parameters << "--max_thresh 5000"
 
       parameters = parameters.flatten.compact.join(" ").strip.squeeze(" ")
 
