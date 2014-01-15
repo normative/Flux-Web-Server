@@ -11,24 +11,36 @@ class FeatureExtractor < Paperclip::Processor
     @file                = file
     @current_format      = File.extname(@file.path)
     @basename            = File.basename(@file.path, @current_format)
-  end
+    @cvt_to_xml          = options[:cvt_to_xml].nil? ? false : options[:cvt_to_xml]
+ end
 
   # Performs the extraction of features from the +file+ into an extraction file. Returns the Tempfile
   # that contains the features.
   def make
 #    logger.debug "Into FeatureExtractor#make"
     src = @file
-#      dst = Tempfile.new([@basename, @format ? ".#{@format}" : ''])
-    dst = Tempfile.new([@basename, ".xml"])
+    dst = Tempfile.new([@basename, @format ? ".#{@format}" : ""])
+    
+#    if @cvt_to_xml
+#      dst = Tempfile.new([@basename, ".xml"])      
+#    else
+#      dst = Tempfile.new([@basename, ".bin"])
+#    end
+
     dst.binmode
+
 
     begin
       parameters = []
       parameters << ":source"
       parameters << ":dest"
-      parameters << "--auto_threshold"
-      parameters << "--min_thresh 1000"
-      parameters << "--max_thresh 5000"
+      if @cvt_to_xml
+        parameters << "--cvt_to_xml"
+      else
+        parameters << "--auto_threshold"
+        parameters << "--min_thresh 1000"
+        parameters << "--max_thresh 10000"
+      end
 
       parameters = parameters.flatten.compact.join(" ").strip.squeeze(" ")
 

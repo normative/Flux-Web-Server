@@ -23,10 +23,15 @@ class Image < ActiveRecord::Base
                                           thumb: "200x200", 
                                       quarterhd: "960x960", 
                                        oriented: '100%', 
-                                       features: { :format => :xml,
+                                    binfeatures: { :format => :bin,
                                                    :chain_to => :oriented,
                                                    :processors => [:chainable, :feature_extractor]
-                                                 } 
+                                                }, 
+                                      features: { :format => :xml,
+                                                  :cvt_to_xml => true,
+                                                  :chain_to => :binfeatures,
+                                                  :processors => [:chainable, :feature_extractor]
+                                                } 
                                     }, 
                          dependent: :destroy, 
                    convert_options: { oriented: "-auto-orient" }
