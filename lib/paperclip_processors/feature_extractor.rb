@@ -38,7 +38,7 @@ class FeatureExtractor < Paperclip::Processor
         parameters << "--cvt_to_xml"
       else
         parameters << "--auto_threshold"
-        parameters << "--min_thresh 1000"
+        parameters << "--min_thresh 100"
         parameters << "--max_thresh 10000"
       end
 
