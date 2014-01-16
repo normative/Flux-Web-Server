@@ -12,5 +12,8 @@ class Users::SessionsController < Devise::SessionsController
   
   def destroy
     sign_out(resource_name)
+    respond_to do |format|
+      format.json { head :no_content }
+    end
   end
 end
