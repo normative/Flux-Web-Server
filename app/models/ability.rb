@@ -11,6 +11,7 @@ class Ability
       can :manage, Image
       can :manage, Tag
       can :manage, Category
+      can :manage, Alias, { user_id: user.id }
     end
   end
 end

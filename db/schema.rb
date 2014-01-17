@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131210211341) do
+ActiveRecord::Schema.define(version: 20140117183014) do
+
+  create_table "aliases", force: true do |t|
+    t.integer  "user_id"
+    t.text     "alias_name"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cameras", force: true do |t|
     t.integer  "user_id",                 null: false
