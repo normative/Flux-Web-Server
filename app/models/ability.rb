@@ -12,6 +12,7 @@ class Ability
       can :manage, Tag
       can :manage, Category
       can :manage, Alias, { user_id: user.id }
+      can :manage, Connection, { user_id: user.id }
     end
   end
 end

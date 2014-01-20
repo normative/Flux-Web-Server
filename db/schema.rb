@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140117183014) do
+ActiveRecord::Schema.define(version: 20140117195838) do
 
   create_table "aliases", force: true do |t|
     t.integer  "user_id"
@@ -34,6 +34,15 @@ ActiveRecord::Schema.define(version: 20140117183014) do
   create_table "categories", force: true do |t|
     t.string   "cat_description", limit: 128, null: false
     t.string   "cat_text",        limit: 32,  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "connections", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "connections_id"
+    t.integer  "connection_type"
+    t.integer  "state"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
