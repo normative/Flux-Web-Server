@@ -29,7 +29,7 @@ DECLARE
 	tagset text[];
 	tagarraylen integer;
 	
-	userset text[];
+	userset integer[];
 	userarraylen integer;
 	
 	myid integer;
@@ -85,7 +85,7 @@ RETURN QUERY
 		-- tags
 		 AND 	(((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset))) AND (t.tagtext IS NOT NULL))
 		-- users
---		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.username = ANY (userset)))
+		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.id = ANY (userset)))
 		 )
 	GROUP BY t.tagtext
 	ORDER BY "count" DESC, MAX(i.time_stamp), t.tagtext
