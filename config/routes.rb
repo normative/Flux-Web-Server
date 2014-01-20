@@ -58,15 +58,15 @@ Web::Application.routes.draw do
     end
   end
   
-  resources :aliases 
-#  do
-#    collection do
-#    end
-#    member do
-#      get 'alias'
-#    end
-#  end
+  resources :aliases do
+    collection do
+      get 'checkcontacts'
+    end
+    member do
+      get 'alias'
+    end
+  end
   
-  
+  resources :connections
   
 end
