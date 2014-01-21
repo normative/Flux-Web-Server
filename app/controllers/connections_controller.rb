@@ -27,24 +27,39 @@ class ConnectionsController < ApplicationController
 
   # POST /connections/createfollower
   # POST /connections/createfollower.json
-  def createfollowers
+  def createfollower
     logger.debug "Into Connection#createfollower"
 
+    cp = connection_params
     ct = connection_params[:connection_type]
+#    if (!ct.nil?)
+#      connection_params[:connection_type] = 1
+#    elsif
+#      connection_params.merge!( connection_type: 1)
+#    end
+#    cs = connection_params[:state]
+#    if (!cs.nil?)
+#      connection_params[:state] = 2
+#    elsif
+#      connection_params.merge!( state: 2)
+#    end
+    
     if (!ct.nil?)
-      connection_params[:connection_type] = 1
+      cp[:connection_type] = 1
     elsif
-      connection_params.merge!( connection_type: 1)
+      cp.merge!( connection_type: 1)
     end
-    cs = connection_params[:connection_status]
+    cs = cp[:state]
     if (!cs.nil?)
-      connection_params[:connection_status] = 2
+      cp[:state] = 2
     elsif
-      connection_params.merge!( connection_status: 2)
+      cp.merge!( state: 2)
     end
 
-    @connection = Connection.where("user_id = :userid AND connection_id = :connid AND connection_type = :contype", 
-                  userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(connection_params)
+    logger.debug cp
+
+    @connection = Connection.where("user_id = :userid AND connections_id = :connid AND connection_type = :contype", 
+                  userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(cp)
 
     respond_to do |format|
       if @connection.save
