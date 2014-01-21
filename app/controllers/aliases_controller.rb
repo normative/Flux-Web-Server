@@ -36,9 +36,9 @@ class AliasesController < ApplicationController
       # find contact in db, return fluxID
       @alias = Alias.select(:user_id, :alias_name, :service_id).where("alias_name = :alname AND service_id = :servid", alname: contact[0], servid: contact[1]).take
       if !(@alias.nil?)
-#      alias_ray = {user_id: @alias.user_id, alias_name: @alias.alias_name, service_id: @alias.service_id} 
+#        alias_ray = {user_id: @alias.user_id, alias_name: @alias.alias_name, service_id: @alias.service_id} 
 #        @aliases << alias_ray
-      @aliases << {user_id: @alias.user_id}
+        @aliases << {user_id: @alias.user_id}
       elsif
         puts "alias = NIL" 
       end

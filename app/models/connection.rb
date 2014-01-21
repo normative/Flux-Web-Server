@@ -5,4 +5,7 @@ class Connection < ActiveRecord::Base
 
   validates_presence_of :user_id, :connections_id, :connection_type
 
+  # connection type: 1 = follower, 2 = friend, 0 = no connection (record can be deleted)
+  # connection status: 1 = request pending, 2 = request accepted, 4 = request rejected
+  
 end

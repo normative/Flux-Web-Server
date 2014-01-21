@@ -25,11 +25,26 @@ class ConnectionsController < ApplicationController
     end
   end
 
-  # POST /connections
-  # POST /connections.json
-  def create
-    logger.debug "Into Connection#create"
-   @connection = Connection.new(connection_params)
+  # POST /connections/createfollower
+  # POST /connections/createfollower.json
+  def createfollowers
+    logger.debug "Into Connection#createfollower"
+
+    ct = connection_params[:connection_type]
+    if (!ct.nil?)
+      connection_params[:connection_type] = 1
+    elsif
+      connection_params.merge!( connection_type: 1)
+    end
+    cs = connection_params[:connection_status]
+    if (!cs.nil?)
+      connection_params[:connection_status] = 2
+    elsif
+      connection_params.merge!( connection_status: 2)
+    end
+
+    @connection = Connection.where("user_id = :userid AND connection_id = :connid AND connection_type = :contype", 
+                  userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(connection_params)
 
     respond_to do |format|
       if @connection.save

@@ -67,6 +67,12 @@ Web::Application.routes.draw do
     end
   end
   
-  resources :connections
+  resources :connections do
+    collection do
+      post 'createfollower'
+    end
+    member do
+    end
+  end
   
 end
