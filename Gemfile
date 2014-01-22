@@ -9,8 +9,12 @@ gem 'pg'
 gem 'paperclip'
 
 # Authentication
-gem 'devise'
+gem 'devise', '~> 3.1.1'
+gem 'oauth2'
+gem 'oauth'
 gem 'cancan'
+gem 'rails_config'
+gem 'twitter'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -30,7 +34,7 @@ group :staging do
 end
 
 gem 'jquery-rails'
-gem 'capistrano', '~> 2'
+gem 'capistrano', '~> 2.15.5'
 gem 'rvm-capistrano'
 
 gem 'awesome_print'

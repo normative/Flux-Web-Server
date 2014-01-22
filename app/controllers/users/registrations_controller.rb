@@ -2,7 +2,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   respond_to :json
   
   def create
-    build_resource(sign_up_params)
+    build_resource(resource_params)
 
     if resource.save
       render json: resource.as_json(auth_token: resource.authentication_token, username: resource.username), status: 201
@@ -38,6 +38,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
 #  end
 #  
   def resource_params
-    params.require(:user).permit :email, :username, :name, :password, :bio, :follower_count, :following_count
+    params.require(:user).permit :email, :username, :name, :password, :bio, :follower_count, :following_count, :facebook, twitter: [:access_token, :access_token_secret]
   end
 end

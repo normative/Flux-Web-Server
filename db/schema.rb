@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131210211341) do
+ActiveRecord::Schema.define(version: 20140116184653) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "cameras", force: true do |t|
     t.integer  "user_id",                 null: false
@@ -121,6 +124,8 @@ ActiveRecord::Schema.define(version: 20131210211341) do
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.string   "bio",                    limit: 256
+    t.string   "provider"
+    t.string   "uid"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
