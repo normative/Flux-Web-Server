@@ -28,22 +28,11 @@ class ConnectionsController < ApplicationController
   # POST /connections/createfollower
   # POST /connections/createfollower.json
   def createfollower
-    logger.debug "Into Connection#createfollower"
+#    logger.debug "Into Connection#createfollower"
 
-    cp = connection_params
+    cp = connection_params  # use a copy since original treated as const and can't change
+
     ct = connection_params[:connection_type]
-#    if (!ct.nil?)
-#      connection_params[:connection_type] = 1
-#    elsif
-#      connection_params.merge!( connection_type: 1)
-#    end
-#    cs = connection_params[:state]
-#    if (!cs.nil?)
-#      connection_params[:state] = 2
-#    elsif
-#      connection_params.merge!( state: 2)
-#    end
-    
     if (!ct.nil?)
       cp[:connection_type] = 1
     elsif
@@ -56,7 +45,7 @@ class ConnectionsController < ApplicationController
       cp.merge!( state: 2)
     end
 
-    logger.debug cp
+#    logger.debug cp
 
     @connection = Connection.where("user_id = :userid AND connections_id = :connid AND connection_type = :contype", 
                   userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(cp)
