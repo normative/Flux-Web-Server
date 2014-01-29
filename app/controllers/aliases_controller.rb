@@ -44,12 +44,30 @@ class AliasesController < ApplicationController
 #      end
 #    }
 #    
-#@aliases = @aliases.sort{|x, y| x[:user_id] <=> y[:user_id]}.uniq
-    @aliases = Alias.checkcontacts(params[:auth_token], params[:contactlist], params[:serviceid], params[:maxcount])
+#    @aliases = @aliases.sort{|x, y| x[:user_id] <=> y[:user_id]}.uniq
+#    @aliases = Alias.checkcontacts(params[:auth_token], params[:contactlist], params[:serviceid], params[:maxcount])
+#    @aliases = @aliases.sort{|x, y| x[:flux_id] <=> y[:flux_id]}.uniq
 
+      # setup the query but don't execute yet...
+    query = ::Alias.checkcontacts(params[:auth_token], params[:contactlist], params[:serviceid], params[:maxcount])
+    # This will issue a query, but only with the attributes we selected above.
+    # It also returns a simple Hash, which is significantly more efficient than a
+    # full blown ActiveRecord model.
+    results = ActiveRecord::Base.connection.select_all(query)
+
+    newresults = Array.new
+    lastid = -1
+    results.rows.each do |r|
+      if r[0] != lastid
+        newresults << r
+        lastid = r[0]
+      end
+    end
+      
     respond_to do |format|
 #      format.html # show.html.erb
-      format.json { render json: @aliases }
+      format.json { render json: newresults }
+#      format.json { render json: @aliases }
     end
   end
 
