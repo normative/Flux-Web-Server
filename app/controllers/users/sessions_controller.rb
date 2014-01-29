@@ -14,7 +14,7 @@ class Users::SessionsController < Devise::SessionsController
     else      
       self.resource = warden.authenticate!(auth_options)
     end
-    sign_in(resource_name, resource)
+    sign_in resource_name, resource, store: false
     resource.save!
     render json: {
       auth_token: resource.authentication_token, id: resource.id, email: resource.email, username: resource.username
@@ -22,7 +22,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def destroy
-    sign_out(resource_name)
+    User.where(authentication_token: params[:auth_token]).update_all(authentication_token: nil)
     head :no_content
   end
 end

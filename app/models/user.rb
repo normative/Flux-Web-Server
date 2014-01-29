@@ -36,6 +36,8 @@ class User < ActiveRecord::Base
                          ))
   end
   
+
+  private
   
   def ensure_authentication_token
     if authentication_token.blank?
@@ -43,15 +45,13 @@ class User < ActiveRecord::Base
     end
   end
 
-  private
-
   def generate_authentication_token
     loop do
       token = Devise.friendly_token
       break token unless User.where(authentication_token: token).first
     end
   end
-  
+
   def self.usernameisunique uname
     select("*").from("usernameisunique('#{uname}')") 
   end
