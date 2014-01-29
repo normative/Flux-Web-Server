@@ -7,6 +7,8 @@ class Alias < ActiveRecord::Base
   validates_presence_of :alias_name, :user_id, :service_id
   
 
-
+  def self.checkcontacts myid, contactlist, serviceid, maxcount
+    select("*").from("checkcontacts('#{myid}', '#{contactlist}', #{serviceid}, #{maxcount})") 
+  end
 
 end

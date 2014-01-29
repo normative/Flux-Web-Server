@@ -26,26 +26,26 @@ class AliasesController < ApplicationController
   end
 
   # GET /aliases/check_contacts
-  # GET /aliases/check_contacts.json?contacts=[[id, service],[id, service]...]
+  # GET /aliases/check_contacts.json?contactslist=id id...&serviceid=[1|2|3]&maxcount=100&auth_token=...
   def checkcontacts
-    @aliases = Array.new
-    
-    contactstrs = params[:contacts].split(" ")
-    contactstrs.each{|contactstr|
-      contact = contactstr.split(",")
-      # find contact in db, return fluxID
-      @alias = Alias.select(:user_id, :alias_name, :service_id).where("alias_name = :alname AND service_id = :servid", alname: contact[0], servid: contact[1]).take
-      if !(@alias.nil?)
-#        alias_ray = {user_id: @alias.user_id, alias_name: @alias.alias_name, service_id: @alias.service_id} 
-#        @aliases << alias_ray
-        @aliases << {user_id: @alias.user_id}
-      elsif
-        puts "alias = NIL" 
-      end
-    }
-    
-@aliases = @aliases.sort{|x, y| x[:user_id] <=> y[:user_id]}.uniq
-#    @aliases = check_contacts(params[:auth_token], params[:contactlist], params[:maxcount])
+#    @aliases = Array.new
+#    
+#    contactstrs = params[:contacts].split(",")
+#    contactstrs.each{|contactstr|
+#      contact = contactstr.split(":")
+#      # find contact in db, return fluxID
+#      @alias = Alias.select(:user_id, :alias_name, :service_id).where("alias_name = :alname AND service_id = :servid", alname: contact[0], servid: contact[1]).take
+#      if !(@alias.nil?)
+##        alias_ray = {user_id: @alias.user_id, alias_name: @alias.alias_name, service_id: @alias.service_id} 
+##        @aliases << alias_ray
+#        @aliases << {user_id: @alias.user_id}
+#      elsif
+#        puts "alias = NIL" 
+#      end
+#    }
+#    
+#@aliases = @aliases.sort{|x, y| x[:user_id] <=> y[:user_id]}.uniq
+    @aliases = Alias.checkcontacts(params[:auth_token], params[:contactlist], params[:serviceid], params[:maxcount])
 
     respond_to do |format|
 #      format.html # show.html.erb

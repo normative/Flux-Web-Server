@@ -8,6 +8,9 @@ Web::Application.routes.draw do
 
 #  resources :users, only: [ :show, :update, :profile, :edit, :index ] do
   resources :users do
+    collection do
+      get 'lookupname'
+    end
     member do
       get 'profile'
       get 'user'

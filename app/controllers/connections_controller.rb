@@ -33,13 +33,14 @@ class ConnectionsController < ApplicationController
     cp = connection_params  # use a copy since original treated as const and can't change
 
     ct = connection_params[:connection_type]
-    if (!ct.nil?)
+    if (ct.nil?)
       cp[:connection_type] = 1
     elsif
       cp.merge!( connection_type: 1)
     end
+    
     cs = cp[:state]
-    if (!cs.nil?)
+    if (cs.nil?)
       cp[:state] = 2
     elsif
       cp.merge!( state: 2)
