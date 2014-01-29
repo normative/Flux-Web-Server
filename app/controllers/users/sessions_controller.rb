@@ -17,7 +17,7 @@ class Users::SessionsController < Devise::SessionsController
     sign_in(resource_name, resource)
     resource.save!
     render json: {
-      auth_token: resource.authentication_token, id: resource.id, email: resource.email
+      auth_token: resource.authentication_token, id: resource.id, email: resource.email, username: resource.username
     }
   end
 
