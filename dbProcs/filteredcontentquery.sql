@@ -27,7 +27,7 @@ DECLARE
 	tagset text[];
 	tagarraylen integer;
 	
-	userset text[];
+	userset integer[];
 	userarraylen integer;
 
 	myid integer;
@@ -83,7 +83,7 @@ RETURN QUERY
 		-- tags
 		 AND 	((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
 		-- users
---		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.username = ANY (userset)))
+		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.id = ANY (userset)))
 		 )
 	ORDER by i.id DESC
 	LIMIT maxcount;

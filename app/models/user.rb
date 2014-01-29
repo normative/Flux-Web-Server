@@ -1,5 +1,8 @@
+require 'facebook'
+require 'twitter_client'
+
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :registerable, :recoverable, :trackable, :validatable, :timeoutable #, :omniauthable, :omniauth_providers => [:facebook]
+  devise :database_authenticatable, :registerable, :recoverable, :trackable, :validatable, :timeoutable
 
   include ActiveModel::ForbiddenAttributesProtection
 
@@ -12,11 +15,10 @@ class User < ActiveRecord::Base
   }
 
   before_save :ensure_authentication_token
-  before_create do
-#    self.privacy = false
-    true
-  end
+  before_validation :merge_facebook_data, :merge_twitter_data
 
+  attr_accessor :facebook, :twitter
+  
   validates(:username,
             presence: true,
             uniqueness: { message: 'is taken', case_sensitive: true },
@@ -38,7 +40,7 @@ class User < ActiveRecord::Base
       self.authentication_token = generate_authentication_token
     end
   end
-  
+
   private
 
   def generate_authentication_token
@@ -59,6 +61,38 @@ class User < ActiveRecord::Base
   # lookupcontact(mytoken text, contact text)
   def self.lookupcontact auth, contact
     select("*").from("lookupcontact('#{auth}', '#{contact}')")
+  end
+
+  def self.find_from_facebook me
+    where(:provider => 'facebook', :uid => me['id'].to_s).first || raise(ActiveRecord::RecordNotFound)
+  end
+
+  def self.find_from_twitter me
+    where(:provider => 'twitter', :uid => me.id.to_s).first || raise(ActiveRecord::RecordNotFound)
+  end
+
+  def merge_facebook_data
+    if new_record? && facebook.present?
+      fbuser = OAuth2::Facebook.lookup_by_token facebook
+      if fbuser.present?
+        self.provider = 'facebook'
+        self.uid = fbuser['id']
+        self.password = self.password_confirmation = Devise.friendly_token[0,20]
+      end
+    end
+    true
+  end
+
+  def merge_twitter_data
+    if new_record? && twitter.present?
+      twuser = TwitterClient.lookup_by_token twitter
+      if twuser.present?
+        self.provider = 'twitter'
+        self.uid = twuser.id
+        self.password = self.password_confirmation = Devise.friendly_token[0,20]
+      end
+    end
+    true
   end
 
   def to_s; username; end

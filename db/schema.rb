@@ -138,6 +138,8 @@ ActiveRecord::Schema.define(version: 20140117195838) do
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.string   "bio",                    limit: 256
+    t.string   "provider"
+    t.string   "uid"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

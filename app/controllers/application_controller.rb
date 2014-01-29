@@ -1,6 +1,9 @@
 class ApplicationController < ActionController::Base
   before_filter :configure_permitted_parameters, if: :devise_controller?
-
+  before_filter {
+    request.env['devise.skip_storage'] = true # turn off cookies
+  }
+  
   protected
 
   def configure_permitted_parameters

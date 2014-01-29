@@ -1,19 +1,28 @@
+require 'facebook'
+require 'twitter_client'
+
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
 
   def create
-    self.resource = warden.authenticate!(auth_options)
+    if params[:user].present? && params[:user][:facebook].present?
+      fbuser = OAuth2::Facebook.lookup_by_token params[:user][:facebook]
+      self.resource = User.find_from_facebook(fbuser)
+    elsif params[:user].present? && params[:user][:twitter].present?
+      twuser = TwitterClient.lookup_by_token params[:user][:twitter]
+      self.resource = User.find_from_twitter(twuser)
+    else      
+      self.resource = warden.authenticate!(auth_options)
+    end
     sign_in(resource_name, resource)
     resource.save!
     render json: {
       auth_token: resource.authentication_token, id: resource.id, email: resource.email
     }
   end
-  
+
   def destroy
     sign_out(resource_name)
-    respond_to do |format|
-      format.json { head :no_content }
-    end
+    head :no_content
   end
 end
