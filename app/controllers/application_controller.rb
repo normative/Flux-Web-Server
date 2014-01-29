@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   def authenticate_user_from_token!
     auth_token = params[:auth_token].presence
     user = auth_token && User.find_by_authentication_token(auth_token)
-    
+
     if user
       sign_in user, store: false
     end
