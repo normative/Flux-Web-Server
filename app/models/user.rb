@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
             format: { with: /\A[a-zA-Z0-9_\-\.]*\Z/, message: 'must contain only letters, numbers, underscores, periods or dashes' },
             length: { in: 4..16 })
 
-  validates :uid, uniqueness: { scope: :provider, message: "account already in use for this network" }
+  validates :uid, uniqueness: { scope: :provider, allow_nil: true, message: "account already in use for this network" }
   
   def as_json(options = {})
     super(options.merge(
