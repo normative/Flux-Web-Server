@@ -72,7 +72,10 @@ Web::Application.routes.draw do
   
   resources :connections do
     collection do
-      post 'createfollower'
+      post 'follow'
+      post 'addfriend'
+      get  'friends'
+      get  'followers'
     end
     member do
     end

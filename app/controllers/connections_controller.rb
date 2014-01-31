@@ -25,10 +25,10 @@ class ConnectionsController < ApplicationController
     end
   end
 
-  # POST /connections/createfollower
-  # POST /connections/createfollower.json
-  def createfollower
-#    logger.debug "Into Connection#createfollower"
+  # POST /connections/follow
+  # POST /connections/follow.json
+  def follow
+#    logger.debug "Into Connection#follow"
 
     cp = connection_params  # use a copy since original treated as const and can't change
 
@@ -47,6 +47,58 @@ class ConnectionsController < ApplicationController
     end
 
 #    logger.debug cp
+
+    @connection = Connection.where("user_id = :userid AND connections_id = :connid AND connection_type = :contype", 
+                  userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(cp)
+
+    respond_to do |format|
+      if @connection.save
+ #       format.html { redirect_to @connection, notice: 'Connection was successfully created.' }
+        format.json { render json: @connection, status: :created, location: @connection }
+      else
+ #       format.html { render action: "new" }
+        format.json { render json: @connection.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # POST /connections/addfriend
+  # POST /connections/addfriend.json
+  def addfriend
+#    logger.debug "Into Connection#addfriend"
+
+    cp = connection_params  # use a copy since original treated as const and can't change
+
+    cs = cp[:state]
+    if (cs.nil?)
+      cp[:state] = 4
+    elsif
+      cp.merge!( state: 4)
+    end
+
+    # first, see if the connection exists in the other direction as pending (or accepted)
+    @recipconnection = Connection.where("user_id = :userid AND connections_id = :connid", 
+    userid: connection_params[:connections_id], connid: connection_params[:user_id])
+    if (@recipconnection)
+      if (@recipconnection.state == 3)
+        # reciprocal is waiting for a friend - set up both and go to town...
+        @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
+                      userid: connection_params[:user_id], connid: connection_params[:connections_id]).first_or_create(cp)
+        if (!@connection.nil?)
+          # check state and update if necessary
+          if (@connection.state < 4)
+            @connection.update_attributes(cp)
+          end
+        end
+
+        cp[:user_id] = @recipconnection.user_id
+        cp[:connections_id] = @recipconnection.connections_id
+        cp[:state] = 4  
+        @recipconnection.update_attributes(cp)
+        
+      end
+    end
+    
 
     @connection = Connection.where("user_id = :userid AND connections_id = :connid AND connection_type = :contype", 
                   userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(cp)
