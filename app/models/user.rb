@@ -18,13 +18,15 @@ class User < ActiveRecord::Base
   before_validation :merge_facebook_data, :merge_twitter_data
 
   attr_accessor :facebook, :twitter
-  
+
   validates(:username,
             presence: true,
             uniqueness: { message: 'is taken', case_sensitive: true },
             format: { with: /\A[a-zA-Z0-9_\-\.]*\Z/, message: 'must contain only letters, numbers, underscores, periods or dashes' },
             length: { in: 4..16 })
 
+  validates :uid, uniqueness: { scope: :provider, allow_nil: true, message: "account already in use for this network" }
+  
   def as_json(options = {})
     super(options.merge(
                         except: [ :encrypted_password, :reset_password_token, :reset_password_sent_at, 
@@ -34,6 +36,8 @@ class User < ActiveRecord::Base
                          ))
   end
   
+
+  private
   
   def ensure_authentication_token
     if authentication_token.blank?
@@ -41,15 +45,13 @@ class User < ActiveRecord::Base
     end
   end
 
-  private
-
   def generate_authentication_token
     loop do
       token = Devise.friendly_token
       break token unless User.where(authentication_token: token).first
     end
   end
-  
+
   def self.usernameisunique uname
     select("*").from("usernameisunique('#{uname}')") 
   end

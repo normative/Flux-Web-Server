@@ -29,7 +29,7 @@ group :assets do
 end
 
 group :staging do
-  gem 'therubyracer', :platforms => :ruby
+  gem 'therubyracer', platforms: :ruby
   gem 'libv8', '~> 3.11.8'
 end
 
@@ -38,7 +38,10 @@ gem 'capistrano', '~> 2.15.5'
 gem 'rvm-capistrano'
 
 gem 'awesome_print'
-gem 'debugger'
-gem 'debugger-completion'
 gem 'rspec-rails'
 gem 'factory_girl_rails'
+
+group :development do
+  gem 'debugger'
+  gem 'debugger-completion'
+end

@@ -15,8 +15,12 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user_from_token!
     auth_token = params[:auth_token].presence
+    # temporary fix until app can be cleaned up properly
+    if auth_token[0] == "'"
+      auth_token.delete! "'"
+    end
     user = auth_token && User.find_by_authentication_token(auth_token)
-    
+
     if user
       sign_in user, store: false
     end
