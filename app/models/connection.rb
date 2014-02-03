@@ -8,4 +8,12 @@ class Connection < ActiveRecord::Base
   # connection type: 1 = follower, 2 = friend, 0 = no connection (record can be deleted)
   # connection status: 1 = request pending, 2 = request accepted, 4 = request rejected
   
+  def self.getfriends myid
+    select("*").from("getfriends('#{myid}')") 
+  end
+
+  def self.getfollowers myid
+    select("*").from("getfollowers('#{myid}')") 
+  end
+  
 end

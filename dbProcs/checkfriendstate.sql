@@ -1,8 +1,8 @@
 ﻿/*
-DROP FUNCTION checkfriendstate(myid integer, otherid integer)
+DROP FUNCTION checkfriendstate(myid integer, theirid integer)
 */
 
-CREATE OR REPLACE FUNCTION checkfriendstate(myid integer, otherid integer)
+CREATE OR REPLACE FUNCTION checkfriendstate(myid integer, theirid integer)
 RETURNS integer
 AS $$
 DECLARE
@@ -11,25 +11,15 @@ DECLARE
 	otherstate integer;
 
 BEGIN
-	SELECT c.state INTO mystate 
+	SELECT c.friend_state INTO mystate 
 	FROM connections AS c
-	WHERE c.user_id = myid AND c.connections_id = otherid AND connection_type = 2;
+	WHERE c.user_id = myid AND c.connections_id = theirid AND friend_state > 0;
 
-	IF ((mystate IS NULL) OR (mystate = 0)) THEN
-		state := 0;
-	ELSE
-		state := mystate;
-	END IF;
-
-	SELECT c.state INTO otherstate 
-	FROM connections AS c
-	WHERE c.user_id = otherid AND c.connections_id = myid AND connection_type = 2;
-
-	IF ((otherstate IS NOT NULL) AND (otherstate <> 0)) THEN
-		state := state + (otherstate * 16);
+	IF (mystate IS NULL) THEN
+		mystate := 0;
 	END IF;
 
 	
-RETURN state;
+RETURN mystate;
 END;
 $$ LANGUAGE plpgsql;

@@ -1,35 +1,40 @@
 ﻿/*
-DROP FUNCTION checkfollowerstate(myid integer, otherid integer)
+DROP FUNCTION checkfollowerstate(myid integer, theirid integer)
 */
 
-CREATE OR REPLACE FUNCTION checkfollowerstate(myid integer, otherid integer)
-RETURNS integer
+/*
+DROP TYPE follow_state;
+CREATE TYPE follow_state AS (myid int, i_follow int, they_follow int);
+*/
+
+
+CREATE OR REPLACE FUNCTION checkfollowerstate(myid integer, theirid integer)
+RETURNS follow_state
 AS $$
 DECLARE
-	state integer;
 	mystate integer;
-	otherstate integer;
+	theirstate integer;
+	state follow_state;
 
 BEGIN
-	SELECT c.state INTO mystate 
+	SELECT c.am_following INTO state.i_follow 
 	FROM connections AS c
-	WHERE c.user_id = myid AND c.connections_id = otherid AND c.connection_type = 1;
+	WHERE c.user_id = myid AND c.connections_id = theirid AND c.am_following = 1;
 
-	IF ((mystate IS NULL) OR (mystate = 0)) THEN
-		state := 0;
-	ELSE
-		state := mystate;
+	SELECT c.am_following INTO state.they_follow
+	FROM connections AS c
+	WHERE c.user_id = theirid AND c.connections_id = myid AND c.am_following = 1;
+
+	IF state.i_follow IS NULL THEN
+		state.i_follow := 0;
 	END IF;
 
-	SELECT c.state INTO otherstate 
-	FROM connections AS c
-	WHERE c.user_id = otherid AND c.connections_id = myid AND c.connection_type = 1;
-
-	IF ((otherstate IS NOT NULL) AND (otherstate <> 0)) THEN
-		state := state + (16 * otherstate);
+	IF state.they_follow IS NULL THEN
+		state.they_follow := 0;
 	END IF;
 
-	
-RETURN state;
+	state.myid := myid;
+
+RETURN  state;
 END;
 $$ LANGUAGE plpgsql;

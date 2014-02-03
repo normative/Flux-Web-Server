@@ -3,9 +3,8 @@ class CreateConnections < ActiveRecord::Migration
     create_table :connections do |t|
       t.integer :user_id
       t.integer :connections_id
-      t.integer :connection_type
-      t.integer :state
-
+      t.integer :am_following
+      t.integer :friend_state
       t.timestamps
     end
   end

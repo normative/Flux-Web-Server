@@ -63,7 +63,7 @@ Web::Application.routes.draw do
   
   resources :aliases do
     collection do
-      get 'checkcontacts'
+      get 'importcontacts'
     end
     member do
       get 'alias'
@@ -74,6 +74,7 @@ Web::Application.routes.draw do
     collection do
       post 'follow'
       post 'addfriend'
+      post 'invite'
       get  'friends'
       get  'followers'
     end
