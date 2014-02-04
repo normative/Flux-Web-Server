@@ -16,4 +16,8 @@ class Connection < ActiveRecord::Base
     select("*").from("getfollowers('#{myid}')") 
   end
   
+  def self.getfriendinvites myid
+    select("*").from("getfriendinvites('#{myid}')") 
+  end
+
 end

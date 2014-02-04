@@ -11,9 +11,7 @@ RETURNS TABLE(id integer, flux_id integer, flux_username varchar, friend_state i
 AS $$
 DECLARE
 	my_id integer;
-
 	r RECORD;
-
 
 BEGIN
 	SELECT u.id INTO my_id 

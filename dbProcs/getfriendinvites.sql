@@ -8,7 +8,7 @@ http://127.0.0.1:3101/aliases/getfriendinvites?auth_token=AoSZmitKx7Mq8dkXd9QD *
 
 CREATE OR REPLACE FUNCTION getfriendinvites(mytoken text)
 
-RETURNS TABLE(flux_id integer, flux_username varchar, since timestamp)
+RETURNS TABLE(id integer, flux_id integer, flux_username varchar, since timestamp)
 AS $$
 DECLARE
 	my_id integer;
@@ -20,7 +20,8 @@ BEGIN
 	WHERE authentication_token = mytoken;
 	
 RETURN QUERY
-	SELECT	u.id AS flux_id, 
+	SELECT	c.id AS id,
+		u.id AS flux_id, 
 		u.username AS flux_username,
 		c.updated_at AS since
 	FROM	users u

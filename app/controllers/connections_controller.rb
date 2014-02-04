@@ -73,14 +73,21 @@ class ConnectionsController < ApplicationController
     end
     
     fs = cp[:friend_state]
-    if (cs.nil?)
+    if (fs.nil?)
       cp[:friend_state] = 0
     elsif
       cp.merge!( friend_state: 0)
     end
 
-    @connection = Connection.where("user_id = :userid AND connections_id = :connid AND connection_type = :contype", 
-                  userid: connection_params[:user_id], connid: connection_params[:connections_id], contype: 1).first_or_create(cp)
+    @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
+                  userid: connection_params[:user_id], connid: connection_params[:connections_id]).first_or_create(cp)
+
+    # may need to update if the record already exists                    
+    if (!@connection.nil?)
+      if (@connection.am_following != 1)
+        @connection.update_attributes(cp)
+      end
+    end
 
     respond_to do |format|
       if @connection.save
@@ -108,7 +115,7 @@ class ConnectionsController < ApplicationController
     end
     
     fs = cp[:friend_state]
-    if (cs.nil?)
+    if (fs.nil?)
       cp[:friend_state] = 1
     elsif
       cp.merge!( friend_state: 1)
@@ -116,32 +123,38 @@ class ConnectionsController < ApplicationController
 
     # first, create the connection from "me" to "them"
     @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-                                      userid: connection_params[:user_id], connid: 
-                                      connection_params[:connections_id]).first_or_create(cp)
+                                      userid: connection_params[:user_id], 
+                                      connid: connection_params[:connections_id]).first_or_create(cp)
     
     # then see if the connection exists in the other direction as pending (or accepted)
-    @recipconnection = Connection.where("user_id = :userid AND connections_id = :connid", 
-                                          userid: connection_params[:connections_id], 
-                                          connid: connection_params[:user_id])
+    @recipconnection = Connection.where("user_id = :connid AND connections_id = :userid", 
+                                          userid: connection_params[:user_id], 
+                                          connid: connection_params[:connections_id]).first()
+                                            
     if (!@recipconnection.nil?)
       if (@recipconnection.friend_state == 1)
         # reciprocal is waiting for a friend - set up both and go to town...
         cp[:friend_state] = 2
           
         if (!@connection.nil?)
-          if (@connection.friend_state < 2)
+          if (@connection.friend_state != 2)
             @connection.update_attributes(cp)
+            logger.debug("Send friend accepted to me")
           end
         end
 
-        cp[:user_id] = @recipconnection.user_id
-        cp[:connections_id] = @recipconnection.connections_id
+        cp[:user_id] = @recipconnection[:user_id]
+        cp[:connections_id] = @recipconnection[:connections_id]
         @recipconnection.update_attributes(cp)
+#        @recipconnection.save
 
         # send friend accepted APN to both users        
+        logger.debug("Send friend accepted to both users")
+        
       end
     else
       # no reciprocal connection - send friend invite APN.
+      logger.debug("Send friend invite")
       
     end
     

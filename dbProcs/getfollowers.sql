@@ -34,7 +34,7 @@ BEGIN
 		)
 	UNION
 		(
-		SELECT	c.id AS id,
+		SELECT	-1 AS id,
 			u.id AS flux_id, 
 			u.username AS flux_username, 
 			0 AS friend_state,
@@ -48,15 +48,21 @@ BEGIN
 	FOR r IN
 		SELECT DISTINCT(m.flux_id) FROM mytable m
 	LOOP
-		UPDATE mytable SET am_follower = follow_state.i_follow, 
+		UPDATE	mytable SET am_follower = follow_state.i_follow, 
 				   is_following = follow_state.they_follow,
 				   friend_state = checkfriendstate(my_id, mytable.flux_id)
-		FROM checkfollowerstate(my_id, r.flux_id) AS follow_state
-		WHERE mytable.flux_id = r.flux_id;
+		FROM	checkfollowerstate(my_id, r.flux_id) AS follow_state
+		WHERE	mytable.flux_id = r.flux_id;
+
+		UPDATE	mytable SET id = mt.id
+		FROM 	(SELECT * FROM mytable im WHERE im.flux_id = r.flux_id AND im.id >= 0) mt
+		WHERE	mytable.flux_id = r.flux_id;
 	END LOOP;
 
 RETURN QUERY	
-	SELECT * FROM mytable;
+	SELECT DISTINCT m.id, m.flux_id, m.flux_username, m.friend_state, m.am_follower, m.is_following 
+	FROM mytable m
+	ORDER BY m.flux_username;
 	
 
 END;

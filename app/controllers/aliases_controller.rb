@@ -25,31 +25,20 @@ class AliasesController < ApplicationController
     end
   end
 
-  # GET /aliases/check_contacts
-  # GET /aliases/check_contacts.json?contactslist=id id...&serviceid=[1|2|3]&maxcount=100&auth_token=...
-  def checkcontacts
-#    @aliases = Array.new
-#    
-#    contactstrs = params[:contacts].split(",")
-#    contactstrs.each{|contactstr|
-#      contact = contactstr.split(":")
-#      # find contact in db, return fluxID
-#      @alias = Alias.select(:user_id, :alias_name, :service_id).where("alias_name = :alname AND service_id = :servid", alname: contact[0], servid: contact[1]).take
-#      if !(@alias.nil?)
-##        alias_ray = {user_id: @alias.user_id, alias_name: @alias.alias_name, service_id: @alias.service_id} 
-##        @aliases << alias_ray
-#        @aliases << {user_id: @alias.user_id}
-#      elsif
-#        puts "alias = NIL" 
-#      end
-#    }    
-#    @aliases = @aliases.sort{|x, y| x[:user_id] <=> y[:user_id]}.uniq
-# OR
-#    @aliases = Alias.checkcontacts(params[:auth_token], params[:contactlist], params[:serviceid], params[:maxcount])
-#    @aliases = @aliases.sort{|x, y| x[:flux_id] <=> y[:flux_id]}.uniq
-# OR
+  # GET /aliases/importcontacts?serviceid=[1|2|3]&access_token=...&access_token_secret=...&maxcount=...&auth_token=...
+  # GET /aliases/importcontacts.json?serviceid=[1|2|3]&access_token=...&access_token_secret=...&maxcount=...&auth_token=...
+  def importcontacts
     # setup the query but don't execute yet...
-    query = ::Alias.checkcontacts(params[:auth_token], params[:contactlist], params[:serviceid], params[:maxcount])
+    
+    contacts = ::TwitterClient.getfriendsbytoken params
+    contacts = contacts.sort{|x, y| x.name <=> y.name}
+    contactlist = String.new
+    contacts.each do |c|
+      contactlist << c.name << ','
+    end 
+    contactlist.chomp!(',') # remove last ',' if exists
+    
+    query = ::Alias.checkcontacts(params[:auth_token], contactlist, params[:serviceid], params[:maxcount])
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
@@ -57,19 +46,34 @@ class AliasesController < ApplicationController
     results = results.sort{|x, y| x[:flux_id] <=> y[:flux_id]}
 
     # filter out duplicate flux user ids - pick only the first since it doesn't really matter which...
-    newresults = Array.new
+    uniqresults = Array.new
     lastid = -1
     results.rows.each do |r|
       if r[0] != lastid
-        newresults << r
+      uniqresults << r
         lastid = r[0]
       end
     end
-      
+
+    # now merge two lists based on alias_name and add the profile image URL into the hash...
+    uniqresults = uniqresults.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
+    c_idx = 0   
+    uniqresults.rows.each do |r|
+      if r[:alias_name] == contacts[c_idx].name
+        r[:image_url] = contacts[c_idx].default_profile_image
+      end
+      while (contacts[c_idx].name <= r[:alias_name]) && (c_idx < contacts.size) do
+        c_idx = c_idx + 1
+      end
+    end
+
+    # sort by flux username
+    uniqresults = uniqresults.sort{|x, y| x[:flux_username] <=> y[:flux_username]}
+                      
     respond_to do |format|
 #      format.html # show.html.erb
 #      format.json { render json: @aliases }
-      format.json { render json: newresults }
+      format.json { render json: uniqresults }
     end
   end
 
@@ -77,7 +81,12 @@ class AliasesController < ApplicationController
   # POST /aliases.json
   def create
     logger.debug "Into Alias#create"
-   @alias = Alias.new(alias_params)
+    
+    user = User.find_by_authentication_token(params[:auth_token])
+    ap = alias_params
+    ap[:user_id] = user[:id]
+    
+    @alias = Alias.new(ap)
 
     respond_to do |format|
       if @alias.save
