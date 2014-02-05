@@ -76,6 +76,7 @@ Web::Application.routes.draw do
       post 'addfriend'
       post 'invite'
       get  'friends'
+      get  'following'
       get  'followers'
       get  'friendinvites'
     end

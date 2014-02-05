@@ -36,10 +36,21 @@ class ConnectionsController < ApplicationController
     end
   end
 
+  # GET /connections/following
+  # GET /connections/following.json
+  def following
+    @connections = Connection.getfollowing(params[:auth_token], 0)
+
+    respond_to do |format|
+#      format.html # show.html.erb
+      format.json { render json: @connections }
+    end
+  end
+  
   # GET /connections/followers
   # GET /connections/followers.json
   def followers
-    @connections = Connection.getfollowers(params[:auth_token])
+    @connections = Connection.getfollowing(params[:auth_token], 1)
 
     respond_to do |format|
 #      format.html # show.html.erb
@@ -239,13 +250,26 @@ class ConnectionsController < ApplicationController
     end
 
     cp = Hash.new
+    if (ct == 2) || (ct == 3)
+      cp[:friend_state] = 0
+      if (@connection.friend_state == 2)
+        @recipconnection = Connection.where("user_id = :connid AND connections_id = :userid", 
+                                              userid: @connection.user_id, 
+                                              connid: @connection.connections_id).first()
+        if (!@recipconnection.nil?)
+          if (@recipconnection.am_follower == 0)
+            @recipconnection.destroy
+          else
+            @recipconnection.update_attributes(cp)
+          end
+        end
+      end
+    end
+    
     if (ct == 1) || (ct == 3)
       cp[:am_follower] = 0
     end
-    if (ct == 2) || (ct == 3)
-      cp[:friend_status] = 0
-    end
-    
+        
     respond_to do |format|
       if @connection.update_attributes(cp)
  #       format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
