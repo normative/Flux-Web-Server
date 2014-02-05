@@ -69,12 +69,12 @@ class ConnectionsController < ApplicationController
         self.addfriend
       else
         respond_to do |format|
-          format.json { render json: "invalid connection type", status: :unprocessable_entity }           
+          format.json { render json: {error_message: "invalid connection type"}, status: :unprocessable_entity }           
         end
       end
     else
       respond_to do |format|
-        format.json { render json: "missing connection type", status: :unprocessable_entity }           
+        format.json { render json: {error_mesage: "missing connection type"}, status: :unprocessable_entity }           
       end
     end
   end
@@ -228,6 +228,36 @@ class ConnectionsController < ApplicationController
     end
   end
 
+  # PATCH/PUT /connections/1/disconnect
+  # PATCH/PUT /connections/1/disconnect.json
+  def disconnect
+    @connection = Connection.find(params[:id])
+
+    ct = params[:connection_type].to_i
+    if (ct.nil?)
+      ct = 3
+    end
+
+    cp = Hash.new
+    if (ct == 1) || (ct == 3)
+      cp[:am_follower] = 0
+    end
+    if (ct == 2) || (ct == 3)
+      cp[:friend_status] = 0
+    end
+    
+    respond_to do |format|
+      if @connection.update_attributes(cp)
+ #       format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
+        format.json { head :no_content }
+      else
+ #       format.html { render action: "edit" }
+        format.json { render json: @connection.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  
   # DELETE /connections/1
   # DELETE /connections/1.json
   def destroy
@@ -235,7 +265,6 @@ class ConnectionsController < ApplicationController
     @connection.destroy
 
     respond_to do |format|
-#      format.html { redirect_to connections_url }
       format.json { head :no_content }
     end
   end

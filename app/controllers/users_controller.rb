@@ -47,6 +47,17 @@ class UsersController < ApplicationController
     end
   end
 
+  # DELETE /users/1
+  # DELETE /users/1.json
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+
+    respond_to do |format|
+      format.json { head :no_content }
+    end
+  end
+
   def profile
     # setup the query but don't execute yet...
     query = ::User.getprofile(params[:auth_token], params[:id])
