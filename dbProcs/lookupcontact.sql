@@ -35,7 +35,7 @@ BEGIN
 			0 AS is_following
 		FROM	users u
 		WHERE	(u.username LIKE searchstr)
-		ORDER BY LENGTH(u.username) ASC, u.username
+		
 		LIMIT 20
 	);
 
@@ -50,7 +50,8 @@ BEGIN
 	END LOOP;
 
 RETURN QUERY
-	SELECT * FROM mytable;
+	SELECT m.* FROM mytable m
+	ORDER BY LENGTH(m.flux_username) ASC, m.flux_username;
 
 END;
 $$ LANGUAGE plpgsql;
