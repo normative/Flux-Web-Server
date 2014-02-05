@@ -57,14 +57,36 @@ class ConnectionsController < ApplicationController
       format.json { render json: @connections }
     end
   end
+
+  # POST /connections?auth_token=...
+  # POST /connections.json?auth_token=...
+  def create
+    ct = connection_params[:connection_type]
+    if (!ct.nil?)
+      if (ct == "1")     # follow
+        self.follow
+      elsif (ct == "2")  #friend
+        self.addfriend
+      else
+        respond_to do |format|
+          format.json { render json: "invalid connection type", status: :unprocessable_entity }           
+        end
+      end
+    else
+      respond_to do |format|
+        format.json { render json: "missing connection type", status: :unprocessable_entity }           
+      end
+    end
+  end
   
+    
   # POST /connections/follow
   # POST /connections/follow.json
   def follow
 #    logger.debug "Into Connection#follow"
 
-    cp = connection_params  # use a copy since original treated as const and can't change
-
+    cp = connection_params.except(:connection_type)  # use a copy since original treated as const and can't change
+    
     af = cp[:am_following]
     if (af.nil?)
       cp[:am_following] = 1
@@ -85,6 +107,7 @@ class ConnectionsController < ApplicationController
     # may need to update if the record already exists                    
     if (!@connection.nil?)
       if (@connection.am_following != 1)
+        cp.merge!( friend_state: @connection.friend_state)
         @connection.update_attributes(cp)
       end
     end
@@ -105,7 +128,7 @@ class ConnectionsController < ApplicationController
   def addfriend
 #    logger.debug "Into Connection#addfriend"
 
-    cp = connection_params  # use a copy since original treated as const and can't change
+    cp = connection_params.except(:connection_type)  # use a copy since original treated as const and can't change
 
     af = cp[:am_following]
     if (af.nil?)
@@ -131,6 +154,8 @@ class ConnectionsController < ApplicationController
                                           userid: connection_params[:user_id], 
                                           connid: connection_params[:connections_id]).first()
                                             
+    cp = cp.except(:am_following)
+
     if (!@recipconnection.nil?)
       if (@recipconnection.friend_state == 1)
         # reciprocal is waiting for a friend - set up both and go to town...
@@ -154,6 +179,11 @@ class ConnectionsController < ApplicationController
       end
     else
       # no reciprocal connection - send friend invite APN.
+      if (!@connection.nil?)
+        if (@connection.friend_state != 1)
+          @connection.update_attributes(cp)
+        end
+      end
       logger.debug("Send friend invite")
       
     end
