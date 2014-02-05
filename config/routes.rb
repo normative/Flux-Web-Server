@@ -81,6 +81,7 @@ Web::Application.routes.draw do
       get  'friendinvites'
     end
     member do
+      put 'disconnect'
     end
   end
   

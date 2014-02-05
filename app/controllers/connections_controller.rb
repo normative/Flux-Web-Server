@@ -257,7 +257,7 @@ class ConnectionsController < ApplicationController
                                               userid: @connection.user_id, 
                                               connid: @connection.connections_id).first()
         if (!@recipconnection.nil?)
-          if (@recipconnection.am_follower == 0)
+          if (@recipconnection.am_following == 0)
             @recipconnection.destroy
           else
             @recipconnection.update_attributes(cp)
@@ -267,7 +267,7 @@ class ConnectionsController < ApplicationController
     end
     
     if (ct == 1) || (ct == 3)
-      cp[:am_follower] = 0
+      cp[:am_following] = 0
     end
         
     respond_to do |format|

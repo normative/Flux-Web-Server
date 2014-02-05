@@ -1,5 +1,5 @@
 ﻿/*
-DROP FUNCTION getfollowers(mytoken text)
+DROP FUNCTION getfollowers(mytoken text, dir integer)
 */
 /*
 raw json call:
