@@ -43,7 +43,7 @@ class AliasesController < ApplicationController
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
     results = ActiveRecord::Base.connection.select_all(query)
-    results = results.sort{|x, y| x[:flux_id] <=> y[:flux_id]}
+    results = results.sort{|x, y| x[:id] <=> y[:id]}
 
     # filter out duplicate flux user ids - pick only the first since it doesn't really matter which...
     uniqresults = Array.new
@@ -68,7 +68,7 @@ class AliasesController < ApplicationController
     end
 
     # sort by flux username
-    uniqresults = uniqresults.sort{|x, y| x[:flux_username] <=> y[:flux_username]}
+    uniqresults = uniqresults.sort{|x, y| x[:username] <=> y[:username]}
                       
     respond_to do |format|
 #      format.html # show.html.erb

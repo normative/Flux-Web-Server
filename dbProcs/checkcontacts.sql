@@ -7,7 +7,7 @@ http://127.0.0.1:3101/aliases/checkcontacts?auth_token=AoSZmitKx7Mq8dkXd9QD&serv
 
 CREATE OR REPLACE FUNCTION checkcontacts(mytoken text, contactlist text, serviceid integer, maxcount integer)
 
-RETURNS TABLE(flux_id integer, flux_username varchar, alias_name text, friend_state integer, am_follower integer, is_following integer)
+RETURNS TABLE(id integer, username varchar, alias_name text, friend_state integer, am_follower integer, is_following integer)
 AS $$
 DECLARE
 	contactset text[];
@@ -34,9 +34,12 @@ BEGIN
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
 	AS (
-		SELECT	u.id AS flux_id, u.username AS flux_username, a.alias_name AS alias_name, 
+		SELECT	u.id AS id, 
+			u.username AS username, 
+			a.alias_name AS alias_name, 
 			checkfriendstate(myid, u.id) AS friend_state,
-			0 AS am_follower, 0 AS is_following
+			0 AS am_follower, 
+			0 AS is_following
 		FROM	users u
 			INNER JOIN aliases a ON ((u.id = a.user_id) AND (a.service_id = serviceid))
 --			INNER JOIN (SELECT * FROM checkfollowerstate(myid, u.id)) fs ON myid = fs.myid
@@ -45,15 +48,16 @@ BEGIN
 	);
 
 	FOR r IN
-		SELECT DISTINCT(m.flux_id) FROM mytable m
+		SELECT DISTINCT(m.id) FROM mytable m
 	LOOP
 		UPDATE mytable SET am_follower = fs.i_follow, is_following = fs.they_follow
-		FROM checkfollowerstate(myid, r.flux_id) AS fs
-		WHERE mytable.flux_id = r.flux_id;
+		FROM checkfollowerstate(myid, r.id) AS fs
+		WHERE mytable.id = r.id;
 	END LOOP;
 	
 RETURN QUERY	
-	SELECT * FROM mytable;
+	SELECT * FROM mytable m
+	ORDER BY m.username;
 
 
 END;

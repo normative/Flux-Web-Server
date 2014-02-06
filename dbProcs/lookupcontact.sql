@@ -10,7 +10,8 @@ Headers: Content-Type: application/json
 
 CREATE OR REPLACE FUNCTION lookupcontact(mytoken text, contact text)
 
-RETURNS TABLE(flux_id integer, flux_username varchar, alias_name varchar, friend_state integer, am_follower integer, is_following integer)
+--RETURNS TABLE(id integer, username varchar, alias_name varchar, friend_state integer, am_follower integer, is_following integer)
+RETURNS TABLE(id integer, username varchar, friend_state integer, am_follower integer, is_following integer)
 AS $$
 DECLARE
 	my_id integer;
@@ -27,31 +28,32 @@ BEGIN
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
 	AS (
-		SELECT	u.id AS flux_id, 
-			u.username AS flux_username, 
-			u.name AS alias_name, 
+		SELECT	u.id AS id, 
+			u.username AS username, 
+--			u.name AS alias_name, 
 			0 AS friend_state, 
 			0 AS am_follower, 
 			0 AS is_following
 		FROM	users u
 		WHERE	(u.username LIKE searchstr)
+		  AND	u.id != my_id
 		
 		LIMIT 20
 	);
 
 	FOR r IN
-		SELECT DISTINCT(m.flux_id) FROM mytable m
+		SELECT DISTINCT(m.id) FROM mytable m
 	LOOP
 		UPDATE mytable SET am_follower = follow_state.i_follow, 
 				   is_following = follow_state.they_follow,
-				   friend_state = checkfriendstate(my_id, mytable.flux_id)
-		FROM checkfollowerstate(my_id, r.flux_id) AS follow_state
-		WHERE mytable.flux_id = r.flux_id;
+				   friend_state = checkfriendstate(my_id, mytable.id)
+		FROM checkfollowerstate(my_id, r.id) AS follow_state
+		WHERE mytable.id = r.id;
 	END LOOP;
 
 RETURN QUERY
 	SELECT m.* FROM mytable m
-	ORDER BY LENGTH(m.flux_username) ASC, m.flux_username;
+	ORDER BY LENGTH(m.username) ASC, m.username;
 
 END;
 $$ LANGUAGE plpgsql;

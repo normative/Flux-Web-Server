@@ -79,9 +79,10 @@ Web::Application.routes.draw do
       get  'following'
       get  'followers'
       get  'friendinvites'
+      put  'disconnect'
+      put  'respondtofriend'
     end
     member do
-      put 'disconnect'
     end
   end
   

@@ -72,12 +72,12 @@ class ConnectionsController < ApplicationController
   # POST /connections?auth_token=...
   # POST /connections.json?auth_token=...
   def create
-    ct = connection_params[:connection_type]
+    ct = connection_params[:connection_type].to_i
     if (!ct.nil?)
-      if (ct == "1")     # follow
-        self.follow
-      elsif (ct == "2")  #friend
-        self.addfriend
+      if (ct == 1)     # follow
+        self.localfollow connection_params
+      elsif (ct == 2)  #friend
+        self.localaddfriend connection_params
       else
         respond_to do |format|
           format.json { render json: {error_message: "invalid connection type"}, status: :unprocessable_entity }           
@@ -94,10 +94,18 @@ class ConnectionsController < ApplicationController
   # POST /connections/follow
   # POST /connections/follow.json
   def follow
+    self.localfollow connection_params
+  end
+  
+  def localfollow connparam
 #    logger.debug "Into Connection#follow"
 
-    cp = connection_params.except(:connection_type)  # use a copy since original treated as const and can't change
+    if connparam.nil?
+      connparam = connection_params  # grab a copy of the hash from the function
+    end
     
+    cp = connparam.except(:connection_type)
+
     af = cp[:am_following]
     if (af.nil?)
       cp[:am_following] = 1
@@ -113,7 +121,8 @@ class ConnectionsController < ApplicationController
     end
 
     @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-                  userid: connection_params[:user_id], connid: connection_params[:connections_id]).first_or_create(cp)
+                                    userid: connparam[:user_id], 
+                                    connid: connparam[:connections_id]).first_or_create(cp)
 
     # may need to update if the record already exists                    
     if (!@connection.nil?)
@@ -137,9 +146,17 @@ class ConnectionsController < ApplicationController
   # POST /connections/addfriend
   # POST /connections/addfriend.json
   def addfriend
+    self.localaddfriend connection_params
+  end
+  
+  def localaddfriend connparam
 #    logger.debug "Into Connection#addfriend"
 
-    cp = connection_params.except(:connection_type)  # use a copy since original treated as const and can't change
+    if connparam.nil?
+      connparam = connection_params  # grab a copy of the hash from the function
+    end
+        
+    cp = connparam.except(:connection_type)
 
     af = cp[:am_following]
     if (af.nil?)
@@ -157,16 +174,18 @@ class ConnectionsController < ApplicationController
 
     # first, create the connection from "me" to "them"
     @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-                                      userid: connection_params[:user_id], 
-                                      connid: connection_params[:connections_id]).first_or_create(cp)
+                                      userid: connparam[:user_id], 
+                                      connid: connparam[:connections_id]).first_or_create(cp)
     
     # then see if the connection exists in the other direction as pending (or accepted)
     @recipconnection = Connection.where("user_id = :connid AND connections_id = :userid", 
-                                          userid: connection_params[:user_id], 
-                                          connid: connection_params[:connections_id]).first()
+                                          userid: connparam[:user_id], 
+                                          connid: connparam[:connections_id]).first()
                                             
     cp = cp.except(:am_following)
 
+    needtoinvite = false
+    
     if (!@recipconnection.nil?)
       if (@recipconnection.friend_state == 1)
         # reciprocal is waiting for a friend - set up both and go to town...
@@ -186,10 +205,15 @@ class ConnectionsController < ApplicationController
 
         # send friend accepted APN to both users        
         logger.debug("Send friend accepted to both users")
-        
+      elsif (@recipconnection.friend_state == 0)
+        needtoinvite = true
       end
     else
-      # no reciprocal connection - send friend invite APN.
+      needtoinvite = true
+    end
+    
+    if needtoinvite == true
+      # send friend invite APN.
       if (!@connection.nil?)
         if (@connection.friend_state != 1)
           @connection.update_attributes(cp)
@@ -223,6 +247,45 @@ class ConnectionsController < ApplicationController
 
   end
 
+  
+  # PUT /connections/respondtofriend?
+  # PUT /connections/respondtofriend.json
+  def respondtofriend
+#    @connection = Connection.find(params[:id])
+              
+    if (!connection_params[:friend_state].nil?)
+      if (connection_params[:friend_state].to_i > 0)
+        conparam = Hash.new
+        conparam[:user_id] = connection_params[:user_id]
+        conparam[:connections_id] = connection_params[:connections_id]
+          
+        self.localaddfriend conparam 
+        
+      else
+        # find the requesting (reciprocal) connection
+        @connection = Connection.where("user_id = :connid AND connections_id = :userid", 
+                                          userid: connection_params[:userid], 
+                                          connid: connection_params[:connections_id]).first
+
+        respond_to do |format|
+          if @connection.update_attributes(connection_params)
+     #       format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
+            format.json { head :no_content }
+          else
+     #       format.html { render action: "edit" }
+            format.json { render json: @connection.errors, status: :unprocessable_entity }
+          end
+        end
+      end
+    else
+      respond_to do |format|
+        format.json { render json: {error_message: "missing friend_state"}, status: :unprocessable_entity }
+      end
+      
+    end
+  end
+
+
   # PATCH/PUT /connections/1
   # PATCH/PUT /connections/1.json
   def update
@@ -239,10 +302,14 @@ class ConnectionsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /connections/1/disconnect
-  # PATCH/PUT /connections/1/disconnect.json
+  # PATCH/PUT /connections/disconnect
+  # PATCH/PUT /connections/disconnect.json
   def disconnect
-    @connection = Connection.find(params[:id])
+#    @connection = Connection.find(params[:id])
+
+    @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
+                                      userid: connection_params[:user_id], 
+                                      connid: connection_params[:connections_id]).first
 
     ct = params[:connection_type].to_i
     if (ct.nil?)
@@ -257,11 +324,7 @@ class ConnectionsController < ApplicationController
                                               userid: @connection.user_id, 
                                               connid: @connection.connections_id).first()
         if (!@recipconnection.nil?)
-          if (@recipconnection.am_following == 0)
-            @recipconnection.destroy
-          else
-            @recipconnection.update_attributes(cp)
-          end
+          @recipconnection.update_attributes(cp)
         end
       end
     end
@@ -294,13 +357,12 @@ class ConnectionsController < ApplicationController
   end
   
   
-
   private
 
   # Use this method to whitelist the permissible parameters. Example:
   # params.require(:person).permit(:name, :age)
   # Also, you can specialize this method with per-user checking of permissible attributes.
   def connection_params
-    params.require(:connection).permit(:user_id, :connections_id, :connection_type)
+    params.require(:connection).permit(:user_id, :connections_id, :connection_type, :friend_state)
   end
 end
