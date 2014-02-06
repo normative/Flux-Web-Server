@@ -234,20 +234,6 @@ class ConnectionsController < ApplicationController
     end
   end
 
-  # POST /connections/invite
-  # POST /connections/invite.json
-  def invite
-#    logger.debug "Into Connection#invite"
-    # Invite a social contact to join Flux
-
-    respond_to do |format|
-#      format.html { redirect_to connections_url }
-      format.json { head :no_content }
-    end
-
-  end
-
-  
   # PUT /connections/respondtofriend?
   # PUT /connections/respondtofriend.json
   def respondtofriend

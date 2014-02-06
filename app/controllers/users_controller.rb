@@ -58,6 +58,20 @@ class UsersController < ApplicationController
     end
   end
 
+  # POST /users/invite
+  # POST /users/invite.json
+  def invite
+#    logger.debug "Into Users#invite"
+    # Invite a social contact to join Flux
+
+    respond_to do |format|
+#      format.html { redirect_to users_url }
+      format.json { head :no_content }
+    end
+
+  end
+
+  
   def profile
     # setup the query but don't execute yet...
     query = ::User.getprofile(params[:auth_token], params[:id])
