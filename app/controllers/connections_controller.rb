@@ -297,7 +297,7 @@ class ConnectionsController < ApplicationController
                                       userid: connection_params[:user_id], 
                                       connid: connection_params[:connections_id]).first
 
-    ct = params[:connection_type].to_i
+    ct = connection_params[:connection_type].to_i
     if (ct.nil?)
       ct = 3
     end
