@@ -15,11 +15,11 @@ DECLARE
 	following_count integer;
 	image_count integer;
 
-	myid integer;
+	my_id integer;
 
 BEGIN
 
-	SELECT u.id INTO myid 
+	SELECT u.id INTO my_id 
 	FROM users u
 	WHERE u.authentication_token = myauthtoken;
 
@@ -45,13 +45,13 @@ RETURN QUERY
 		follower_count,  
 		following_count, 
 		image_count, 
-		checkfriendstate(myid, userid) AS friend_state,
+		checkfriendstate(my_id, userid) AS friend_state,
 		follow_state.i_follow AS am_follower, 
 		follow_state.they_follow AS is_following
 	FROM
 		users u
 		LEFT OUTER JOIN images i ON i.user_id = u.id,
-		checkfollowerstate(myid, userid) AS follow_state
+		checkfollowerstate(my_id, userid) AS follow_state
 	WHERE	u.id = userid;
 	
 END;
