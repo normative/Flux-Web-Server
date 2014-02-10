@@ -19,6 +19,7 @@ Web::Application.routes.draw do
       get 'profile'
       get 'user'
       get 'avatar'
+      put 'updateapnstoken'
     end
   end
     

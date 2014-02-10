@@ -28,7 +28,13 @@ class UsersController < ApplicationController
   # GET /users/1/avatar
   def avatar
     @user = User.find(params[:id])
-    send_file @user.avatar.path(params[:size]), disposition: :attachment
+    if (!@user.avatar.nil?)
+      send_file @user.avatar.path(params[:size]), disposition: :attachment
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
   end
   
   # PATCH/PUT /users/1
@@ -47,6 +53,22 @@ class UsersController < ApplicationController
     end
   end
 
+  # PATCH/PUT /users/1/updateapnstoken
+  # PATCH/PUT /users/1/updateapnstoken.json
+  def updateapnstoken
+    @user = User.find(params[:id])
+    uph = {user: {apns_device_token: params[:apns_token]}}
+    respond_to do |format|
+      if @user.update_attributes(uph)
+        format.html { redirect_to @user, notice: 'User was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+    
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
@@ -100,6 +122,6 @@ class UsersController < ApplicationController
   end
   
   def user_params
-    params.require(:user).permit(:username, :name, :bio, :avatar)
+    params.require(:user).permit(:username, :name, :bio, :avatar, :apns_device_token)
   end
 end
