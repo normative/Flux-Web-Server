@@ -53,7 +53,8 @@ BEGIN
 
 RETURN QUERY
 	SELECT m.* FROM mytable m
-	ORDER BY LENGTH(m.username) ASC, m.username;
+	ORDER BY 	m.friend_state, am_follower, is_following, 
+			LENGTH(m.username) ASC, m.username;
 
 END;
 $$ LANGUAGE plpgsql;

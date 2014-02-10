@@ -7,7 +7,7 @@ http://127.0.0.1:3101/aliases/getfollowers?auth_token=AoSZmitKx7Mq8dkXd9QD */
 
 CREATE OR REPLACE FUNCTION getfollowers(mytoken text, dir integer)
 
-RETURNS TABLE(id integer, username varchar, friend_state integer, am_follower integer, is_following integer)
+RETURNS TABLE(id integer, username varchar, has_pic boolean, friend_state integer, am_follower integer, is_following integer)
 AS $$
 DECLARE
 	my_id integer;
@@ -27,6 +27,7 @@ BEGIN
 		ON COMMIT DROP
 		AS (	SELECT	u.id AS id, 
 				u.username AS username,
+				((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic,
 				0 AS friend_state,
 				0 AS am_follower, 
 				0 AS is_following
@@ -39,6 +40,7 @@ BEGIN
 		AS (
 			SELECT	u.id AS id, 
 				u.username AS username, 
+				((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic,
 				0 AS friend_state,
 				0 AS am_follower, 
 				0 AS is_following
@@ -59,7 +61,7 @@ BEGIN
 	END LOOP;
 
 RETURN QUERY	
-	SELECT DISTINCT m.id, m.username, m.friend_state, m.am_follower, m.is_following 
+	SELECT DISTINCT m.id, m.username, m.has_pic, m.friend_state, m.am_follower, m.is_following 
 	FROM mytable m
 	ORDER BY m.username;
 	
