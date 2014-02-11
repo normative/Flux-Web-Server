@@ -36,6 +36,15 @@ class Image < ActiveRecord::Base
                          dependent: :destroy, 
                    convert_options: { oriented: "-auto-orient" }
                               
+  has_attached_file :historical, styles: { thumbcrop: "184x184#", 
+                                  quarterhdcrop: "540x540#", 
+                                          thumb: "200x200", 
+                                      quarterhd: "960x960", 
+                                       oriented: '100%' 
+                                    }, 
+                         dependent: :destroy, 
+                   convert_options: { oriented: "-auto-orient" }
+                              
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,  
                         :user, :camera, :heading, :image, :time_stamp

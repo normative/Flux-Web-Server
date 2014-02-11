@@ -76,9 +76,32 @@ class ImagesController < ApplicationController
   # GET /images/1/image
   def image
     @image = Image.find(params[:id])
-    send_file @image.image.path(params[:size]), disposition: :attachment
+    path = @image.image.path(params[:size])
+    if (!path.nil?)
+      send_file @image.image.path(params[:size]), disposition: :attachment
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
   end
 
+  # GET /images/1/historical
+  def historical
+    @image = Image.find(params[:id])
+    send_file @image.historical.path(params[:size]), disposition: :attachment
+  end
+
+  # GET /images/1/renderimage
+  def renderimage
+    @image = Image.find(params[:id])
+    path = @image.historical.path(params[:size])
+    if (path.nil?)
+      path = @image.image.path(params[:size])
+    end
+    send_file path, disposition: :attachment
+  end  
+  
   # GET /images/new
   # GET /images/new.json
   def new
@@ -211,6 +234,6 @@ class ImagesController < ApplicationController
                                   :best_qw, :best_qx, :best_qy, :best_qz,
                                   :camera_id, :category_id, :description, :heading, :image, 
                                   :user_id, :time_stamp, :horiz_accuracy, :vert_accuracy,
-                                  :privacy )
+                                  :privacy, :historical )
   end
 end

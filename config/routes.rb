@@ -36,6 +36,8 @@ Web::Application.routes.draw do
     end
     member do
       get 'image'
+      get 'renderimage'
+      get 'historical'
 #      destroy 'destroy'
     end
   end
