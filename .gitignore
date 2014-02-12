@@ -20,3 +20,6 @@
 
 /public/system
 /RemoteSystemsTempFiles
+
+# for now (at least) don't store certificates in git
+/config/certs

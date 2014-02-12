@@ -14,6 +14,7 @@ Web::Application.routes.draw do
       get  'following',     :to => "connections#following"
       get  'followers',     :to => "connections#followers"
       get  'friendinvites', :to => "connections#friendinvites"
+      put  'updateapnstoken'
     end
     member do
       get 'profile'

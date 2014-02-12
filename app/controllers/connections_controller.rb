@@ -1,3 +1,5 @@
+require 'apns_client'
+
 class ConnectionsController < ApplicationController
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!
@@ -195,6 +197,7 @@ class ConnectionsController < ApplicationController
           if (@connection.friend_state != 2)
             @connection.update_attributes(cp)
             logger.debug("Send friend accepted to me")
+            ApnsClient.sendmessage(@connection.connections_id, @connection.user_id, 2)
           end
         end
 
@@ -204,7 +207,8 @@ class ConnectionsController < ApplicationController
 #        @recipconnection.save
 
         # send friend accepted APN to both users        
-        logger.debug("Send friend accepted to both users")
+        logger.debug("Send friend accepted to other user")
+        ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 2)
       elsif (@recipconnection.friend_state == 0)
         needtoinvite = true
       end
@@ -218,9 +222,9 @@ class ConnectionsController < ApplicationController
         if (@connection.friend_state != 1)
           @connection.update_attributes(cp)
         end
-      end
-      logger.debug("Send friend invite")
-      
+        logger.debug("Send friend invite")
+        ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
+      end     
     end
     
     respond_to do |format|
@@ -239,9 +243,10 @@ class ConnectionsController < ApplicationController
   def respondtofriend
 #    @connection = Connection.find(params[:id])
               
+    conparam = Hash.new
+
     if (!connection_params[:friend_state].nil?)
       if (connection_params[:friend_state].to_i > 0)
-        conparam = Hash.new
         conparam[:user_id] = connection_params[:user_id]
         conparam[:connections_id] = connection_params[:connections_id]
           
@@ -250,11 +255,12 @@ class ConnectionsController < ApplicationController
       else
         # find the requesting (reciprocal) connection
         @connection = Connection.where("user_id = :connid AND connections_id = :userid", 
-                                          userid: connection_params[:userid], 
+                                          userid: connection_params[:user_id], 
                                           connid: connection_params[:connections_id]).first
 
         respond_to do |format|
-          if @connection.update_attributes(connection_params)
+          conparam[:friend_state] = 0
+          if @connection.update_attributes(conparam)
      #       format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
             format.json { head :no_content }
           else

@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(version: 20140211165941) do
     t.string   "bio",                    limit: 256
     t.string   "provider"
     t.string   "uid"
+    t.string   "apns_device_token",      limit: 33
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
