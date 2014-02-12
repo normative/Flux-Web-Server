@@ -1,3 +1,5 @@
+require 'apns_client'
+
 class ConnectionsController < ApplicationController
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!
@@ -205,9 +207,8 @@ class ConnectionsController < ApplicationController
 #        @recipconnection.save
 
         # send friend accepted APN to both users        
-        logger.debug("Send friend accepted to both users")
-        ApnsClient.sendmessage(@connection.user_id, @connection.connections_id.user_id, 2)
-        ApnsClient.sendmessage(@recipconnection.user_id, @recipconnection.connections_id.user_id, 2)
+        logger.debug("Send friend accepted to other user")
+        ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 2)
       elsif (@recipconnection.friend_state == 0)
         needtoinvite = true
       end
@@ -254,7 +255,7 @@ class ConnectionsController < ApplicationController
       else
         # find the requesting (reciprocal) connection
         @connection = Connection.where("user_id = :connid AND connections_id = :userid", 
-                                          userid: connection_params[:userid], 
+                                          userid: connection_params[:user_id], 
                                           connid: connection_params[:connections_id]).first
 
         respond_to do |format|
