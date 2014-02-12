@@ -8,6 +8,14 @@ Web::Application.routes.draw do
 
 #  resources :users, only: [ :show, :update, :profile, :edit, :index ] do
   resources :users do
+    collection do
+      get 'lookupname'
+      get  'friends',       :to => "connections#friends"
+      get  'following',     :to => "connections#following"
+      get  'followers',     :to => "connections#followers"
+      get  'friendinvites', :to => "connections#friendinvites"
+      put  'updateapnstoken'
+    end
     member do
       get 'profile'
       get 'user'
@@ -29,6 +37,8 @@ Web::Application.routes.draw do
     end
     member do
       get 'image'
+      get 'renderimage'
+      get 'historical'
 #      destroy 'destroy'
     end
   end
@@ -55,6 +65,31 @@ Web::Application.routes.draw do
     end
     member do
       get 'tag'
+    end
+  end
+  
+  resources :aliases do
+    collection do
+      get 'importcontacts'
+    end
+    member do
+      get 'alias'
+    end
+  end
+  
+  resources :connections do
+    collection do
+      post 'follow'
+      post 'addfriend'
+#      post 'invite'
+      put  'disconnect'
+      put  'respondtofriend'
+#      get  'friends'
+#      get  'following'
+#      get  'followers'
+#      get  'friendinvites'
+    end
+    member do
     end
   end
   

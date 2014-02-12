@@ -59,6 +59,11 @@ class User < ActiveRecord::Base
   def self.getprofile auth, userid
     select("*").from("getprofileforuser('#{auth}', #{userid})")     
   end
+  
+  # lookupcontact(mytoken text, contact text)
+  def self.lookupcontact auth, contact
+    select("*").from("lookupcontact('#{auth}', '#{contact}')")
+  end
 
   def self.find_from_facebook me
     where(:provider => 'facebook', :uid => me['id'].to_s).first || raise(ActiveRecord::RecordNotFound)

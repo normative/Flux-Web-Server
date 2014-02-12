@@ -28,7 +28,13 @@ class UsersController < ApplicationController
   # GET /users/1/avatar
   def avatar
     @user = User.find(params[:id])
-    send_file @user.avatar.path(params[:size]), disposition: :attachment
+    if (!@user.avatar.nil?)
+      send_file @user.avatar.path(params[:size]), disposition: :attachment
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
   end
   
   # PATCH/PUT /users/1
@@ -47,24 +53,75 @@ class UsersController < ApplicationController
     end
   end
 
+  # PATCH/PUT /users/updateapnstoken
+  # PATCH/PUT /users/updateapnstoken.json
+  def updateapnstoken
+    @user = User.find_by_authentication_token(params[:auth_token])
+    uph = {apns_device_token: params[:apns_token]}
+    respond_to do |format|
+      if @user.update_attributes(uph)
+        format.html { redirect_to @user, notice: 'User was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+    
+  # DELETE /users/1
+  # DELETE /users/1.json
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+
+    respond_to do |format|
+      format.json { head :no_content }
+    end
+  end
+
+  # POST /users/invite
+  # POST /users/invite.json
+  def invite
+#    logger.debug "Into Users#invite"
+    # Invite a social contact to join Flux
+
+    respond_to do |format|
+#      format.html { redirect_to users_url }
+      format.json { head :no_content }
+    end
+
+  end
+
+  
   def profile
-  #     def self.getprofile auth, userid
-  #       select("*").from("getprofileforuser('#{auth}', #{userid})")     
-  #     end
- #    @profile = User.getprofile(params[:auth_token], params[:id])
-   
-       # setup the query but don't execute yet...
-      query = ::User.getprofile(params[:auth_token], params[:id])
-       # This will issue a query, but only with the attributes we selected above.
-       # It also returns a simple Hash, which is significantly more efficient than a
-       # full blown ActiveRecord model.
-       results = ActiveRecord::Base.connection.select_all(query)
-       #=> [{"id" => 1, "member_since" => 2013-02-26 01:28:08 UTC}, etc...]    
-       render json: results
-#    render json: @user
+    # setup the query but don't execute yet...
+    query = ::User.getprofile(params[:auth_token], params[:id])
+    # This will issue a query, but only with the attributes we selected above.
+    # It also returns a simple Hash, which is significantly more efficient than a
+    # full blown ActiveRecord model.
+    results = ActiveRecord::Base.connection.select_all(query)
+    render json: results
+  end
+  
+  def lookupname
+#    by doing it this way, it assumes the user model and always adds an id:null field to each record
+#    contacts = User.lookupcontact(params[:auth_token], params[:contact])
+#    respond_to do |format|
+##      format.html  index.html.erb
+#      format.json { render json: contacts }
+#    end
+#
+#   conversely, this way does not add the extra column to the output.        
+    query = ::User.lookupcontact(params[:auth_token], params[:contact])
+    results = ActiveRecord::Base.connection.select_all(query)
+    respond_to do |format|
+#      format.html  index.html.erb
+      format.json { render json: results }
+    end
   end
   
   def user_params
-    params.require(:user).permit(:username, :name, :bio, :avatar)
+    params.require(:user).permit(:username, :name, :bio, :avatar, :apns_device_token)
   end
 end
