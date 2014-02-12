@@ -11,8 +11,8 @@ class ApnsClient
       return
     end
 
-    badgecount = Connection.select("id").where("connections_id=:connid AND friend_state=1", connid: targetuserid).size
-
+#    badgecount = Connection.select("id").where("connections_id=:connid AND friend_state=1", connid: targetuserid).size
+    badgecount = 0
     if (messagetype == 1) ||      # 1: new friend request
        (messagetype == 2)         # 2: friend request accepted
       senderuser = User.find(senderuserid)
