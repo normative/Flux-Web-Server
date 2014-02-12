@@ -53,11 +53,11 @@ class UsersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /users/1/updateapnstoken
-  # PATCH/PUT /users/1/updateapnstoken.json
+  # PATCH/PUT /users/updateapnstoken
+  # PATCH/PUT /users/updateapnstoken.json
   def updateapnstoken
-    @user = User.find(params[:id])
-    uph = {user: {apns_device_token: params[:apns_token]}}
+    @user = User.find_by_authentication_token(params[:auth_token])
+    uph = {apns_device_token: params[:apns_token]}
     respond_to do |format|
       if @user.update_attributes(uph)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }

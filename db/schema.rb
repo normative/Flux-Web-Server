@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140117195838) do
+ActiveRecord::Schema.define(version: 20140211165941) do
 
   create_table "aliases", force: true do |t|
     t.integer  "user_id"
@@ -41,8 +41,8 @@ ActiveRecord::Schema.define(version: 20140117195838) do
   create_table "connections", force: true do |t|
     t.integer  "user_id"
     t.integer  "connections_id"
-    t.integer  "connection_type"
-    t.integer  "state"
+    t.integer  "am_following"
+    t.integer  "friend_state"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -58,23 +58,23 @@ ActiveRecord::Schema.define(version: 20140117195838) do
   add_index "friends", ["user_id"], name: "index_friends_on_user_id", using: :btree
 
   create_table "images", force: true do |t|
-    t.float    "raw_latitude",                                  null: false
-    t.float    "raw_longitude",                                 null: false
-    t.float    "raw_altitude",                                  null: false
+    t.float    "raw_latitude",                                      null: false
+    t.float    "raw_longitude",                                     null: false
+    t.float    "raw_altitude",                                      null: false
     t.float    "best_latitude"
     t.float    "best_longitude"
     t.float    "best_altitude"
-    t.float    "raw_yaw",                                       null: false
-    t.float    "raw_pitch",                                     null: false
-    t.float    "raw_roll",                                      null: false
+    t.float    "raw_yaw",                                           null: false
+    t.float    "raw_pitch",                                         null: false
+    t.float    "raw_roll",                                          null: false
     t.float    "best_yaw"
     t.float    "best_pitch"
     t.float    "best_roll"
-    t.string   "description",         limit: 256
-    t.integer  "category_id",                                   null: false
-    t.integer  "user_id",                                       null: false
-    t.integer  "camera_id",                                     null: false
-    t.float    "heading",                         default: 0.0, null: false
+    t.string   "description",             limit: 256
+    t.integer  "category_id",                                       null: false
+    t.integer  "user_id",                                           null: false
+    t.integer  "camera_id",                                         null: false
+    t.float    "heading",                             default: 0.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "image_file_name"
@@ -90,10 +90,14 @@ ActiveRecord::Schema.define(version: 20140117195838) do
     t.float    "best_qx"
     t.float    "best_qy"
     t.float    "best_qz"
-    t.float    "horiz_accuracy",                  default: 0.0
-    t.float    "vert_accuracy",                   default: 0.0
-    t.float    "location_confidence",             default: 0.0
-    t.integer  "privacy",                         default: 0,   null: false
+    t.float    "horiz_accuracy",                      default: 0.0
+    t.float    "vert_accuracy",                       default: 0.0
+    t.float    "location_confidence",                 default: 0.0
+    t.integer  "privacy",                             default: 0,   null: false
+    t.string   "historical_file_name"
+    t.string   "historical_content_type"
+    t.integer  "historical_file_size"
+    t.datetime "historical_updated_at"
   end
 
   add_index "images", ["best_latitude"], name: "image_latitude_idx", using: :btree
@@ -140,6 +144,7 @@ ActiveRecord::Schema.define(version: 20140117195838) do
     t.string   "bio",                    limit: 256
     t.string   "provider"
     t.string   "uid"
+    t.string   "apns_device_token",      limit: 33
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
