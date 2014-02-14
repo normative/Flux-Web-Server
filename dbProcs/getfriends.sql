@@ -20,30 +20,42 @@ BEGIN
 	
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
-	AS (
+	AS 
+	(	(
 		SELECT	u.id AS id, 
  			u.username AS username,
 			((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic,
-			0 AS friend_state,
+			(c.friend_state + 1) AS friend_state,
 			0 AS am_follower, 
 			0 AS is_following
 		FROM	users u
-			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state = 2))
+			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state > 0))
+		)
+	UNION
+		(
+		SELECT	u.id AS id, 
+ 			u.username AS username,
+			((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic,
+			c.friend_state AS friend_state,
+			0 AS am_follower, 
+			0 AS is_following
+		FROM	users u
+			INNER JOIN connections c ON ((c.user_id = u.id) AND (c.connections_id = my_id) AND (c.friend_state = 1))
+		)
 	);
 
 	FOR r IN
 		SELECT DISTINCT(m.id) FROM mytable m
 	LOOP
 		UPDATE mytable SET am_follower = follow_state.i_follow, 
-				   is_following = follow_state.they_follow,
-				   friend_state = checkfriendstate(my_id, mytable.id)
+				   is_following = follow_state.they_follow
 		FROM checkfollowerstate(my_id, r.id) AS follow_state
 		WHERE mytable.id = r.id;
 	END LOOP;
 
 RETURN QUERY	
 	SELECT * FROM mytable m
-	ORDER BY m.username;
+	ORDER BY m.friend_state, m.username;
 	
 
 END;

@@ -11,9 +11,15 @@ DECLARE
 	otherstate integer;
 
 BEGIN
-	SELECT c.friend_state INTO mystate 
+	SELECT (c.friend_state + 1) INTO mystate 
 	FROM connections AS c
 	WHERE c.user_id = myid AND c.connections_id = theirid AND friend_state > 0;
+
+	IF ((mystate IS NULL) OR (mystate = 0)) THEN
+		SELECT c.friend_state INTO mystate 
+		FROM connections AS c
+		WHERE c.user_id = theirid AND c.connections_id = myid AND friend_state > 0;
+	END IF;
 
 	IF (mystate IS NULL) THEN
 		mystate := 0;
