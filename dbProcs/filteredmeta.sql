@@ -66,74 +66,69 @@ BEGIN
 		maxtime = 'infinity'::timestamp;
 	END IF;
 
-	CREATE TEMP TABLE imageset
+	CREATE TEMP TABLE imagesinbox
 	ON COMMIT DROP
-	AS 
-	(	(
-		-- my pics (all)
-		SELECT	i.id AS id
-		FROM	images i
-		WHERE	i.user_id = my_id
-		  AND	mypics = 1
-		)
-	UNION
-		(
-		-- friends - private and public
-		SELECT	i.id AS id 
-		FROM	images i
+	AS
+	(	
+		SELECT	i.id, 
+			i.privacy,
+			i.user_id,
+			u.username as username
+		FROM	(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
+			images i
 			INNER JOIN users u ON (i.user_id = u.id)
-			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state = 2))
-		WHERE	friendpics = 1
-		)
-	UNION
-		(
-		-- following - public only, not friends
-		SELECT	i.id AS id
-		FROM	images i
-			INNER JOIN users u on i.user_id = u.id
-			INNER JOIN connections c ON ((c.user_id = my_id)  AND (c.connections_id = u.id) 
-						 AND (c.am_following = 1) AND (c.friend_state < 2))
-		WHERE	i.privacy = 0
-		  AND	followingpics = 1
-		)
-	);
-
-RETURN QUERY
-	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.username as username, c.model as camera_model,
-				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
-				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
-				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
-	FROM	
-		(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
-		images i
-		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
-		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
-		LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
-		JOIN users u ON i.user_id = u.id
-	WHERE	(
-		-- base image set
-			((skipsocial) OR
-			 (i.id IN (SELECT ims.id FROM imageset ims))
-			)
-		AND
-		-- location
-			((skiploc) OR
+		WHERE	((skiploc) OR
 			 ((i.best_latitude > bb.minlat) AND (i.best_latitude < bb.maxlat) AND
 			 (i.best_longitude > bb.minlon) AND (i.best_longitude < bb.maxlon))
 			)
-		-- altitude
-		AND	(((minalt IS NULL) OR (i.best_altitude >= minalt))
+	);
+
+
+	CREATE TEMP TABLE imageset
+	ON COMMIT DROP
+	AS 
+	(
+		-- friends - private and public
+		SELECT	DISTINCT i.* 
+		FROM	imagesinbox i
+			INNER JOIN users u ON (i.user_id = u.id)
+			LEFT OUTER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id))
+		WHERE	-- my pics
+ 			(((mypics = 1) OR (skipsocial)) AND
+ 			 (i.user_id = my_id))
+ 		   OR	-- friend pics
+ 			(((friendpics = 1) OR (skipsocial)) AND
+ 			 (c.friend_state = 2))
+ 		   OR	-- following
+ 			(((followingpics = 1) OR (skipsocial)) AND
+ 			 ((c.am_following = 1) AND (c.friend_state < 2) AND (i.privacy = 0)))
+ 		   OR	-- everyone else
+			((skipsocial) AND (i.privacy = 0))
+	);
+
+RETURN QUERY
+	SELECT	i.id, i.time_stamp, i.user_id, i.description, ims.username as username, c.model as camera_model,
+				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
+				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
+				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
+	FROM	imageset ims
+		INNER JOIN images i ON (ims.id = i.id)
+		LEFT OUTER JOIN images_tags imt ON (i.id = imt.image_id)
+		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
+		LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
+	WHERE	(   -- altitude
+			(((minalt IS NULL) OR (i.best_altitude >= minalt))
 		    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
 			)
-		-- time
-		AND	(((mintime IS NULL) OR (i.time_stamp >= mintime))
+		AND -- time
+			(((mintime IS NULL) OR (i.time_stamp >= mintime))
 		    AND	 ((maxtime IS NULL) OR (i.time_stamp <= maxtime))
 			)
-		-- tags
-		 AND 	((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
-		-- users
-		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.id = ANY (userset)))
-		 )
+		AND -- tags
+			((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
+		AND -- users
+			((userarraylen IS NULL) OR (userarraylen = 0) OR (ims.user_id = ANY (userset)))
+		)
 	ORDER by i.time_stamp desc
 	LIMIT maxcount;
 

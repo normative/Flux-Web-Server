@@ -47,7 +47,7 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
-	skipsocial = NOT (mypics = 1) OR (friendpics = 1) OR (followingpics = 1);
+	skipsocial = NOT ((mypics = 1) OR (friendpics = 1) OR (followingpics = 1));
 
 	SELECT u.id INTO my_id 
 	FROM users AS u 
@@ -67,71 +67,64 @@ BEGIN
 		maxtime = 'infinity'::timestamp;
 	END IF;
 		
+	CREATE TEMP TABLE imagesinbox
+	ON COMMIT DROP
+	AS
+	(	
+		SELECT	i.id, 
+			i.privacy,
+			i.user_id
+		FROM	(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
+			images i
+			INNER JOIN users u ON (i.user_id = u.id)
+		WHERE	((skiploc) OR
+			 ((i.best_latitude > bb.minlat) AND (i.best_latitude < bb.maxlat) AND
+			 (i.best_longitude > bb.minlon) AND (i.best_longitude < bb.maxlon))
+			)
+	);
+
+
 	CREATE TEMP TABLE imageset
 	ON COMMIT DROP
 	AS 
-	(	(
-		-- my pics (all)
-		SELECT	i.id AS id
-		FROM	images i
-		WHERE	i.user_id = my_id
-		  AND	mypics = 1
-		)
-	UNION
-		(
+	(
 		-- friends - private and public
-		SELECT	i.id AS id 
-		FROM	images i
+		SELECT	DISTINCT i.* 
+		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
-			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state = 2))
-		WHERE	friendpics = 1
-		)
-	UNION
-		(
-		-- following - public only, not friends
-		SELECT	i.id AS id
-		FROM	images i
-			INNER JOIN users u on i.user_id = u.id
-			INNER JOIN connections c ON ((c.user_id = my_id)  AND (c.connections_id = u.id) 
-						 AND (c.am_following = 1) AND (c.friend_state < 2))
-		WHERE	i.privacy = 0
-		  AND	followingpics = 1
-		)
+			LEFT OUTER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id))
+		WHERE	-- my pics
+ 			(((mypics = 1) OR (skipsocial)) AND
+ 			 (i.user_id = my_id))
+ 		   OR	-- friend pics
+ 			(((friendpics = 1) OR (skipsocial)) AND
+ 			 (c.friend_state = 2))
+ 		   OR	-- following
+ 			(((followingpics = 1) OR (skipsocial)) AND
+ 			 ((c.am_following = 1) AND (c.friend_state < 2) AND (i.privacy = 0)))
+ 		   OR	-- everyone else
+			((skipsocial) AND (i.privacy = 0))
 	);
 
 RETURN QUERY	
 	SELECT	t.tagtext, count(imt.image_id) AS "count"
-	FROM	
-		(SELECT * FROM buildboundingbox(lat, lon, radius) FETCH FIRST 1 ROWS ONLY) as bb,
-		images i
+	FROM	imageset ims
+		INNER JOIN images i ON (ims.id = i.id)
 		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
-		JOIN users u ON i.user_id = u.id
-	WHERE	( 
-		-- base image set
-			((skipsocial) OR
-			 (i.id IN (SELECT ims.id FROM imageset ims))
-			)
-		AND
-		-- location
-			((skiploc) OR
-			 ((i.best_latitude > bb.minlat) AND (i.best_latitude < bb.maxlat) AND
-			 (i.best_longitude > bb.minlon) AND (i.best_longitude < bb.maxlon))
-			)
-		-- altitude
-		AND	(((minalt IS NULL) OR (i.best_altitude >= minalt))
+	WHERE	(   -- altitude
+			(((minalt IS NULL) OR (i.best_altitude >= minalt))
 		    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
 			)
-		-- time
---		AND	(i.time_stamp BETWEEN mintime AND maxtime)
-		AND	(((mintime IS NULL) OR (i.time_stamp >= mintime))
+		AND -- time
+			(((mintime IS NULL) OR (i.time_stamp >= mintime))
 		    AND	 ((maxtime IS NULL) OR (i.time_stamp <= maxtime))
 			)
-		-- tags
-		 AND 	(((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset))) AND (t.tagtext IS NOT NULL))
-		-- users
-		 AND 	((userarraylen IS NULL) OR (userarraylen = 0) OR (u.id = ANY (userset)))
-		 )
+		AND -- tags
+			((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
+		AND -- users
+			((userarraylen IS NULL) OR (userarraylen = 0) OR (ims.user_id = ANY (userset)))
+		)
 	GROUP BY t.tagtext
 	ORDER BY "count" DESC, MAX(i.time_stamp), t.tagtext
 	LIMIT maxcount;
