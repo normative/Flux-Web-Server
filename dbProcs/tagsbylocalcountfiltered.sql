@@ -20,6 +20,9 @@ CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(mytoken text,
 							mintime timestamp, maxtime timestamp,
 							taglist text,
 							userlist text,
+							mypics boolean,
+							friendpics boolean,
+							followingpics boolean,
 							maxcount integer
 						    )
 
