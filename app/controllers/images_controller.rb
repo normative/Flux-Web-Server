@@ -21,10 +21,26 @@ class ImagesController < ApplicationController
   #                     &userlist="user1 user2 user3...userN"
   #                     &catlist="cat1 cat2...catN"
   def filtered
+    mypics = params[:mypics]
+    if mypics.nil?
+      mypics = false;
+    end
+    
+    friendpics = params[:friendpics]
+    if friendpics.nil?
+      friendpics = false;
+    end
+    
+    followingpics = params[:followingpics]
+    if followingpics.nil?
+      followingpics = false;
+    end
+  
     @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:maxcount])
+                                params[:taglist], params[:userlist], 
+                                mypics, friendpics, followingpics, params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }
@@ -39,10 +55,26 @@ class ImagesController < ApplicationController
   #                     &catlist="cat1 cat2...catN"
   #                     &maxcount=...
   def filteredcontent
+    mypics = params[:mypics]
+    if mypics.nil?
+      mypics = false;
+    end
+    
+    friendpics = params[:friendpics]
+    if friendpics.nil?
+      friendpics = false;
+    end
+    
+    followingpics = params[:followingpics]
+    if followingpics.nil?
+      followingpics = false;
+    end
+  
     @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:maxcount])
+                                params[:taglist], params[:userlist], 
+                                mypics, friendpics, followingpics, params[:maxcount])
 
     respond_to do |format|
     #  format.html { render 'index' }

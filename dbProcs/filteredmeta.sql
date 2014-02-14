@@ -16,6 +16,9 @@ CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					mintime timestamp, maxtime timestamp,
 					taglist text,
 					userlist text,
+					mypics boolean,
+					friendpics boolean,
+					followingpics boolean,
 					maxcount integer
 					)
 RETURNS table (id bigint, time_stamp timestamp, user_id integer, description character varying, 
@@ -31,15 +34,18 @@ DECLARE
 	userset integer[];
 	userarraylen integer;
 
-	myid integer;
+	my_id integer;
 
 	skiploc boolean;
+	skipsocial boolean;
 
 BEGIN
 
 	skiploc = (radius <= 0);
 
-	SELECT u.id INTO myid 
+	skipsocial = NOT (mypics OR friendpics OR followingpics);
+
+	SELECT u.id INTO my_id 
 	FROM users AS u 
 	WHERE authentication_token = mytoken;
 
@@ -56,7 +62,38 @@ BEGIN
 	IF (maxtime IS NULL) THEN
 		maxtime = 'infinity'::timestamp;
 	END IF;
-		
+
+	CREATE TEMP TABLE imageset
+	ON COMMIT DROP
+	AS 
+	(	(
+		-- my pics (all)
+		SELECT	i.id AS id
+		FROM	images i
+		WHERE	i.user_id = my_id
+		  AND	mypics
+		)
+	UNION
+		(
+		-- friends - private and public
+		SELECT	i.id AS id 
+		FROM	images i
+			INNER JOIN users u ON (i.user_id = u.id)
+			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state = 2))
+		WHERE	friendpics
+		)
+	UNION
+		(
+		-- following - public only, not friends
+		SELECT	i.id AS id
+		FROM	images i
+			INNER JOIN users u on i.user_id = u.id
+			INNER JOIN connections c ON ((c.user_id = my_id)  AND (c.connections_id = u.id) 
+						 AND (c.am_following = 1) AND (c.friend_state < 2))
+		WHERE	i.privacy = 0
+		  AND	followingpics
+		)
+	);
 
 RETURN QUERY
 	SELECT	DISTINCT(i.id), i.time_stamp, i.user_id, i.description, u.username as username, c.model as camera_model,
@@ -70,7 +107,12 @@ RETURN QUERY
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
 		LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
 		JOIN users u ON i.user_id = u.id
-	WHERE	( 
+	WHERE	(
+		-- base image set
+			((skipsocial) OR
+			 (i.id IN (SELECT ims.id FROM imageset ims))
+			)
+		AND
 		-- location
 			((skiploc) OR
 			 ((i.best_latitude > bb.minlat) AND (i.best_latitude < bb.maxlat) AND

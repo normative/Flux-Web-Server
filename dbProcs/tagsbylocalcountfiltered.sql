@@ -1,15 +1,17 @@
 ﻿-- return the set of tags found in local imagery and return ranked in order of highest count
 
 /*
-DROP FUNCTION tagsbylocalcountfiltered(lat double precision, lon double precision, radius double precision,
-							minalt double precision, maxalt double precision,
-							mintime timestamp, maxtime timestamp,
-							taglist text,
-							userlist text,
-							catlist text,
-							maxcount integer
-						    )
-
+DROP FUNCTION tagsbylocalcountfiltered(mytoken text, 
+					lat double precision, lon double precision, radius double precision,
+					minalt double precision, maxalt double precision,
+					mintime timestamp, maxtime timestamp,
+					taglist text,
+					userlist text,
+					mypics boolean,
+					friendpics boolean,
+					followingpics boolean,
+					maxcount integer
+				      )
 */
 
 CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(mytoken text,
@@ -32,15 +34,19 @@ DECLARE
 	userset integer[];
 	userarraylen integer;
 	
-	myid integer;
+	my_id integer;
 	
 	skiploc boolean;
+	skipsocial boolean;
+
 
 BEGIN
 
 	skiploc = (radius <= 0);
 
-	SELECT u.id INTO myid 
+	skipsocial = NOT (mypics OR friendpics OR followingpics);
+
+	SELECT u.id INTO my_id 
 	FROM users AS u 
 	WHERE authentication_token = mytoken;
 
@@ -58,6 +64,37 @@ BEGIN
 		maxtime = 'infinity'::timestamp;
 	END IF;
 		
+	CREATE TEMP TABLE imageset
+	ON COMMIT DROP
+	AS 
+	(	(
+		-- my pics (all)
+		SELECT	i.id AS id
+		FROM	images i
+		WHERE	i.user_id = my_id
+		  AND	mypics
+		)
+	UNION
+		(
+		-- friends - private and public
+		SELECT	i.id AS id 
+		FROM	images i
+			INNER JOIN users u ON (i.user_id = u.id)
+			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state = 2))
+		WHERE	friendpics
+		)
+	UNION
+		(
+		-- following - public only, not friends
+		SELECT	i.id AS id
+		FROM	images i
+			INNER JOIN users u on i.user_id = u.id
+			INNER JOIN connections c ON ((c.user_id = my_id)  AND (c.connections_id = u.id) 
+						 AND (c.am_following = 1) AND (c.friend_state < 2))
+		WHERE	i.privacy = 0
+		  AND	followingpics
+		)
+	);
 
 RETURN QUERY	
 	SELECT	t.tagtext, count(imt.image_id) AS "count"
@@ -68,6 +105,11 @@ RETURN QUERY
 		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
 		JOIN users u ON i.user_id = u.id
 	WHERE	( 
+		-- base image set
+			((skipsocial) OR
+			 (i.id IN (SELECT ims.id FROM imageset ims))
+			)
+		AND
 		-- location
 			((skiploc) OR
 			 ((i.best_latitude > bb.minlat) AND (i.best_latitude < bb.maxlat) AND
