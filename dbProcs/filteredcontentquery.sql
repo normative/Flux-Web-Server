@@ -5,6 +5,9 @@ DROP FUNCTION filteredcontentquery(mytoken text,
 						mintime timestamp, maxtime timestamp,
 						taglist text,
 						userlist text,
+						mypics boolean,
+						friendpics boolean,
+						followingpics boolean,
 						maxcount integer
 						)
 */
@@ -18,9 +21,9 @@ CREATE OR REPLACE FUNCTION filteredcontentquery(mytoken text,
 						mintime timestamp, maxtime timestamp,
 						taglist text,
 						userlist text,
-						mypics boolean,
-						friendpics boolean,
-						followingpics boolean,
+						mypics integer,
+						friendpics integer,
+						followingpics integer,
 						maxcount integer
 						)
 RETURNS TABLE(id bigint, content_type integer, latitude double precision, longitude double precision, altitude double precision)
@@ -41,7 +44,7 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
-	skipsocial = NOT (mypics OR friendpics OR followingpics);
+	skipsocial = NOT (mypics = 1) OR (friendpics = 1) OR (followingpics = 1);
 
 	SELECT u.id INTO my_id 
 	FROM users AS u 
@@ -69,7 +72,7 @@ BEGIN
 		SELECT	i.id AS id
 		FROM	images i
 		WHERE	i.user_id = my_id
-		  AND	mypics
+		  AND	mypics = 1
 		)
 	UNION
 		(
@@ -78,7 +81,7 @@ BEGIN
 		FROM	images i
 			INNER JOIN users u ON (i.user_id = u.id)
 			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state = 2))
-		WHERE	friendpics
+		WHERE	friendpics = 1
 		)
 	UNION
 		(
@@ -89,7 +92,7 @@ BEGIN
 			INNER JOIN connections c ON ((c.user_id = my_id)  AND (c.connections_id = u.id) 
 						 AND (c.am_following = 1) AND (c.friend_state < 2))
 		WHERE	i.privacy = 0
-		  AND	followingpics
+		  AND	followingpics = 1
 		)
 	);
 

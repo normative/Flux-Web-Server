@@ -19,17 +19,17 @@ class TagsController < ApplicationController
   def localbycountfiltered
     mypics = params[:mypics]
     if mypics.nil?
-      mypics = false;
+      mypics = 0;
     end
     
     friendpics = params[:friendpics]
     if friendpics.nil?
-      friendpics = false;
+      friendpics = 0;
     end
     
     followingpics = params[:followingpics]
     if followingpics.nil?
-      followingpics = false;
+      followingpics = 0;
     end
   
     @tags = Tag.getlocalbycountfiltered(params[:auth_token], params[:lat], params[:long], params[:radius], 

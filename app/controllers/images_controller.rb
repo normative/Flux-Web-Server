@@ -23,17 +23,17 @@ class ImagesController < ApplicationController
   def filtered
     mypics = params[:mypics]
     if mypics.nil?
-      mypics = false;
+      mypics = 0;
     end
     
     friendpics = params[:friendpics]
     if friendpics.nil?
-      friendpics = false;
+      friendpics = 0;
     end
     
     followingpics = params[:followingpics]
     if followingpics.nil?
-      followingpics = false;
+      followingpics = 0;
     end
   
     @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
@@ -57,17 +57,17 @@ class ImagesController < ApplicationController
   def filteredcontent
     mypics = params[:mypics]
     if mypics.nil?
-      mypics = false;
+      mypics = 0;
     end
     
     friendpics = params[:friendpics]
     if friendpics.nil?
-      friendpics = false;
+      friendpics = 0;
     end
     
     followingpics = params[:followingpics]
     if followingpics.nil?
-      followingpics = false;
+      followingpics = 0;
     end
   
     @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
