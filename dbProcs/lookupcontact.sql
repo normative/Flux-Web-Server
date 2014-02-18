@@ -23,7 +23,7 @@ BEGIN
 	FROM users AS u 
 	WHERE authentication_token = mytoken;
 
-	searchstr := contact || '%';
+	searchstr := contact || '.*';
 
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
@@ -35,7 +35,7 @@ BEGIN
 			0 AS am_follower, 
 			0 AS is_following
 		FROM	users u
-		WHERE	(u.username LIKE searchstr)
+		WHERE	(u.username ~* searchstr)	-- case insensitive regex
 		  AND	u.id != my_id
 		
 		LIMIT 20
