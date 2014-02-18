@@ -110,8 +110,8 @@ RETURN QUERY
 	SELECT	t.tagtext, count(imt.image_id) AS "count"
 	FROM	imageset ims
 		INNER JOIN images i ON (ims.id = i.id)
-		LEFT OUTER JOIN images_tags imt ON i.id = imt.image_id
-		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
+		INNER JOIN images_tags imt ON i.id = imt.image_id
+		INNER JOIN tags t ON (imt.tag_id = t.id)
 	WHERE	(   -- altitude
 			(((minalt IS NULL) OR (i.best_altitude >= minalt))
 		    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
