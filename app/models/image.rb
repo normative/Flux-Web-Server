@@ -97,6 +97,10 @@ class Image < ActiveRecord::Base
     select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics}, #{maxcount})") 
   end
 
+  def self.filteredimgcounts myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics
+    select("*").from("filteredimgcounts('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics})") 
+  end
+
   def to_s; image.original_filename; end
 
   # still used for nuke

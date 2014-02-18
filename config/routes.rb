@@ -28,6 +28,7 @@ Web::Application.routes.draw do
     collection do
       get 'filtered'  # more comprehensive filtering of queries
       get 'filteredcontent' # filtered but returning only lat, lon, alt, imageid, type
+      get 'filteredimgcounts'      # returns total image count, count of my images, count of friends images and count of following images 
       get 'getimagelistforuser'    # returns list of [id, description] pairs, ordered by time_stamp [DESC] with the given userid
       get 'nuke'
 #      get 'filteredmeta'  # set of (base metadata based on filtered image set)
