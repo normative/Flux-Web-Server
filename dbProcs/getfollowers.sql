@@ -32,7 +32,7 @@ BEGIN
 				0 AS am_follower, 
 				0 AS is_following
 			FROM	users u
-				INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.am_following <> 0))
+				INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.am_following <> 0) AND (c.friend_state < 2))
 		);
 	ELSE
 		CREATE TEMP TABLE mytable
@@ -45,7 +45,7 @@ BEGIN
 				0 AS am_follower, 
 				0 AS is_following
 			FROM	users u
-				INNER JOIN connections c ON ((c.user_id = u.id) AND (c.connections_id = my_id) AND (c.am_following <> 0))
+				INNER JOIN connections c ON ((c.user_id = u.id) AND (c.connections_id = my_id) AND (c.am_following <> 0) AND (c.friend_state < 2))
 		);
 	END IF;
 
