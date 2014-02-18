@@ -10,7 +10,6 @@ Headers: Content-Type: application/json
 
 CREATE OR REPLACE FUNCTION lookupcontact(mytoken text, contact text)
 
---RETURNS TABLE(id integer, username varchar, alias_name varchar, friend_state integer, am_follower integer, is_following integer)
 RETURNS TABLE(id integer, username varchar, friend_state integer, am_follower integer, is_following integer)
 AS $$
 DECLARE
@@ -23,14 +22,13 @@ BEGIN
 	FROM users AS u 
 	WHERE authentication_token = mytoken;
 
-	searchstr := contact || '.*';
+	searchstr := '^' || contact || '.*';
 
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
 	AS (
 		SELECT	u.id AS id, 
 			u.username AS username, 
---			u.name AS alias_name, 
 			0 AS friend_state, 
 			0 AS am_follower, 
 			0 AS is_following
