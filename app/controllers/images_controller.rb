@@ -57,17 +57,17 @@ class ImagesController < ApplicationController
   def filteredcontent
     mypics = params[:mypics]
     if mypics.nil?
-      mypics = 0;
+      mypics = 0
     end
     
     friendpics = params[:friendpics]
     if friendpics.nil?
-      friendpics = 0;
+      friendpics = 0
     end
     
     followingpics = params[:followingpics]
     if followingpics.nil?
-      followingpics = 0;
+      followingpics = 0
     end
   
     @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
