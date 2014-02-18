@@ -29,7 +29,7 @@ BEGIN
 			0 AS am_follower, 
 			0 AS is_following
 		FROM	users u
-			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state > 0))
+			INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.friend_state > 1))
 		)
 	UNION
 		(
