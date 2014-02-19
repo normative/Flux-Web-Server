@@ -72,6 +72,7 @@ Web::Application.routes.draw do
   resources :aliases do
     collection do
       get 'importcontacts'
+      get 'foruser'
     end
     member do
       get 'alias'

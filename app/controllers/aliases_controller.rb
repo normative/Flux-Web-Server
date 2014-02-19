@@ -77,6 +77,17 @@ class AliasesController < ApplicationController
     end
   end
 
+  # GET /aliases/foruser?auth_token=
+  def foruser
+    user = User.find_by_authentication_token(params[:auth_token])
+    @aliases = Alias.where(user_id: user[:id])
+      
+    respond_to do |format|
+#      format.html # show.html.erb
+      format.json { render json: @aliases }
+    end
+  end
+  
   # POST /aliases
   # POST /aliases.json
   def create
@@ -86,7 +97,7 @@ class AliasesController < ApplicationController
     ap = alias_params
     ap[:user_id] = user[:id]
     
-    @alias = Alias.new(ap)
+    @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
 
     respond_to do |format|
       if @alias.save
