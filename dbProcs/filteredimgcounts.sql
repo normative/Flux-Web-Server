@@ -110,14 +110,12 @@ BEGIN
 	ON COMMIT DROP
 	AS 
 	(
---		SELECT	DISTINCT i.id, i.user_id, conn.am_following, conn.friend_state
 		SELECT	DISTINCT i.id, i.user_id, ims.am_following, ims.friend_state
 		FROM	imageset ims
 			INNER JOIN images i ON (ims.id = i.id)
 			LEFT OUTER JOIN images_tags imt ON (i.id = imt.image_id)
 			LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
 			LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
---			LEFT OUTER JOIN connections conn ON ((conn.user_id = my_id) AND (conn.connections_id = ims.user_id))
 		WHERE	(   -- altitude
 				(((minalt IS NULL) OR (i.best_altitude >= minalt))
 			    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
