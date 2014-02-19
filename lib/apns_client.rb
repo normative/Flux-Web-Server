@@ -21,9 +21,9 @@ class ApnsClient
       end
 
       if (messagetype == 1)
-        alertstr = "@%s has invited you to be a friend in Flux!" % [senderuser.username]
+        alertstr = "@%s sent you a friend request!" % [senderuser.username]
       else                        
-        alertstr = "@%s is now your friend in Flux!" % [senderuser.username]
+        alertstr = "@%s is now your friend!" % [senderuser.username]
       end
 
       packet = {alert: alertstr, badge: badgecount, sound: "default"}

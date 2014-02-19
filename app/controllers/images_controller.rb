@@ -21,10 +21,26 @@ class ImagesController < ApplicationController
   #                     &userlist="user1 user2 user3...userN"
   #                     &catlist="cat1 cat2...catN"
   def filtered
+    mypics = params[:mypics]
+    if mypics.nil?
+      mypics = 0;
+    end
+    
+    friendpics = params[:friendpics]
+    if friendpics.nil?
+      friendpics = 0;
+    end
+    
+    followingpics = params[:followingpics]
+    if followingpics.nil?
+      followingpics = 0;
+    end
+  
     @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:maxcount])
+                                params[:taglist], params[:userlist], 
+                                mypics, friendpics, followingpics, params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }
@@ -39,10 +55,26 @@ class ImagesController < ApplicationController
   #                     &catlist="cat1 cat2...catN"
   #                     &maxcount=...
   def filteredcontent
+    mypics = params[:mypics]
+    if mypics.nil?
+      mypics = 0
+    end
+    
+    friendpics = params[:friendpics]
+    if friendpics.nil?
+      friendpics = 0
+    end
+    
+    followingpics = params[:followingpics]
+    if followingpics.nil?
+      followingpics = 0
+    end
+  
     @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], params[:maxcount])
+                                params[:taglist], params[:userlist], 
+                                mypics, friendpics, followingpics, params[:maxcount])
 
     respond_to do |format|
     #  format.html { render 'index' }
@@ -59,6 +91,39 @@ class ImagesController < ApplicationController
       format.html { render 'index' }
       format.json { render json: @images }
     end
+  end
+  
+  # GET /images/filteredimgcounts?lat=...&long=...&radius=...&minalt=...&maxalt=...
+  #                     &mintime=...&maxtime=...
+  #                     &taglist="tag1 tag2 tag3...tagN"
+  #                     &userlist="user1 user2 user3...userN"
+  #                     &auth_token=...
+  def filteredimgcounts
+    mypics = params[:mypics]
+    if mypics.nil?
+      mypics = 0
+    end
+    
+    friendpics = params[:friendpics]
+    if friendpics.nil?
+      friendpics = 0
+    end
+    
+    followingpics = params[:followingpics]
+    if followingpics.nil?
+      followingpics = 0
+    end
+  
+    query = ::Image.filteredimgcounts(params[:auth_token], params[:lat], params[:long], params[:radius], 
+                                params[:altmin], params[:altmax], 
+                                params[:timemin], params[:timemax], 
+                                params[:taglist], params[:userlist], 
+                                mypics, friendpics, followingpics)
+    # This will issue a query, but only with the attributes we selected above.
+    # It also returns a simple Hash, which is significantly more efficient than a
+    # full blown ActiveRecord model.
+    results = ActiveRecord::Base.connection.select_all(query)
+    render json: results
   end
   
   

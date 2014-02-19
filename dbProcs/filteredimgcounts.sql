@@ -1,6 +1,6 @@
 ﻿
 /*
-DROP FUNCTION filteredmeta(mytoken text,
+DROP FUNCTION filteredimgcounts(mytoken text,
 					lat double precision, lon double precision, radius double precision, 
 					minalt double precision, maxalt double precision,
 					mintime timestamp, maxtime timestamp,
@@ -8,12 +8,11 @@ DROP FUNCTION filteredmeta(mytoken text,
 					userlist text,
 					mypics integer,
 					friendpics integer,
-					followingpics integer,
-					maxcount integer
+					followingpics integer
 					)
 */
 
-CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
+CREATE OR REPLACE FUNCTION filteredimgcounts(mytoken text,
 					lat double precision, lon double precision, radius double precision, 
 					minalt double precision, maxalt double precision,
 					mintime timestamp, maxtime timestamp,
@@ -21,14 +20,9 @@ CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					userlist text,
 					mypics integer,
 					friendpics integer,
-					followingpics integer,
-					maxcount integer
+					followingpics integer
 					)
-RETURNS table (id bigint, time_stamp timestamp, user_id integer, description character varying, 
-			username character varying, camera_model character varying,
-			latitude double precision, longitude double precision, altitude double precision, 
-			heading double precision, yaw double precision, pitch double precision, roll double precision,
-			qw double precision, qx double precision, qy double precision, qz double precision)
+RETURNS table (totalimgcount integer, myimgcount integer, friendimgcount integer, followingimgcount integer)
 AS $$
 DECLARE
 	tagset text[];
@@ -41,6 +35,11 @@ DECLARE
 
 	skiploc boolean;
 	skipsocial boolean;
+
+	totalimgcount integer;
+	myimgcount integer;
+	friendimgcount integer;
+	followingimgcount integer;
 
 BEGIN
 
@@ -88,8 +87,9 @@ BEGIN
 	ON COMMIT DROP
 	AS 
 	(
-		-- friends - private and public
-		SELECT	DISTINCT i.* 
+		SELECT	DISTINCT i.*, 
+				c.am_following as am_following, 
+				c.friend_state as friend_state 
 		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
 			LEFT OUTER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id))
@@ -106,31 +106,53 @@ BEGIN
 			((skipsocial) AND (i.privacy = 0))
 	);
 
-RETURN QUERY
-	SELECT	i.id, i.time_stamp, i.user_id, i.description, ims.username as username, c.model as camera_model,
-				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
-				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
-				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
-	FROM	imageset ims
-		INNER JOIN images i ON (ims.id = i.id)
-		LEFT OUTER JOIN images_tags imt ON (i.id = imt.image_id)
-		LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
-		LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
-	WHERE	(   -- altitude
-			(((minalt IS NULL) OR (i.best_altitude >= minalt))
-		    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
+	CREATE TEMP TABLE filteredimageset
+	ON COMMIT DROP
+	AS 
+	(
+		SELECT	DISTINCT i.id, i.user_id, ims.am_following, ims.friend_state
+		FROM	imageset ims
+			INNER JOIN images i ON (ims.id = i.id)
+			LEFT OUTER JOIN images_tags imt ON (i.id = imt.image_id)
+			LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
+			LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
+		WHERE	(   -- altitude
+				(((minalt IS NULL) OR (i.best_altitude >= minalt))
+			    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
+				)
+			AND -- time
+				(((mintime IS NULL) OR (i.time_stamp >= mintime))
+			    AND	 ((maxtime IS NULL) OR (i.time_stamp <= maxtime))
+				)
+			AND -- tags
+				((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
+			AND -- users
+				((userarraylen IS NULL) OR (userarraylen = 0) OR (ims.user_id = ANY (userset)))
 			)
-		AND -- time
-			(((mintime IS NULL) OR (i.time_stamp >= mintime))
-		    AND	 ((maxtime IS NULL) OR (i.time_stamp <= maxtime))
-			)
-		AND -- tags
-			((tagarraylen IS NULL) OR (tagarraylen = 0) OR (t.tagtext = ANY (tagset)))
-		AND -- users
-			((userarraylen IS NULL) OR (userarraylen = 0) OR (ims.user_id = ANY (userset)))
-		)
-	ORDER by i.time_stamp desc
-	LIMIT maxcount;
+	);
 
+	SELECT COUNT(fis.id) INTO totalimgcount 
+	FROM filteredimageset AS fis;
+	
+	SELECT COUNT(fis.id) INTO myimgcount 
+	FROM filteredimageset AS fis 
+	WHERE fis.user_id = my_id;
+
+	SELECT COUNT(fis.id) INTO friendimgcount 
+	FROM filteredimageset AS fis 
+	WHERE (fis.friend_state = 2)
+	  AND (fis.user_id != my_id);
+
+	SELECT COUNT(fis.id) INTO followingimgcount 
+	FROM filteredimageset AS fis 
+	WHERE (fis.am_following != 0)
+	  AND (fis.friend_state < 2)
+	  AND (fis.user_id != my_id);
+
+RETURN QUERY
+	SELECT	totalimgcount, 
+		myimgcount, 
+		friendimgcount, 
+		followingimgcount;
 END;
 $$ LANGUAGE plpgsql;

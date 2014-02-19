@@ -85,16 +85,20 @@ class Image < ActiveRecord::Base
   def qz= qz; self.raw_qz = self.best_qz = qz; end
 
   def self.filtered myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist
-    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, 100)") 
+    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, 0, 0, 0, 100)") 
   end
 
-  def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, maxcount
+  def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics, maxcount
  #   select("*").from(      "filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})")
-    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{maxcount})") 
+    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics}, #{maxcount})") 
   end
 
-  def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, maxcount
-    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{maxcount})") 
+  def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics, maxcount
+    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics}, #{maxcount})") 
+  end
+
+  def self.filteredimgcounts myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics
+    select("*").from("filteredimgcounts('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics})") 
   end
 
   def to_s; image.original_filename; end
