@@ -15,6 +15,8 @@ class Users::SessionsController < Devise::SessionsController
       self.resource = warden.authenticate!(auth_options)
     end
     sign_in resource_name, resource, store: false
+    resource.last_sign_in_at = Time.now
+    resource.sign_in_count += 1
     resource.save!
     render json: {
       auth_token: resource.authentication_token, id: resource.id, email: resource.email, username: resource.username
