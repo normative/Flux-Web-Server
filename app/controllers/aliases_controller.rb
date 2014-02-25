@@ -30,14 +30,17 @@ class AliasesController < ApplicationController
   def importcontacts
     # setup the query but don't execute yet...
     
-    contacts = ::TwitterClient.getfriendsbytoken params
-    contacts = contacts.sort{|x, y| x.name <=> y.name}
+    contacts = ::TwitterClient.get_friends_by_token params
+    contacts = contacts.sort{|x, y| x.username <=> y.username}
     contactlist = String.new
     contacts.each do |c|
-      contactlist << c.name << ','
+      contactlist << c.username << ','
+#      if (c.profile_image_uri?)
+#        uri = c.profile_image_uri.to_s
+#      end
     end 
     contactlist.chomp!(',') # remove last ',' if exists
-    
+       
     query = ::Alias.checkcontacts(params[:auth_token], contactlist, params[:serviceid], params[:maxcount])
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
@@ -50,7 +53,7 @@ class AliasesController < ApplicationController
     lastid = -1
     results.rows.each do |r|
       if r[0] != lastid
-      uniqresults << r
+        uniqresults << r
         lastid = r[0]
       end
     end
@@ -58,17 +61,34 @@ class AliasesController < ApplicationController
     # now merge two lists based on alias_name and add the profile image URL into the hash...
     uniqresults = uniqresults.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
     c_idx = 0   
+    newrows = Array.new
     uniqresults.rows.each do |r|
-      if r[:alias_name] == contacts[c_idx].name
-        r[:image_url] = contacts[c_idx].default_profile_image
+      if (r[:alias_name] == contacts[c_idx].username)
+        if (contacts[c_idx].profile_image_uri?)
+          r[:profile_pic_URL] = contacts[c_idx].c.profile_image_uri.to_s
+        else
+          r[:profile_pic_URL] = ''
+        end
+        r[:display_name] = contacts[c_idx].name    
       end
+      
       while (contacts[c_idx].name <= r[:alias_name]) && (c_idx < contacts.size) do
+        if (contacts[c_idx].name != r[:alias_name])
+          # add rows to something to add into r later...
+          nr = {alias_name: contacts[c_idx].username, profile_pic_URL: contacts[c_idx].c.profile_image_uri.to_s,
+                  display_name: contacts[c_idx].name,
+                  user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+          newrows << nr
+        end
         c_idx = c_idx + 1
       end
     end
 
-    # sort by flux username
-    uniqresults = uniqresults.sort{|x, y| x[:username] <=> y[:username]}
+    # add in the new rows...
+    uniqresults = uniqresults + newrows
+    
+    # sort by alias_name
+    uniqresults = uniqresults.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
                       
     respond_to do |format|
 #      format.html # show.html.erb
