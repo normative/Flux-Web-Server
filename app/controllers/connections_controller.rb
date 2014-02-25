@@ -196,8 +196,8 @@ class ConnectionsController < ApplicationController
         if (!@connection.nil?)
           if (@connection.friend_state != 2)
             @connection.update_attributes(cp)
-            logger.debug("Send friend accepted to me")
-            ApnsClient.sendmessage(@connection.connections_id, @connection.user_id, 2)
+#            logger.debug("Send friend accepted to me")
+#            ApnsClient.sendmessage(@connection.connections_id, @connection.user_id, 2)
           end
         end
 
@@ -303,6 +303,14 @@ class ConnectionsController < ApplicationController
                                       userid: connection_params[:user_id], 
                                       connid: connection_params[:connections_id]).first
 
+    if (@connection.nil?)
+      respond_to do |format|
+#       format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
+        format.json { head :no_content }
+      end
+      return
+    end
+                                                
     ct = connection_params[:connection_type].to_i
     if (ct.nil?)
       ct = 3
