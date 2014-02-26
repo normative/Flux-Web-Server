@@ -29,19 +29,46 @@ class AliasesController < ApplicationController
   # GET /aliases/importcontacts.json?serviceid=[1|2|3]&access_token=...&access_token_secret=...&maxcount=...&auth_token=...
   def importcontacts
     # setup the query but don't execute yet...
-    
-    contacts = ::TwitterClient.get_friends_by_token params
-    contacts = contacts.sort{|x, y| x.username <=> y.username}
+    logger.debug "Into Alias#importcontacts"
+        
     contactlist = String.new
-    contacts.each do |c|
-      contactlist << c.username << ','
-#      if (c.profile_image_uri?)
-#        uri = c.profile_image_uri.to_s
-#      end
-    end 
-    contactlist.chomp!(',') # remove last ',' if exists
+    contacts = Array.new
+    
+    service_id = params[:serviceid].to_i
+
+    if (service_id == 1)
+      # email contacts...
+      logger.debug "service id = 1 (email contacts)"
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+      return
+    elsif (service_id == 2)
+      # Twitter..
+      logger.debug "service id = 2 (twitter contacts)"
+      contacts = ::TwitterClient.get_friends_by_token params
+      contacts = contacts.sort{|x, y| x.username <=> y.username}
+      contacts.each do |c|
+        contactlist << c.username << ','
+      end 
+      contactlist.chomp!(',') # remove last ',' if exists
+    elsif (service_id == 3)
+      # Facebook...
+      logger.debug "service id = 3 (Facebook contacts)"
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+      return
+    else
+      # unknown - fail...
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+      return
+    end
+    
        
-    query = ::Alias.checkcontacts(params[:auth_token], contactlist, params[:serviceid], 0)
+    query = ::Alias.checkcontacts(params[:auth_token], contactlist, service_id, 0)
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
@@ -65,29 +92,42 @@ class AliasesController < ApplicationController
     c_idx = 0   
     newrows = Array.new
     if (uniqresults.size > 0)
-    uniqresults.rows.each do |r|
-      if (r[:alias_name] == contacts[c_idx].username)
-        if (contacts[c_idx].profile_image_uri?)
-          r[:profile_pic_URL] = contacts[c_idx].c.profile_image_uri.to_s
-        else
-          r[:profile_pic_URL] = ''
+      uniqresults.rows.each do |r|
+        if (service_id == 1)
+          # email contacts...
+        elsif (service_id == 2)
+          # Twitter contacts...
+          if (r[:alias_name] == contacts[c_idx].username)
+            if (contacts[c_idx].profile_image_uri?)
+              r[:profile_pic_URL] = contacts[c_idx].profile_image_uri.to_s
+            else
+              r[:profile_pic_URL] = ''
+            end
+            r[:display_name] = contacts[c_idx].name    
+          end
+          
+          while (contacts[c_idx].username <= r[:alias_name]) && (c_idx < contacts.size) do
+            if (contacts[c_idx].username != r[:alias_name])
+              # add rows to something to add into r later...
+              nr = {alias_name: contacts[c_idx].username, profile_pic_URL: contacts[c_idx].profile_image_uri.to_s,
+                      display_name: contacts[c_idx].name,
+                      user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+              newrows << nr
+            end
+            c_idx = c_idx + 1
+          end
+        elsif (service_id == 3)
+          # Facebook
         end
-        r[:display_name] = contacts[c_idx].name    
       end
-      
-      while (contacts[c_idx].name <= r[:alias_name]) && (c_idx < contacts.size) do
-        if (contacts[c_idx].name != r[:alias_name])
-          # add rows to something to add into r later...
-          nr = {alias_name: contacts[c_idx].username, profile_pic_URL: contacts[c_idx].c.profile_image_uri.to_s,
-                  display_name: contacts[c_idx].name,
+    elsif (contacts.size > 0)
+      contacts.each do |c|
+        nr = {alias_name: c.username, profile_pic_URL: c.profile_image_uri.to_s,
+                  display_name: c.name,
                   user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
-          newrows << nr
-        end
-        c_idx = c_idx + 1
+        newrows << nr
       end
     end
-else
-  
 
     # add in the new rows...
     uniqresults = uniqresults + newrows
