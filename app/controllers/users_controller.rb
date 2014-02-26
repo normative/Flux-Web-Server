@@ -28,8 +28,11 @@ class UsersController < ApplicationController
   # GET /users/1/avatar
   def avatar
     @user = User.find(params[:id])
-    if (!@user.avatar.nil?)
-      send_file @user.avatar.path(params[:size]), disposition: :attachment
+      
+#    if (!@user.avatar.nil?)
+    path = @user.avatar.path(params[:size])
+     if (!path.nil?)
+      send_file path, disposition: :attachment
     else
       respond_to do |format|
         format.json { head :no_content }
