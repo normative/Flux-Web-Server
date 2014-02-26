@@ -41,7 +41,7 @@ class AliasesController < ApplicationController
     end 
     contactlist.chomp!(',') # remove last ',' if exists
        
-    query = ::Alias.checkcontacts(params[:auth_token], contactlist, params[:serviceid], params[:maxcount])
+    query = ::Alias.checkcontacts(params[:auth_token], contactlist, params[:serviceid], 0)
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
@@ -51,10 +51,12 @@ class AliasesController < ApplicationController
     # filter out duplicate flux user ids - pick only the first since it doesn't really matter which...
     uniqresults = Array.new
     lastid = -1
-    results.rows.each do |r|
-      if r[0] != lastid
-        uniqresults << r
-        lastid = r[0]
+    if (results.size > 0)
+      results.rows.each do |r|
+        if r[0] != lastid
+          uniqresults << r
+          lastid = r[0]
+        end
       end
     end
 
@@ -62,6 +64,7 @@ class AliasesController < ApplicationController
     uniqresults = uniqresults.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
     c_idx = 0   
     newrows = Array.new
+    if (uniqresults.size > 0)
     uniqresults.rows.each do |r|
       if (r[:alias_name] == contacts[c_idx].username)
         if (contacts[c_idx].profile_image_uri?)
@@ -83,6 +86,8 @@ class AliasesController < ApplicationController
         c_idx = c_idx + 1
       end
     end
+else
+  
 
     # add in the new rows...
     uniqresults = uniqresults + newrows
