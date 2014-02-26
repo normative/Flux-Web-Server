@@ -35,7 +35,10 @@ class UsersController < ApplicationController
       send_file path, disposition: :attachment
     else
       respond_to do |format|
-        format.json { head :no_content }
+        # should be no_content but earlier versions of the app will fail if a 200-level response is given with no image
+        # force a 500 for now until the apps have been updated
+#        format.json { head :no_content }
+        format.json { head :internal_server_error }
       end
     end
   end
