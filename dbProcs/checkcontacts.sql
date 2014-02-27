@@ -26,8 +26,8 @@ BEGIN
 	FROM users AS u 
 	WHERE authentication_token = mytoken;
 
-	contactset = string_to_array(trim(both ' ' from contactlist), ' ');
-	contactarraylen = array_length(contactset, 1);
+	contactset := string_to_array(trim(both ' ' from contactlist), ',');
+	contactarraylen := array_length(contactset, 1);
 
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
@@ -49,7 +49,7 @@ BEGIN
 	LOOP
 		UPDATE mytable SET am_follower = fs.i_follow, is_following = fs.they_follow, friend_state = checkfriendstate(my_id, r.user_id)
 		FROM checkfollowerstate(my_id, r.user_id) AS fs
-		WHERE mytable.id = r.user_id;
+		WHERE mytable.user_id = r.user_id;
 	END LOOP;
 	
 RETURN QUERY	
