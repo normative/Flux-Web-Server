@@ -117,8 +117,8 @@ BEGIN
 			LEFT OUTER JOIN tags t ON (imt.tag_id = t.id)
 			LEFT OUTER JOIN cameras c ON (i.camera_id = c.id)
 		WHERE	(   -- altitude
-				(((minalt IS NULL) OR (i.best_altitude >= minalt))
-			    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
+				(((minalt IS NULL) OR ((i.best_altitude + i.vert_accuracy) >= minalt))
+			    AND	 ((maxalt IS NULL) OR ((i.best_altitude - i.vert_accuracy) <= maxalt))
 				)
 			AND -- time
 				(((mintime IS NULL) OR (i.time_stamp >= mintime))

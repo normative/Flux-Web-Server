@@ -113,8 +113,8 @@ RETURN QUERY
 		INNER JOIN images_tags imt ON i.id = imt.image_id
 		INNER JOIN tags t ON (imt.tag_id = t.id)
 	WHERE	(   -- altitude
-			(((minalt IS NULL) OR (i.best_altitude >= minalt))
-		    AND	 ((maxalt IS NULL) OR (i.best_altitude <= maxalt))
+			(((minalt IS NULL) OR ((i.best_altitude + i.vert_accuracy) >= minalt))
+		    AND	 ((maxalt IS NULL) OR ((i.best_altitude - i.vert_accuracy) <= maxalt))
 			)
 		AND -- time
 			(((mintime IS NULL) OR (i.time_stamp >= mintime))
