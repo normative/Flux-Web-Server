@@ -1,3 +1,5 @@
+require 'facebook_client'
+
 class AliasesController < ApplicationController
   before_filter :authenticate_user_from_token!
   before_filter :authenticate_user!
@@ -55,10 +57,12 @@ class AliasesController < ApplicationController
     elsif (service_id == 3)
       # Facebook...
       logger.debug "service id = 3 (Facebook contacts)"
-      respond_to do |format|
-        format.json { head :no_content }
-      end
-      return
+      contacts = ::FacebookClient.get_friends_by_token params
+      contacts = contacts.sort{|x, y| x.username <=> y.username}
+      contacts.each do |c|
+        contactlist << c.username << ','
+      end 
+      contactlist.chomp!(',') # remove last ',' if exists
     else
       # unknown - fail...
       respond_to do |format|
@@ -90,21 +94,27 @@ class AliasesController < ApplicationController
     # now merge two lists based on alias_name and add the profile image URL into the hash...
     uniqresults = uniqresults.sort{|x, y| x["alias_name"].to_s <=> y["alias_name"].to_s}
     c_idx = 0   
-    newrows = Array.new
+    contactrows = Array.new
+    fluxrows = Array.new
+
     if (uniqresults.size > 0)
       uniqresults.each do |r|
         if (service_id == 1)
           # email contacts...
-        elsif (service_id == 2)
-          # Twitter contacts...
+        elsif ((service_id == 2) || (service_id == 3))
+          # Twitter and Facebook contacts...
+          piu = String.new
           while (c_idx < contacts.size) && (contacts[c_idx].username.to_s < r["alias_name"].to_s)  do
-            if (contacts[c_idx].username != r["alias_name"])
-              # add rows to something to add into r later...
-              nr = {alias_name: contacts[c_idx].username, profile_pic_URL: contacts[c_idx].profile_image_uri.to_s,
-                      display_name: contacts[c_idx].name,
-                      user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
-              newrows << nr
+            # add rows to something to add into r later...
+            if (service_id == 2)
+              piu = contacts[c_idx].profile_image_uri.to_s
+            elsif (service_id ==3)
+              piu = 'http://graph.facebook.com/' + contacts[c_idx].identifier + '/picture?type=small'
             end
+            nr = {alias_name: contacts[c_idx].username, profile_pic_URL: piu,
+                    display_name: contacts[c_idx].name,
+                    user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+            contactrows << nr
             c_idx = c_idx + 1
           end
 
@@ -114,47 +124,54 @@ class AliasesController < ApplicationController
                     profile_pic_URL: '',
                     user_id: r["user_id"], username: r["username"], 
                     am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
-            if (contacts[c_idx].profile_image_uri?)
+            if ((service_id == 2) && (contacts[c_idx].profile_image_uri?))
               nr[:profile_pic_URL] = contacts[c_idx].profile_image_uri.to_s
+            else
+              nr[:profile_pic_URL] = 'http://graph.facebook.com/' + contacts[c_idx].identifier + '/picture?type=small'
             end
-            newrows << nr
+            fluxrows << nr
             c_idx = c_idx + 1
           end
-          
-        elsif (service_id == 3)
-          # Facebook
         end
       end
       
       # now do the rest in the contacts list...
       if (service_id == 1)
         # email contacts...
-      elsif (service_id == 2)
-        # Twitter contacts...
+      elsif ((service_id == 2) || (service_id == 3))
+        # Twitter & Facebook contacts...
+        piu = String.new
         while (c_idx < contacts.size)  do
           # add rows to something to add into r later...
-          nr = {alias_name: contacts[c_idx].username, profile_pic_URL: contacts[c_idx].profile_image_uri.to_s,
+          if (service_id == 2)
+            piu = contacts[c_idx].profile_image_uri.to_s
+          elsif (service_id ==3)
+            piu = 'http://graph.facebook.com/' + contacts[c_idx].identifier + '/picture?type=small'
+          end
+          nr = {alias_name: contacts[c_idx].username, profile_pic_URL: piu,
                   display_name: contacts[c_idx].name,
                   user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
-          newrows << nr
+          contactrows << nr
           c_idx = c_idx + 1
         end
       end      
       
     elsif (contacts.size > 0)
       contacts.each do |c|
-        nr = {alias_name: c.username, profile_pic_URL: c.profile_image_uri.to_s,
+        if (service_id == 2)
+          piu = c.profile_image_uri.to_s
+        elsif (service_id ==3)
+          piu = 'http://graph.facebook.com/' + c.identifier + '/picture?type=small'
+        end
+        nr = {alias_name: c.username, profile_pic_URL: piu,
                   display_name: c.name,
                   user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
-        newrows << nr
+        contactrows << nr
       end
     end
 
-    # add in the new rows...
-    finalresults = newrows
-    
-    # sort by alias_name
-    finalresults = finalresults.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
+    # sort the flux rows by alias_name, contact rows by alias_name, then concatenate together
+    finalresults = fluxrows.sort{|x, y| x[:alias_name] <=> y[:alias_name]} + contactrows.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
                       
     respond_to do |format|
 #      format.html # show.html.erb
