@@ -93,7 +93,8 @@ class UsersController < ApplicationController
     # Invite a social contact to join Flux
     
     service_id = params[:serviceid].to_i
-
+      
+    puts 'service_id = ' + service_id.to_s
     result = :no_content
       
     if (service_id == 1)

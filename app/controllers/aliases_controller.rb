@@ -122,6 +122,7 @@ class AliasesController < ApplicationController
             nr = {alias_name: r["alias_name"],
                     display_name: r["alias_name"],
                     profile_pic_URL: '',
+                    social_id: r["user_id"],
                     user_id: r["user_id"], username: r["username"], 
                     am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
             # find if the user has an avatar then fetch the thumb path for it
@@ -135,16 +136,20 @@ class AliasesController < ApplicationController
           end
         elsif ((service_id == 2) || (service_id == 3))
           # Twitter and Facebook contacts...
-          piu = String.new
+#          piu = String.new
+#          ident = String.new
           while (c_idx < contacts.size) && (contacts[c_idx].username.to_s < r["alias_name"].to_s)  do
             # add rows to something to add into r later...
             if (service_id == 2)
               piu = contacts[c_idx].profile_image_uri.to_s
+              ident = contacts[c_idx].id
             elsif (service_id ==3)
               piu = 'http://graph.facebook.com/' + contacts[c_idx].identifier + '/picture?type=small'
+              ident = contacts[c_idx].identifier
             end
             nr = {alias_name: contacts[c_idx].username, profile_pic_URL: piu,
                     display_name: contacts[c_idx].name,
+                    social_id: ident,
                     user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
             contactrows << nr
             c_idx = c_idx + 1
@@ -154,12 +159,17 @@ class AliasesController < ApplicationController
             nr = {alias_name: r["alias_name"],
                     display_name: contacts[c_idx].name,
                     profile_pic_URL: '',
+                    social_id: contacts[c_idx].identifier,
                     user_id: r["user_id"], username: r["username"], 
                     am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
-            if ((service_id == 2) && (contacts[c_idx].profile_image_uri?))
-              nr[:profile_pic_URL] = contacts[c_idx].profile_image_uri.to_s
+            if (service_id == 2)
+              if (contacts[c_idx].profile_image_uri?)
+                nr[:profile_pic_URL] = contacts[c_idx].profile_image_uri.to_s
+              end
+              nr[:social_id] = contacts[c_idx].id
             else
               nr[:profile_pic_URL] = 'http://graph.facebook.com/' + contacts[c_idx].identifier + '/picture?type=small'
+              nr[:social_id] = contacts[c_idx].identifier
             end
             fluxrows << nr
             c_idx = c_idx + 1
@@ -177,11 +187,14 @@ class AliasesController < ApplicationController
           # add rows to something to add into r later...
           if (service_id == 2)
             piu = contacts[c_idx].profile_image_uri.to_s
+            ident = contacts[c_idx].id
           elsif (service_id ==3)
             piu = 'http://graph.facebook.com/' + contacts[c_idx].identifier + '/picture?type=small'
+            ident = contacts[c_idx].identifier
           end
           nr = {alias_name: contacts[c_idx].username, profile_pic_URL: piu,
                   display_name: contacts[c_idx].name,
+                  social_id: ident,
                   user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
           contactrows << nr
           c_idx = c_idx + 1
@@ -192,11 +205,14 @@ class AliasesController < ApplicationController
       contacts.each do |c|
         if (service_id == 2)
           piu = c.profile_image_uri.to_s
+          ident = contacts[c_idx].id
         elsif (service_id ==3)
           piu = 'http://graph.facebook.com/' + c.identifier + '/picture?type=small'
+        ident = contacts[c_idx].identifier
         end
         nr = {alias_name: c.username, profile_pic_URL: piu,
                   display_name: c.name,
+                  social_id: ident,
                   user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
         contactrows << nr
       end
