@@ -41,10 +41,18 @@ class AliasesController < ApplicationController
     if (service_id == 1)
       # email contacts...
       logger.debug "service id = 1 (email contacts)"
-      respond_to do |format|
-        format.json { head :no_content }
-      end
-      return
+      # contacts coming in as parameter as a comma-separated list already...
+      contactlist = params[:contactlist]
+      contacts = contactlist.split(',')
+#      clist = contactlist.split(',')
+#      rec = Hash.new
+#      clist.each do |c|
+#        rec[:user_name] = c
+#        rec[:display_name] = c 
+#        rec[:alias_name] = c
+#        rec[:profile_image_uri] = ''
+#        contacts << c;
+#      end
     elsif (service_id == 2)
       # Twitter..
       logger.debug "service id = 2 (twitter contacts)"
@@ -101,6 +109,30 @@ class AliasesController < ApplicationController
       uniqresults.each do |r|
         if (service_id == 1)
           # email contacts...
+          while (c_idx < contacts.size) && (contacts[c_idx].to_s < r["alias_name"].to_s)  do
+            # add rows to something to add into r later...
+#            nr = {alias_name: contacts[c_idx][:username], profile_pic_URL: contacts[c_idx][:profile_pic_uri.to_s],
+#                    display_name: contacts[c_idx][:username],
+#                    user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+#            contactrows << nr
+            c_idx = c_idx + 1
+          end
+
+          if (c_idx < contacts.size) && (r["alias_name"].to_s == contacts[c_idx].to_s)
+            nr = {alias_name: r["alias_name"],
+                    display_name: r["alias_name"],
+                    profile_pic_URL: '',
+                    user_id: r["user_id"], username: r["username"], 
+                    am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
+            # find if the user has an avatar then fetch the thumb path for it
+            @user = User.find(r["user_id"])
+            path = @user.avatar.path('thumb')
+            if (!path.nil?)
+              nr[:profile_pic_URL] = path
+            end
+            fluxrows << nr
+            c_idx = c_idx + 1
+          end
         elsif ((service_id == 2) || (service_id == 3))
           # Twitter and Facebook contacts...
           piu = String.new
@@ -156,7 +188,7 @@ class AliasesController < ApplicationController
         end
       end      
       
-    elsif (contacts.size > 0)
+    elsif ((contacts.size > 0) && ((service_id == 2) || (service_id == 3)))
       contacts.each do |c|
         if (service_id == 2)
           piu = c.profile_image_uri.to_s

@@ -86,15 +86,31 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST /users/invite
-  # POST /users/invite.json
-  def invite
-#    logger.debug "Into Users#invite"
+  # POST /users/invitetoflux
+  # POST /users/invitetoflux.json
+  def invitetoflux
+#    logger.debug "Into Users#invitetoflux"
     # Invite a social contact to join Flux
+    
+    service_id = params[:serviceid].to_i
 
+    result = :no_content
+      
+    if (service_id == 1)
+      # email invite
+    elsif (service_id == 2)
+      # twitter invite
+      invite = ::TwitterClient.invite_friend_to_flux params
+      if (!invite.nil?)
+        result = :ok
+      end
+    elsif (service_id == 3)
+      # facebook invite
+    end
+    
     respond_to do |format|
 #      format.html { redirect_to users_url }
-      format.json { head :no_content }
+      format.json { head result }
     end
 
   end
