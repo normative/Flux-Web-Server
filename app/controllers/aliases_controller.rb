@@ -159,7 +159,7 @@ class AliasesController < ApplicationController
             nr = {alias_name: r["alias_name"],
                     display_name: contacts[c_idx].name,
                     profile_pic_URL: '',
-                    social_id: contacts[c_idx].identifier,
+                    social_id: '',
                     user_id: r["user_id"], username: r["username"], 
                     am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
             if (service_id == 2)
