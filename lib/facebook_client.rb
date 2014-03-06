@@ -2,6 +2,7 @@ class FacebookClient
   
   def self.get_friends_by_token token
     user = FbGraph::User.me(token[:access_token])
+    realfriends = Array.new
     if (!user.nil?)
       friends = user.friends
       friends.each do |f|
@@ -9,11 +10,13 @@ class FacebookClient
           u = FbGraph::User.fetch(f.identifier)
           f.username = u.username
         end
+        if (!f.username.nil?)
+          realfriends << f
+        end
       end
-      friends.to_a
-    else
-      Array.new
     end
+    
+    realfriends
   end
   
   def self.invite_friend_to_flux token, friendid

@@ -57,7 +57,7 @@ class AliasesController < ApplicationController
       # Twitter..
       logger.debug "service id = 2 (twitter contacts)"
       contacts = ::TwitterClient.get_friends_by_token params
-      contacts = contacts.sort{|x, y| x.username <=> y.username}
+      contacts = contacts.sort_by{|x| x.username}
       contacts.each do |c|
         contactlist << c.username << ','
       end 
@@ -66,7 +66,7 @@ class AliasesController < ApplicationController
       # Facebook...
       logger.debug "service id = 3 (Facebook contacts)"
       contacts = ::FacebookClient.get_friends_by_token params
-      contacts = contacts.sort{|x, y| x.username <=> y.username}
+      contacts = contacts.sort_by{|x| x.username}
       contacts.each do |c|
         contactlist << c.username << ','
       end 
