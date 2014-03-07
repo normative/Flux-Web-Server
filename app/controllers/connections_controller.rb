@@ -134,6 +134,9 @@ class ConnectionsController < ApplicationController
       end
     end
 
+    # notify the user being followed...    
+    ApnsClient.sendmessage(@connection.user_id, connections_id, 3)
+
     respond_to do |format|
       if @connection.save
  #       format.html { redirect_to @connection, notice: 'Connection was successfully created.' }
