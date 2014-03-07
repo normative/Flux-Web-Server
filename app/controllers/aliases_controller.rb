@@ -44,33 +44,24 @@ class AliasesController < ApplicationController
       # contacts coming in as parameter as a comma-separated list already...
       contactlist = params[:contactlist]
       contacts = contactlist.split(',')
-#      clist = contactlist.split(',')
-#      rec = Hash.new
-#      clist.each do |c|
-#        rec[:user_name] = c
-#        rec[:display_name] = c 
-#        rec[:alias_name] = c
-#        rec[:profile_image_uri] = ''
-#        contacts << c;
-#      end
     elsif (service_id == 2)
       # Twitter..
       logger.debug "service id = 2 (twitter contacts)"
       contacts = ::TwitterClient.get_friends_by_token params
-      contacts = contacts.sort_by{|x| x.username}
-      contacts.each do |c|
-        contactlist << c.username << ','
-      end 
-      contactlist.chomp!(',') # remove last ',' if exists
+#      contacts = contacts.sort_by{|x| x.username}
+#      contacts.each do |c|
+#        contactlist << c.username << ','
+#      end 
+#      contactlist.chomp!(',') # remove last ',' if exists
     elsif (service_id == 3)
       # Facebook...
       logger.debug "service id = 3 (Facebook contacts)"
       contacts = ::FacebookClient.get_friends_by_token params
-      contacts = contacts.sort_by{|x| x.username}
-      contacts.each do |c|
-        contactlist << c.username << ','
-      end 
-      contactlist.chomp!(',') # remove last ',' if exists
+#      contacts = contacts.sort_by{|x| x.username}
+#      contacts.each do |c|
+#        contactlist << c.username << ','
+#      end 
+#      contactlist.chomp!(',') # remove last ',' if exists
     else
       # unknown - fail...
       respond_to do |format|
@@ -78,14 +69,21 @@ class AliasesController < ApplicationController
       end
       return
     end
-    
+
+    if (service_id != 1)
+      contacts = contacts.sort_by{|x| x.username}
+      contacts.each do |c|
+        contactlist << c.username << ','
+      end 
+      contactlist.chomp!(',') # remove last ',' if exists
+    end    
        
     query = ::Alias.checkcontacts(params[:auth_token], contactlist, service_id, 0)
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
     results = ActiveRecord::Base.connection.select_all(query)
-    results = results.sort{|x, y| x["user_id"] <=> y["user_id"]}
+    results = results.sort_by{|x| x["user_id"]}
 
     # filter out duplicate flux user ids - pick only the first since it doesn't really matter which...
     uniqresults = Array.new
@@ -100,7 +98,7 @@ class AliasesController < ApplicationController
     end
 
     # now merge two lists based on alias_name and add the profile image URL into the hash...
-    uniqresults = uniqresults.sort{|x, y| x["alias_name"].to_s <=> y["alias_name"].to_s}
+    uniqresults = uniqresults.sort_by{|x| x["alias_name"].to_s}
     c_idx = 0   
     contactrows = Array.new
     fluxrows = Array.new
@@ -111,10 +109,6 @@ class AliasesController < ApplicationController
           # email contacts...
           while (c_idx < contacts.size) && (contacts[c_idx].to_s < r["alias_name"].to_s)  do
             # add rows to something to add into r later...
-#            nr = {alias_name: contacts[c_idx][:username], profile_pic_URL: contacts[c_idx][:profile_pic_uri.to_s],
-#                    display_name: contacts[c_idx][:username],
-#                    user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
-#            contactrows << nr
             c_idx = c_idx + 1
           end
 
@@ -136,8 +130,6 @@ class AliasesController < ApplicationController
           end
         elsif ((service_id == 2) || (service_id == 3))
           # Twitter and Facebook contacts...
-#          piu = String.new
-#          ident = String.new
           while (c_idx < contacts.size) && (contacts[c_idx].username.to_s < r["alias_name"].to_s)  do
             # add rows to something to add into r later...
             if (service_id == 2)
@@ -218,8 +210,13 @@ class AliasesController < ApplicationController
       end
     end
 
-    # sort the flux rows by alias_name, contact rows by alias_name, then concatenate together
-    finalresults = fluxrows.sort{|x, y| x[:alias_name] <=> y[:alias_name]} + contactrows.sort{|x, y| x[:alias_name] <=> y[:alias_name]}
+    # sort the flux rows and contact rows, then concatenate together
+    if (service_id == 2)
+      # Twitter - sort by alias_name
+      finalresults = fluxrows.sort{|x| x[:alias_name].downcase} + contactrows.sort_by{|x| x[:alias_name].downcase}
+    else
+      finalresults = fluxrows.sort{|x| x[:display_name].downcase} + contactrows.sort_by{|x| x[:display_name].downcase}
+    end
                       
     respond_to do |format|
 #      format.html # show.html.erb
