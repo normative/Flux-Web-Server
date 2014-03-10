@@ -15,7 +15,7 @@ class ApnsClient
     badgecount = 0
     if (messagetype == 1) ||      # 1: new friend request
        (messagetype == 2) ||      # 2: friend request accepted
-       (messagetype == 3) ||      # 3: following notification
+       (messagetype == 3)         # 3: following notification
       senderuser = User.find(senderuserid)
       if (senderuser.nil?)
         return
