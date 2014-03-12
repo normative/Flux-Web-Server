@@ -7,7 +7,7 @@ http://127.0.0.1:3101/aliases/checkcontacts?auth_token=AoSZmitKx7Mq8dkXd9QD&serv
 
 CREATE OR REPLACE FUNCTION checkcontacts(mytoken text, contactlist text, serviceid integer, maxcount integer)
 
-RETURNS TABLE(id integer, username varchar, alias_name text, friend_state integer, am_follower integer, is_following integer)
+RETURNS TABLE(user_id integer, username varchar, alias_name text, friend_state integer, am_follower integer, is_following integer)
 AS $$
 DECLARE
 	contactset text[];
