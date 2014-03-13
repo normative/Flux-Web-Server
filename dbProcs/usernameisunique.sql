@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
 DROP FUNCTION usernameisunique(uname text)
 */
 
