@@ -11,5 +11,6 @@ module OAuth2
       token = OAuth2::AccessToken.new(new('', ''), token)
       JSON.parse(token.get('/me').body)
     end
+    
   end
 end

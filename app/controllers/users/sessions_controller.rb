@@ -25,6 +25,7 @@ class Users::SessionsController < Devise::SessionsController
 
   def destroy
     User.where(authentication_token: params[:auth_token]).update_all(authentication_token: nil)
+    reset_session
     head :no_content
   end
 end

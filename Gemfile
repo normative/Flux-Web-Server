@@ -48,3 +48,4 @@ end
 
 gem 'jtv-apns'
 gem 'apns'
+gem 'fb_graph'
