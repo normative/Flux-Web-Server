@@ -1,5 +1,5 @@
 ﻿
-/*
+
 DROP FUNCTION filteredmeta(mytoken text,
 					lat double precision, lon double precision, radius double precision, 
 					minalt double precision, maxalt double precision,
@@ -10,8 +10,8 @@ DROP FUNCTION filteredmeta(mytoken text,
 					friendpics integer,
 					followingpics integer,
 					maxcount integer
-					)
-*/
+					);
+
 
 CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					lat double precision, lon double precision, radius double precision, 
@@ -20,7 +20,6 @@ CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					taglist text,
 					userlist text,
 					mypics integer,
-					friendpics integer,
 					followingpics integer,
 					maxcount integer
 					)
@@ -46,7 +45,7 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
-	skipsocial = NOT (mypics = 1 OR friendpics = 1 OR followingpics = 1);
+	skipsocial = NOT (mypics = 1 OR followingpics = 1);
 
 	SELECT u.id INTO my_id 
 	FROM users AS u 
@@ -96,12 +95,9 @@ BEGIN
 		WHERE	-- my pics
  			(((mypics = 1) OR (skipsocial)) AND
  			 (i.user_id = my_id))
- 		   OR	-- friend pics
- 			(((friendpics = 1) OR (skipsocial)) AND
- 			 (c.friend_state = 2))
- 		   OR	-- following
+ 		   OR	-- following pics
  			(((followingpics = 1) OR (skipsocial)) AND
- 			 ((c.am_following = 1) AND (c.friend_state < 2) AND (i.privacy = 0)))
+ 			 (c.following_state = 2))
  		   OR	-- everyone else
 			((skipsocial) AND (i.privacy = 0))
 	);
