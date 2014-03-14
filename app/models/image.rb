@@ -88,17 +88,17 @@ class Image < ActiveRecord::Base
     select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, 0, 0, 0, 100)") 
   end
 
-  def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics, maxcount
+  def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
  #   select("*").from(      "filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})")
-    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics}, #{maxcount})") 
+    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})") 
   end
 
-  def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics, maxcount
-    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics}, #{maxcount})") 
+  def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
+    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})") 
   end
 
-  def self.filteredimgcounts myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics
-    select("*").from("filteredimgcounts('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics})") 
+  def self.filteredimgcounts myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics
+    select("*").from("filteredimgcounts('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics})") 
   end
 
   def to_s; image.original_filename; end
@@ -106,7 +106,7 @@ class Image < ActiveRecord::Base
   # still used for nuke
   def self.within lat, lng, radius
 #    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
-    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, NULL, 1000)") 
+    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, 1000)") 
   end
 
 #  def self.oldwithin lat, lng, radius
