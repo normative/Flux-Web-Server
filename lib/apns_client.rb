@@ -40,7 +40,7 @@ class ApnsClient
       end
       
       packet = {badge: badgecount}
-APNS.send_notification(device_token, aps: packet, details: {messagetype: messagetype})
+      APNS.send_notification(device_token, aps: packet, details: {messagetype: messagetype})
       
     end    
   end

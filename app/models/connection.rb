@@ -22,7 +22,7 @@ class Connection < ActiveRecord::Base
 #  end
 
   def self.getfollowerrequests myid
-    select("*").from("getfollowerinvites('#{myid}')") 
+    select("*").from("getfollowerrequests('#{myid}')") 
   end
 
 end
