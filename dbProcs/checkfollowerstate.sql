@@ -19,11 +19,11 @@ DECLARE
 BEGIN
 	SELECT c.following_state INTO state.i_follow 
 	FROM connections AS c
-	WHERE c.user_id = myid AND c.connections_id = theirid AND c.following_state = 2;
+	WHERE c.user_id = myid AND c.connections_id = theirid AND c.following_state > 0;
 
 	SELECT c.following_state INTO state.they_follow
 	FROM connections AS c
-	WHERE c.user_id = theirid AND c.connections_id = myid AND c.following_state = 2;
+	WHERE c.user_id = theirid AND c.connections_id = myid AND c.following_state > 0;
 
 	IF state.i_follow IS NULL THEN
 		state.i_follow := 0;

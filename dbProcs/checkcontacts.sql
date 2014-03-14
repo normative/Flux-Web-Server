@@ -1,6 +1,6 @@
-﻿/*
-DROP FUNCTION checkcontacts(mytoken text, contactlist text, serviceid integer, maxcount integer)
-*/
+﻿
+DROP FUNCTION checkcontacts(mytoken text, contactlist text, serviceid integer, maxcount integer);
+
 /*
 raw json call:
 http://127.0.0.1:3101/aliases/checkcontacts?auth_token=AoSZmitKx7Mq8dkXd9QD&serviceid=2&maxcount=100 
@@ -8,7 +8,7 @@ http://127.0.0.1:3101/aliases/checkcontacts?auth_token=AoSZmitKx7Mq8dkXd9QD&serv
 
 CREATE OR REPLACE FUNCTION checkcontacts(mytoken text, contactlist text, serviceid integer, maxcount integer)
 
-RETURNS TABLE(user_id integer, username varchar, alias_name text, friend_state integer, am_follower integer, is_following integer)
+RETURNS TABLE(user_id integer, username varchar, alias_name text, am_follower integer, is_following integer)
 AS $$
 DECLARE
 	contactset text[];
@@ -35,8 +35,6 @@ BEGIN
 		SELECT	u.id AS user_id, 
 			u.username AS username, 
 			a.alias_name AS alias_name, 
---			checkfriendstate(my_id, u.id) AS friend_state,
-			0 AS friend_state,
 			0 AS am_follower, 
 			0 AS is_following
 		FROM	users u
@@ -47,7 +45,7 @@ BEGIN
 	FOR r IN
 		SELECT DISTINCT(m.user_id) FROM mytable m
 	LOOP
-		UPDATE mytable SET am_follower = fs.i_follow, is_following = fs.they_follow, friend_state = checkfriendstate(my_id, r.user_id)
+		UPDATE mytable SET am_follower = fs.i_follow, is_following = fs.they_follow
 		FROM checkfollowerstate(my_id, r.user_id) AS fs
 		WHERE mytable.user_id = r.user_id;
 	END LOOP;
