@@ -7,9 +7,9 @@ DROP FUNCTION tagsbylocalcountfiltered(mytoken text,
 					mintime timestamp, maxtime timestamp,
 					taglist text,
 					userlist text,
-					mypics boolean,
-					friendpics boolean,
-					followingpics boolean,
+					mypics integer,
+					friendpics integer,
+					followingpics integer,
 					maxcount integer
 				      );
 
