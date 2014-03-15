@@ -37,7 +37,6 @@ DECLARE
 
 	totalimgcount integer;
 	myimgcount integer;
-	friendimgcount integer;
 	followingimgcount integer;
 
 BEGIN

@@ -83,7 +83,6 @@ BEGIN
 	ON COMMIT DROP
 	AS 
 	(
-		-- friends - private and public
 		SELECT	DISTINCT i.* 
 		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
