@@ -24,17 +24,21 @@ BEGIN
 	WHERE authentication_token = mytoken;
 
 	IF (dir = 0) THEN
+		-- people I follow
 		CREATE TEMP TABLE mytable
 		ON COMMIT DROP
-		AS (	SELECT	u.id AS id, 
+		AS (	
+			SELECT	u.id AS id, 
 				u.username AS username,
 				((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic,
 				0 AS am_follower, 
-				0 AS is_following
+				0 AS is_following,
+				c.following_state as following_state
 			FROM	users u
 				INNER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id) AND (c.following_state = 2))
 		);
 	ELSE
+		-- people that (want to) follow me
 		CREATE TEMP TABLE mytable
 		ON COMMIT DROP
 		AS (
@@ -42,9 +46,10 @@ BEGIN
 				u.username AS username, 
 				((u.avatar_file_size IS NOT NULL) AND (u.avatar_file_size > 0)) AS has_pic,
 				0 AS am_follower, 
-				0 AS is_following
+				0 AS is_following,
+				c.following_state as following_state
 			FROM	users u
-				INNER JOIN connections c ON ((c.user_id = u.id) AND (c.connections_id = my_id) AND (c.following_state = 2))
+				INNER JOIN connections c ON ((c.user_id = u.id) AND (c.connections_id = my_id) AND (c.following_state > 0))
 		);
 	END IF;
 
@@ -61,7 +66,7 @@ BEGIN
 RETURN QUERY	
 	SELECT DISTINCT m.id, m.username, m.has_pic, m.am_follower, m.is_following 
 	FROM mytable m
-	ORDER BY m.username;
+	ORDER BY m.following_state ASC, m.username;
 	
 END;
 $$ LANGUAGE plpgsql;
