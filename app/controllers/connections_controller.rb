@@ -107,12 +107,13 @@ class ConnectionsController < ApplicationController
       cp.merge!( following_state: 1)
     end
 
-    # first, create the connection from "me" to "them"
+    # first, search for an existing connection from "me" to "them"
     @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
                                       userid: connparam[:user_id], 
                                       connid: connparam[:connections_id]).first
     
     if (@connection.nil?)
+      # new request - create the record and send the request message
       @connection = Connection.new(cp)
       ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
     end     
