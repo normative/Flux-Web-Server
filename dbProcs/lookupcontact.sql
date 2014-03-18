@@ -49,6 +49,7 @@ BEGIN
 
 RETURN QUERY
 	SELECT m.* FROM mytable m
+	WHERE	m.am_follower < 2
 	ORDER BY 	am_follower, is_following, 
 			LENGTH(m.username) ASC, m.username;
 
