@@ -64,7 +64,7 @@ BEGIN
 	END LOOP;
 
 RETURN QUERY	
-	SELECT DISTINCT m.id, m.username, m.has_pic, m.am_follower, m.is_following 
+	SELECT m.id, m.username, m.has_pic, m.am_follower, m.is_following 
 	FROM mytable m
 	ORDER BY m.following_state ASC, m.username;
 	
