@@ -20,32 +20,26 @@ class Image < ActiveRecord::Base
 #                                    }, 
   has_attached_file :image, styles: { thumbcrop: "184x184#", 
                                   quarterhdcrop: "540x540#", 
-                                          thumb: "200x200", 
-                                      quarterhd: "960x960", 
+ #                                         thumb: "200x200", 
+ #                                     quarterhd: "960x960", 
                                        oriented: '100%', 
                                     binfeatures: { :format => :bin,
                                                    :chain_to => :oriented,
                                                    :processors => [:chainable, :feature_extractor]
-                                                }, 
-                                      features: { :format => :xml,
-                                                  :cvt_to_xml => true,
-                                                  :chain_to => :binfeatures,
-                                                  :processors => [:chainable, :feature_extractor]
-                                                } 
+                                                }#, 
+#                                      features: { :format => :xml,
+#                                                  :cvt_to_xml => true,
+#                                                  :chain_to => :binfeatures,
+#                                                  :processors => [:chainable, :feature_extractor]
+#                                                } 
                                     }, 
                          dependent: :destroy, 
                    convert_options: { oriented: "-auto-orient" }
-#                   :storage => :s3,
-#                   :s3_credentials => {
-#                        :bucket => 'worldinflux.flux.imagery01',
-#                        :access_key_id => 'AKIAJYHGYWSGE2TFEIMQ',
-#                        :secret_access_key => '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'
-#                        }
                               
   has_attached_file :historical, styles: { thumbcrop: "184x184#", 
                                   quarterhdcrop: "540x540#", 
-                                          thumb: "200x200", 
-                                      quarterhd: "960x960", 
+#                                          thumb: "200x200", 
+#                                      quarterhd: "960x960", 
                                        oriented: '100%' 
                                     }, 
                          dependent: :destroy, 
