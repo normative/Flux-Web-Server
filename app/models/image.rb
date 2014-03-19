@@ -35,6 +35,12 @@ class Image < ActiveRecord::Base
                                     }, 
                          dependent: :destroy, 
                    convert_options: { oriented: "-auto-orient" }
+#                   :storage => :s3,
+#                   :s3_credentials => {
+#                        :bucket => 'worldinflux.flux.imagery01',
+#                        :access_key_id => 'AKIAJYHGYWSGE2TFEIMQ',
+#                        :secret_access_key => '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'
+#                        }
                               
   has_attached_file :historical, styles: { thumbcrop: "184x184#", 
                                   quarterhdcrop: "540x540#", 

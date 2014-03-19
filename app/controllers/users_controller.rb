@@ -31,14 +31,14 @@ class UsersController < ApplicationController
       
 #    if (!@user.avatar.nil?)
     path = @user.avatar.path(params[:size])
-     if (!path.nil?)
-      send_file path, disposition: :attachment
+    if (!path.nil?)
+      send_file @user.avatar.url(params[:size]), disposition: :attachment
     else
       respond_to do |format|
         # should be no_content but earlier versions of the app will fail if a 200-level response is given with no image
         # force a 500 for now until the apps have been updated
-#        format.json { head :no_content }
-        format.json { head :internal_server_error }
+        format.json { head :no_content }
+#        format.json { head :internal_server_error }
       end
     end
   end

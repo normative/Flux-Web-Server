@@ -143,7 +143,7 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
     path = @image.image.path(params[:size])
     if (!path.nil?)
-      send_file @image.image.path(params[:size]), disposition: :attachment
+      send_file @image.image.url(params[:size]), disposition: :attachment
     else
       respond_to do |format|
         format.json { head :no_content }
@@ -154,17 +154,18 @@ class ImagesController < ApplicationController
   # GET /images/1/historical
   def historical
     @image = Image.find(params[:id])
-    send_file @image.historical.path(params[:size]), disposition: :attachment
+    send_file @image.historical.url(params[:size]), disposition: :attachment
   end
 
   # GET /images/1/renderimage
   def renderimage
     @image = Image.find(params[:id])
     path = @image.historical.path(params[:size])
+    url = @image.historical.url(params[:size])
     if (path.nil?)
-      path = @image.image.path(params[:size])
+      url = @image.image.url(params[:size])
     end
-    send_file path, disposition: :attachment
+    send_file url, disposition: :attachment
   end  
   
   # GET /images/new

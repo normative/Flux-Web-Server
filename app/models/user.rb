@@ -37,6 +37,8 @@ class User < ActiveRecord::Base
   end
   
 
+  def to_s; username; end
+
   private
   
   def ensure_authentication_token
@@ -97,5 +99,4 @@ class User < ActiveRecord::Base
     true
   end
 
-  def to_s; username; end
 end
