@@ -32,7 +32,11 @@ class UsersController < ApplicationController
 #    if (!@user.avatar.nil?)
     path = @user.avatar.path(params[:size])
     if (!path.nil?)
-      send_file @user.avatar.url(params[:size]), disposition: :attachment
+#      send_file @user.avatar.url(params[:size]), disposition: :attachment
+#      send_file @user.avatar.expiring_url(300, params[:size]), disposition: :attachment
+      data = open(@user.avatar.expiring_url(5,params[:size]))
+      send_data data.read, filename: @user.avatar_file_name, type: @user.avatar_content_type
+      
     else
       respond_to do |format|
         # should be no_content but earlier versions of the app will fail if a 200-level response is given with no image

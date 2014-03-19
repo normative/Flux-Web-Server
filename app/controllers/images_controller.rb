@@ -143,7 +143,13 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
     path = @image.image.path(params[:size])
     if (!path.nil?)
-      send_file @image.image.url(params[:size]), disposition: :attachment
+#      send_file @image.image.url(params[:size]), disposition: :attachment
+      url = @image.image.expiring_url(5, params[:size])
+       fn = @image.image_file_name
+       ct = @image.image_content_type
+     data = open(url)
+     send_data data.read, filename: fn, type: ct, disposition: :attachment
+        
     else
       respond_to do |format|
         format.json { head :no_content }
@@ -154,18 +160,41 @@ class ImagesController < ApplicationController
   # GET /images/1/historical
   def historical
     @image = Image.find(params[:id])
-    send_file @image.historical.url(params[:size]), disposition: :attachment
+    path = @image.historical.path(params[:size])
+    if (!path.nil?)
+#      send_file @image.historical.url(params[:size]), disposition: :attachment
+      url = @image.historical.expiring_url(5, params[:size])
+       fn = @image.historical_file_name
+       ct = @image.historical_content_type
+     data = open(url)
+     send_data data.read, filename: fn, type: ct, disposition: :attachment
+        
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
   end
 
   # GET /images/1/renderimage
   def renderimage
     @image = Image.find(params[:id])
     path = @image.historical.path(params[:size])
-    url = @image.historical.url(params[:size])
+
     if (path.nil?)
-      url = @image.image.url(params[:size])
+      url = @image.image.expiring_url(5, params[:size])
+      fn = @image.image_file_name
+      ct = @image.image_content_type
+    elsif
+      url = @image.historical.expiring_url(5, params[:size])
+      fn = @image.historical_file_name
+      ct = @image.historical_content_type
     end
-    send_file url, disposition: :attachment
+
+    #    send_file url, disposition: :attachment
+    data = open(url)
+    send_data data.read, filename: fn, type: ct, disposition: :attachment
+    
   end  
   
   # GET /images/new
