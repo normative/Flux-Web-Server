@@ -1,18 +1,18 @@
 ﻿-- return the set of tags found in local imagery and return ranked in order of highest count
 
-/*
+
 DROP FUNCTION tagsbylocalcountfiltered(mytoken text, 
 					lat double precision, lon double precision, radius double precision,
 					minalt double precision, maxalt double precision,
 					mintime timestamp, maxtime timestamp,
 					taglist text,
 					userlist text,
-					mypics boolean,
-					friendpics boolean,
-					followingpics boolean,
+					mypics integer,
+					friendpics integer,
+					followingpics integer,
 					maxcount integer
-				      )
-*/
+				      );
+
 
 CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(mytoken text,
 							lat double precision, lon double precision, radius double precision,
@@ -21,7 +21,6 @@ CREATE OR REPLACE FUNCTION tagsbylocalcountfiltered(mytoken text,
 							taglist text,
 							userlist text,
 							mypics integer,
-							friendpics integer,
 							followingpics integer,
 							maxcount integer
 						    )
@@ -47,7 +46,7 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
-	skipsocial = NOT ((mypics = 1) OR (friendpics = 1) OR (followingpics = 1));
+	skipsocial = NOT ((mypics = 1) OR (followingpics = 1));
 
 	SELECT u.id INTO my_id 
 	FROM users AS u 
@@ -88,7 +87,6 @@ BEGIN
 	ON COMMIT DROP
 	AS 
 	(
-		-- friends - private and public
 		SELECT	DISTINCT i.* 
 		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
@@ -96,12 +94,9 @@ BEGIN
 		WHERE	-- my pics
  			(((mypics = 1) OR (skipsocial)) AND
  			 (i.user_id = my_id))
- 		   OR	-- friend pics
- 			(((friendpics = 1) OR (skipsocial)) AND
- 			 (c.friend_state = 2))
- 		   OR	-- following
+ 		   OR	-- following pics
  			(((followingpics = 1) OR (skipsocial)) AND
- 			 ((c.am_following = 1) AND (c.friend_state < 2) AND (i.privacy = 0)))
+ 			 (c.following_state = 2))
  		   OR	-- everyone else
 			((skipsocial) AND (i.privacy = 0))
 	);

@@ -1,16 +1,16 @@
-﻿/*
+﻿
 DROP FUNCTION filteredcontentquery(mytoken text, 
 						lat double precision, lon double precision, radius double precision, 
 						minalt double precision, maxalt double precision,
 						mintime timestamp, maxtime timestamp,
 						taglist text,
 						userlist text,
-						mypics boolean,
-						friendpics boolean,
-						followingpics boolean,
+						mypics integer,
+						friendpics integer,
+						followingpics integer,
 						maxcount integer
-						)
-*/
+						);
+
 /*
 raw json call:
 http://54.221.254.230/images/filteredcontent.json?lat=43.32485&long=-79.81303&radius=500.0&altmin=-1000.0&altmax=1000.0&timemin=NULL&timemax=NULL&taglist=''&userlist=''&catlist=''&maxcount=10
@@ -22,7 +22,6 @@ CREATE OR REPLACE FUNCTION filteredcontentquery(mytoken text,
 						taglist text,
 						userlist text,
 						mypics integer,
-						friendpics integer,
 						followingpics integer,
 						maxcount integer
 						)
@@ -44,7 +43,7 @@ BEGIN
 
 	skiploc = (radius <= 0);
 
-	skipsocial = NOT ((mypics = 1) OR (friendpics = 1) OR (followingpics = 1));
+	skipsocial = NOT ((mypics = 1) OR (followingpics = 1));
 
 	SELECT u.id INTO my_id 
 	FROM users AS u 
@@ -84,7 +83,6 @@ BEGIN
 	ON COMMIT DROP
 	AS 
 	(
-		-- friends - private and public
 		SELECT	DISTINCT i.* 
 		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
@@ -92,12 +90,9 @@ BEGIN
 		WHERE	-- my pics
   			(((mypics = 1) OR (skipsocial)) AND
   			 (i.user_id = my_id))
-   		   OR	-- friend pics
-   			(((friendpics = 1) OR (skipsocial)) AND
-   			 (c.friend_state = 2))
-   		   OR	-- following
+   		   OR	-- following pics
    			(((followingpics = 1) OR (skipsocial)) AND
-   			 ((c.am_following = 1) AND (c.friend_state < 2) AND (i.privacy = 0)))
+   			 (c.following_state = 2))
   		   OR	-- everyone else
  			((skipsocial) AND (i.privacy = 0))
 	);

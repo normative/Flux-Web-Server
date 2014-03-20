@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140211165941) do
+ActiveRecord::Schema.define(version: 20140314001143) do
 
   create_table "aliases", force: true do |t|
     t.integer  "user_id"
@@ -41,8 +41,7 @@ ActiveRecord::Schema.define(version: 20140211165941) do
   create_table "connections", force: true do |t|
     t.integer  "user_id"
     t.integer  "connections_id"
-    t.integer  "am_following"
-    t.integer  "friend_state"
+    t.integer  "follower_state"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -144,7 +143,7 @@ ActiveRecord::Schema.define(version: 20140211165941) do
     t.string   "bio",                    limit: 256
     t.string   "provider"
     t.string   "uid"
-    t.string   "apns_device_token",      limit: 33
+    t.string   "apns_device_token",      limit: 65
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree

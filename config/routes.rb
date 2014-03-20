@@ -10,10 +10,10 @@ Web::Application.routes.draw do
   resources :users do
     collection do
       get 'lookupname'
-      get 'friends',       :to => "connections#friends"
+#      get 'friends',       :to => "connections#friends"
       get 'following',     :to => "connections#following"
       get 'followers',     :to => "connections#followers"
-      get 'friendinvites', :to => "connections#friendinvites"
+      get 'followerrequests', :to => "connections#followerrequests"
       put 'updateapnstoken'
       put 'invitetoflux'
     end
@@ -83,9 +83,9 @@ Web::Application.routes.draw do
   resources :connections do
     collection do
       post 'follow'
-      post 'addfriend'
+#      post 'addfriend'
       put  'disconnect'
-      put  'respondtofriend'
+      put  'respondtofollowrequest'
     end
     member do
     end

@@ -26,11 +26,6 @@ class ImagesController < ApplicationController
       mypics = 0;
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0;
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0;
@@ -40,7 +35,7 @@ class ImagesController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics, params[:maxcount])
+                                mypics, followingpics, params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }
@@ -60,11 +55,6 @@ class ImagesController < ApplicationController
       mypics = 0
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0
@@ -74,7 +64,7 @@ class ImagesController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics, params[:maxcount])
+                                mypics, followingpics, params[:maxcount])
 
     respond_to do |format|
     #  format.html { render 'index' }
@@ -104,11 +94,6 @@ class ImagesController < ApplicationController
       mypics = 0
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0
@@ -118,7 +103,7 @@ class ImagesController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics)
+                                mypics, followingpics)
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
