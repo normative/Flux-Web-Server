@@ -243,7 +243,7 @@ class ConnectionsController < ApplicationController
           conparam[:following_state] = 2
           if @connection.update_attributes(conparam)
             logger.debug("Send follower accepted to other user")
-            ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 2)
+            ApnsClient.sendmessage(@connection.connections_id, @connection.user_id, 2)
 #           format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
             format.json { head :no_content }
           else
