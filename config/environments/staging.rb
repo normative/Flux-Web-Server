@@ -76,4 +76,6 @@ config.paperclip_defaults = {
   :s3_permissions => :private
 }
 
+APNS.host = 'gateway.push.apple.com'
+APNS.feedback_host = 'feedback.push.apple.com'
 end
