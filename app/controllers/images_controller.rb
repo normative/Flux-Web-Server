@@ -220,7 +220,7 @@ class ImagesController < ApplicationController
   def setprivacy
     @user = User.find_by_authentication_token(params[:auth_token])
     
-    update_attrs = [privacy: params[:privacy]]
+    update_attrs = {privacy: params[:privacy]}
     update_ids = params[:image_ids].split(",").map(&:to_i)
       
     update_ids.each do |uid|  
