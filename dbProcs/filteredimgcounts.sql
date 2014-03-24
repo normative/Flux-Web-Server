@@ -1,5 +1,5 @@
 ﻿
-/*
+
 DROP FUNCTION filteredimgcounts(mytoken text,
 					lat double precision, lon double precision, radius double precision, 
 					minalt double precision, maxalt double precision,
@@ -9,8 +9,8 @@ DROP FUNCTION filteredimgcounts(mytoken text,
 					mypics integer,
 					friendpics integer,
 					followingpics integer
-					)
-*/
+					);
+
 
 CREATE OR REPLACE FUNCTION filteredimgcounts(mytoken text,
 					lat double precision, lon double precision, radius double precision, 
@@ -19,10 +19,9 @@ CREATE OR REPLACE FUNCTION filteredimgcounts(mytoken text,
 					taglist text,
 					userlist text,
 					mypics integer,
-					friendpics integer,
 					followingpics integer
 					)
-RETURNS table (totalimgcount integer, myimgcount integer, friendimgcount integer, followingimgcount integer)
+RETURNS table (totalimgcount integer, myimgcount integer, followingimgcount integer)
 AS $$
 DECLARE
 	tagset text[];
@@ -38,14 +37,13 @@ DECLARE
 
 	totalimgcount integer;
 	myimgcount integer;
-	friendimgcount integer;
 	followingimgcount integer;
 
 BEGIN
 
 	skiploc = (radius <= 0);
 
-	skipsocial = NOT (mypics = 1 OR friendpics = 1 OR followingpics = 1);
+	skipsocial = NOT (mypics = 1 OR followingpics = 1);
 
 	SELECT u.id INTO my_id 
 	FROM users AS u 
@@ -88,20 +86,16 @@ BEGIN
 	AS 
 	(
 		SELECT	DISTINCT i.*, 
-				c.am_following as am_following, 
-				c.friend_state as friend_state 
+				c.following_state as following_state 
 		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
 			LEFT OUTER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id))
 		WHERE	-- my pics
  			(((mypics = 1) OR (skipsocial)) AND
  			 (i.user_id = my_id))
- 		   OR	-- friend pics
- 			(((friendpics = 1) OR (skipsocial)) AND
- 			 (c.friend_state = 2))
- 		   OR	-- following
- 			(((followingpics = 1) OR (skipsocial)) AND
- 			 ((c.am_following = 1) AND (c.friend_state < 2) AND (i.privacy = 0)))
+   		   OR	-- following pics
+   			(((followingpics = 1) OR (skipsocial)) AND
+   			 (c.following_state = 2))
  		   OR	-- everyone else
 			((skipsocial) AND (i.privacy = 0))
 	);
@@ -110,7 +104,7 @@ BEGIN
 	ON COMMIT DROP
 	AS 
 	(
-		SELECT	DISTINCT i.id, i.user_id, ims.am_following, ims.friend_state
+		SELECT	DISTINCT i.id, i.user_id, ims.following_state
 		FROM	imageset ims
 			INNER JOIN images i ON (ims.id = i.id)
 			LEFT OUTER JOIN images_tags imt ON (i.id = imt.image_id)
@@ -138,21 +132,14 @@ BEGIN
 	FROM filteredimageset AS fis 
 	WHERE fis.user_id = my_id;
 
-	SELECT COUNT(fis.id) INTO friendimgcount 
-	FROM filteredimageset AS fis 
-	WHERE (fis.friend_state = 2)
-	  AND (fis.user_id != my_id);
-
 	SELECT COUNT(fis.id) INTO followingimgcount 
 	FROM filteredimageset AS fis 
-	WHERE (fis.am_following != 0)
-	  AND (fis.friend_state < 2)
+	WHERE (fis.following_state = 2)
 	  AND (fis.user_id != my_id);
 
 RETURN QUERY
 	SELECT	totalimgcount, 
 		myimgcount, 
-		friendimgcount, 
 		followingimgcount;
 END;
 $$ LANGUAGE plpgsql;

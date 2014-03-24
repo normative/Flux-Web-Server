@@ -13,18 +13,18 @@ class ApnsClient
 
 #    badgecount = Connection.select("id").where("connections_id=:connid AND friend_state=1", connid: targetuserid).size
     badgecount = 0
-    if (messagetype == 1) ||      # 1: new friend request
-       (messagetype == 2) ||      # 2: friend request accepted
-       (messagetype == 3)         # 3: following notification
+    if (messagetype == 1) ||      # 1: new follower request
+       (messagetype == 2)       # 2: follower request accepted
+#       (messagetype == 3)         # 3: following notification
       senderuser = User.find(senderuserid)
       if (senderuser.nil?)
         return
       end
 
       if (messagetype == 1)
-        alertstr = "@%s sent you a friend request!" % [senderuser.username]
+        alertstr = "@%s sent you a follower request!" % [senderuser.username]
       elsif (messagetype == 2)                        
-        alertstr = "@%s is now your friend!" % [senderuser.username]
+        alertstr = "You are now following @%s!" % [senderuser.username]
       elsif (messagetype == 3)                        
         alertstr = "@%s is following you!" % [senderuser.username]
       end
@@ -40,7 +40,7 @@ class ApnsClient
       end
       
       packet = {badge: badgecount}
-APNS.send_notification(device_token, aps: packet, details: {messagetype: messagetype})
+      APNS.send_notification(device_token, aps: packet, details: {messagetype: messagetype})
       
     end    
   end

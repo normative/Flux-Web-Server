@@ -11,8 +11,8 @@ class Tag < ActiveRecord::Base
     select("*").from("tagsbylocalcount(#{lat}, #{lng}, #{radius}, #{maxcount})") 
   end
 
-  def self.getlocalbycountfiltered myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, friendpics, followingpics, maxcount
-    select("*").from("tagsbylocalcountfiltered('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{friendpics}, #{followingpics}, #{maxcount})") 
+  def self.getlocalbycountfiltered myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
+    select("*").from("tagsbylocalcountfiltered('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})") 
   end
   
 end

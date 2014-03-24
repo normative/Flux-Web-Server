@@ -26,11 +26,6 @@ class ImagesController < ApplicationController
       mypics = 0;
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0;
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0;
@@ -40,7 +35,7 @@ class ImagesController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics, params[:maxcount])
+                                mypics, followingpics, params[:maxcount])
 
     respond_to do |format|
       format.html { render 'index' }
@@ -60,11 +55,6 @@ class ImagesController < ApplicationController
       mypics = 0
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0
@@ -74,7 +64,7 @@ class ImagesController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics, params[:maxcount])
+                                mypics, followingpics, params[:maxcount])
 
     respond_to do |format|
     #  format.html { render 'index' }
@@ -85,7 +75,7 @@ class ImagesController < ApplicationController
   # GET /images/getimagelistforuser?userid=...
   # GET /images/getimagelistforuser.json?userid=...
   def getimagelistforuser
-    @images = Image.joins(:user).where(user_id: params[:userid]).select("images.id, users.username, description").order("time_stamp DESC")
+    @images = Image.joins(:user).where(user_id: params[:userid]).select("images.id, users.username, description, privacy").order("time_stamp DESC")
 
     respond_to do |format|
       format.html { render 'index' }
@@ -104,11 +94,6 @@ class ImagesController < ApplicationController
       mypics = 0
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0
@@ -118,7 +103,7 @@ class ImagesController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics)
+                                mypics, followingpics)
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
     # full blown ActiveRecord model.
@@ -143,7 +128,13 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
     path = @image.image.path(params[:size])
     if (!path.nil?)
-      send_file @image.image.path(params[:size]), disposition: :attachment
+#      send_file @image.image.url(params[:size]), disposition: :attachment
+      url = @image.image.expiring_url(5, params[:size])
+       fn = @image.image_file_name
+       ct = @image.image_content_type
+     data = open(url)
+     send_data data.read, filename: fn, type: ct, disposition: :attachment
+        
     else
       respond_to do |format|
         format.json { head :no_content }
@@ -154,17 +145,41 @@ class ImagesController < ApplicationController
   # GET /images/1/historical
   def historical
     @image = Image.find(params[:id])
-    send_file @image.historical.path(params[:size]), disposition: :attachment
+    path = @image.historical.path(params[:size])
+    if (!path.nil?)
+#      send_file @image.historical.url(params[:size]), disposition: :attachment
+      url = @image.historical.expiring_url(5, params[:size])
+       fn = @image.historical_file_name
+       ct = @image.historical_content_type
+     data = open(url)
+     send_data data.read, filename: fn, type: ct, disposition: :attachment
+        
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
   end
 
   # GET /images/1/renderimage
   def renderimage
     @image = Image.find(params[:id])
     path = @image.historical.path(params[:size])
+
     if (path.nil?)
-      path = @image.image.path(params[:size])
+      url = @image.image.expiring_url(5, params[:size])
+      fn = @image.image_file_name
+      ct = @image.image_content_type
+    elsif
+      url = @image.historical.expiring_url(5, params[:size])
+      fn = @image.historical_file_name
+      ct = @image.historical_content_type
     end
-    send_file path, disposition: :attachment
+
+    #    send_file url, disposition: :attachment
+    data = open(url)
+    send_data data.read, filename: fn, type: ct, disposition: :attachment
+    
   end  
   
   # GET /images/new

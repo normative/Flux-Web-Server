@@ -22,11 +22,6 @@ class TagsController < ApplicationController
       mypics = 0;
     end
     
-    friendpics = params[:friendpics]
-    if friendpics.nil?
-      friendpics = 0;
-    end
-    
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0;
@@ -36,7 +31,7 @@ class TagsController < ApplicationController
                                 params[:altmin], params[:altmax], 
                                 params[:timemin], params[:timemax], 
                                 params[:taglist], params[:userlist], 
-                                mypics, friendpics, followingpics, params[:maxcount])
+                                mypics, followingpics, params[:maxcount])
     respond_to do |format|
       format.html { render 'bycount' }
       format.json { render json: @tags }
