@@ -36,6 +36,7 @@ Web::Application.routes.draw do
 #      get 'extendedmeta'  # set of (remainder of metadata not passed in <filteredmeta>, including hash tag list)
 #      get 'closest'
 #      delete 'nuke'
+      put 'setprivacy'
     end
     member do
       get 'image'
