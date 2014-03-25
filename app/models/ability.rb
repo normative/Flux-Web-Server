@@ -13,6 +13,7 @@ class Ability
       can :manage, Category
       can :manage, Alias, { user_id: user.id }
       can :manage, Connection, { user_id: user.id }
+      can :getmatches, ImageMatch
     end
   end
 end

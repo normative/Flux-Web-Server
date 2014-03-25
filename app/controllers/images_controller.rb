@@ -182,6 +182,25 @@ class ImagesController < ApplicationController
     
   end  
   
+  # GET /images/1/features
+  def features
+    @image = Image.find(params[:id])
+    path = @image.features.path(params[:size])
+    if (!path.nil?)
+#      send_file @image.historical.url(params[:size]), disposition: :attachment
+      url = @image.features.expiring_url(5, params[:size])
+       fn = @image.features_file_name
+       ct = @image.features_content_type
+     data = open(url)
+     send_data data.read, filename: fn, type: ct, disposition: :attachment
+        
+    else
+      respond_to do |format|
+        format.json { head :no_content }
+      end
+    end
+  end
+
   # GET /images/new
   # GET /images/new.json
   def new
@@ -334,6 +353,6 @@ class ImagesController < ApplicationController
                                   :best_qw, :best_qx, :best_qy, :best_qz,
                                   :camera_id, :category_id, :description, :heading, :image, 
                                   :user_id, :time_stamp, :horiz_accuracy, :vert_accuracy,
-                                  :privacy, :historical )
+                                  :privacy, :historical, :features )
   end
 end

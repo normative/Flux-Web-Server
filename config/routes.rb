@@ -43,6 +43,7 @@ Web::Application.routes.draw do
       get 'image'
       get 'renderimage'
       get 'historical'
+      get 'matches',  :to => "image_matches#getmatches"   # return set of image match records for the specified image
 #      destroy 'destroy'
     end
   end

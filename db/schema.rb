@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140314001143) do
+ActiveRecord::Schema.define(version: 20140325162021) do
 
   create_table "aliases", force: true do |t|
     t.integer  "user_id"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20140314001143) do
   create_table "connections", force: true do |t|
     t.integer  "user_id"
     t.integer  "connections_id"
-    t.integer  "follower_state"
+    t.integer  "following_state"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -55,6 +55,20 @@ ActiveRecord::Schema.define(version: 20140314001143) do
 
   add_index "friends", ["friend_id"], name: "index_friends_on_friend_id", using: :btree
   add_index "friends", ["user_id"], name: "index_friends_on_user_id", using: :btree
+
+  create_table "image_matches", force: true do |t|
+    t.integer  "image_id",    limit: 8
+    t.integer  "matching_id", limit: 8
+    t.float    "qw"
+    t.float    "qx"
+    t.float    "qy"
+    t.float    "qz"
+    t.float    "t1"
+    t.float    "t2"
+    t.float    "t3"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "images", force: true do |t|
     t.float    "raw_latitude",                                      null: false
@@ -97,6 +111,10 @@ ActiveRecord::Schema.define(version: 20140314001143) do
     t.string   "historical_content_type"
     t.integer  "historical_file_size"
     t.datetime "historical_updated_at"
+    t.string   "features_file_name"
+    t.string   "features_content_type"
+    t.integer  "features_file_size"
+    t.datetime "features_updated_at"
   end
 
   add_index "images", ["best_latitude"], name: "image_latitude_idx", using: :btree
