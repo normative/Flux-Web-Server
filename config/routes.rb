@@ -37,6 +37,7 @@ Web::Application.routes.draw do
 #      get 'closest'
 #      delete 'nuke'
       put 'setprivacy'
+      patch 'setprivacy'
     end
     member do
       get 'image'
