@@ -24,7 +24,7 @@
 ####################
 
 # Path to the .pem file created earlier
-APNS.pem  = '/home/denis/workspace/SMLR_server/SMLR_webserver/config/certs/apn_development.pem'
+# APNS.pem  = '/home/denis/workspace/SMLR_server/SMLR_webserver/config/certs/apn_development.pem'
 
 # Password for decrypting the .pem file, if one was used
 # APNS.pass = 'xxxx'

@@ -78,4 +78,6 @@ config.paperclip_defaults = {
 
 APNS.host = 'gateway.push.apple.com'
 APNS.feedback_host = 'feedback.push.apple.com'
+
+APNS.pem  = 'config/certs/apn_production.pem'
 end
