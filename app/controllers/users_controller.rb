@@ -34,8 +34,12 @@ class UsersController < ApplicationController
     if (!path.nil?)
 #      send_file @user.avatar.url(params[:size]), disposition: :attachment
 #      send_file @user.avatar.expiring_url(300, params[:size]), disposition: :attachment
-      data = open(@user.avatar.expiring_url(5,params[:size]))
-      send_data data.read, filename: @user.avatar_file_name, type: @user.avatar_content_type
+      if (Rails.env == 'production')
+        data = open(@user.avatar.expiring_url(5,params[:size]))
+        send_data data.read, filename: @user.avatar_file_name, type: @user.avatar_content_type
+      else
+        send_file path, disposition: :attachment
+      end
       
     else
       respond_to do |format|
