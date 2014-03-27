@@ -70,6 +70,7 @@ class AliasesController < ApplicationController
       return
     end
 
+    # NOTE: for service_id=3 (facebook), c.username is actually c.identifier
     if (service_id != 1)
       contacts = contacts.sort_by{|x| x.username}
       contacts.each do |c|
@@ -244,8 +245,17 @@ class AliasesController < ApplicationController
     user = User.find_by_authentication_token(params[:auth_token])
     ap = alias_params
     ap[:user_id] = user[:id]
+
+    new_alias_name = ap[:alias_name]
+            
+#    @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
+
+    if (ap[:service_id] == 3)
+      # special handling for facebook - convert everything to identifier
+      new_alias_name = ::FacebookClient.get_identifier(ap[:alias_name])
+    end
     
-    @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
+    @alias = Alias.where(user_id: ap[:user_id], alias_name: new_alias_name, service_id: ap[:service_id]).first_or_create(ap)
 
     respond_to do |format|
       if @alias.save

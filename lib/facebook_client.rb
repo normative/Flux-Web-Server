@@ -1,34 +1,33 @@
 class FacebookClient
   
   def self.get_friends_by_token token
+#    Rails.logger.debug Time.now.to_s + ': facebook_client::get_friends_by_token: start'
     user = FbGraph::User.me(token[:access_token])
     realfriends = Array.new
     if (!user.nil?)
-      friends = user.friends
-      friends.each do |f|
-        if (f.username.nil?)
-          u = FbGraph::User.fetch(f.identifier)
-          f.username = u.username
-        end
-        if (!f.username.nil?)
-          realfriends << f
-        end
+      realfriends = user.friends
+      
+      # shortcut this to make subsequent processing easier
+      realfriends.each do |f|
+        f.username = f.identifier
       end
     end
-    
+
+#    Rails.logger.debug Time.now.to_s + ': facebook_client::get_friends_by_token: done'
     realfriends
   end
   
-  def self.invite_friend_to_flux token, friendid
-    me = FbGraph::User.me(token).fetch
-    description = 'Get the Flux app now and join ' + me.name + '.' 
-    friend = FbGraph::User.fetch(friendid, access_token: token)
-    friend.feed!( message: 'Join me in Flux!', 
-                  picture: 'https://graph.facebook.com/denis.delorme.75/picture', 
-                     link: 'http://smlr.is', 
-                     name: 'Flux', 
-              description: description
-                )   
+  def self.get_identifier name
+    begin
+      u = FbGraph::User.fetch(name)
+      if (!u.nil?)
+        u.identifier
+      else
+        name
+      end
+    rescue
+      name
+    end
   end
   
 end
