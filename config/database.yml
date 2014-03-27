@@ -13,12 +13,12 @@ development:
 staging:
   adapter: postgresql
   database: flux
-  host: fluxprimarydb.ci5ox253ixhm.us-east-1.rds.amazonaws.com
-  username: fluxdbuser
-  password: thedebtthatallmenpay
+  host: localhost
+  username: postgres
+  password: postgres
   timeout: 5000
 
-staging2:
+production:
   adapter: postgresql
   database: flux
   host: fluxprimarydb.ci5ox253ixhm.us-east-1.rds.amazonaws.com
