@@ -198,10 +198,10 @@ class AliasesController < ApplicationController
       contacts.each do |c|
         if (service_id == 2)
           piu = c.profile_image_uri.to_s
-          ident = contacts[c_idx].id
+          ident = c.id
         elsif (service_id ==3)
           piu = 'http://graph.facebook.com/' + c.identifier + '/picture?type=small'
-        ident = contacts[c_idx].identifier
+          ident = c.identifier
         end
         nr = {alias_name: c.username, profile_pic_URL: piu,
                   display_name: c.name,
@@ -218,7 +218,7 @@ class AliasesController < ApplicationController
     else
       finalresults = fluxrows.sort{|x| x[:display_name].downcase} + contactrows.sort_by{|x| x[:display_name].downcase}
     end
-                      
+
     respond_to do |format|
 #      format.html # show.html.erb
 #      format.json { render json: @aliases }
