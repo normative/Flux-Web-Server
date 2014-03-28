@@ -179,11 +179,11 @@ class ImagesController < ApplicationController
       url = @image.image.expiring_url(5, params[:size])
       fn = @image.image_file_name
       ct = @image.image_content_type
-    elsif
+      path = @image.image.path(params[:size])
+    else
       url = @image.historical.expiring_url(5, params[:size])
       fn = @image.historical_file_name
       ct = @image.historical_content_type
-      path = @image.image.path(params[:size])
     end
 
     if (Rails.env == 'production')
