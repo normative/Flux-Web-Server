@@ -1,5 +1,5 @@
 set :deploy_to, '/home/ubuntu/flux_web/'
-set :rails_env, 'test'
+set :rails_env, 'testing'
 set :user, 'ubuntu'
 set :use_sudo, false
 set :rvm_ruby_string, 'ruby-1.9.3-p484'
