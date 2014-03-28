@@ -67,17 +67,5 @@ Web::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-config.paperclip_defaults = {
-  :storage => :s3,
-  :s3_credentials => {
-    :bucket => 'worldinflux.flux.imagery01'
-  },
-  :path => "Production/:class/:attachment/:id_partition/:style/:filename",
-  :s3_permissions => :private
-}
-
-APNS.host = 'gateway.push.apple.com'
-APNS.feedback_host = 'feedback.push.apple.com'
-
-APNS.pem  = 'config/certs/apn_production.pem'
+APNS.pem  = 'config/certs/apn_development.pem'
 end
