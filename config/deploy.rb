@@ -2,8 +2,8 @@ require "rvm/capistrano"
 require "bundler/capistrano"
 require "capistrano/ext/multistage"
 
-set :stages, ["production", "staging", "test"]
-set :default_stage, "test"
+set :stages, ["production", "staging", "testing"]
+set :default_stage, "testing"
 
 set :application, "SMLR Flux"
 set :repository,  "git@bitbucket.org:smlrteam/smlr_flux_webserver.git"
