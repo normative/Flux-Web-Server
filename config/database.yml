@@ -10,6 +10,13 @@ development:
   username: postgres
   password: postgres
 
+test:
+  adapter: postgresql
+  database: flux
+  host: localhost
+  username: postgres
+  password: postgres
+
 staging:
   adapter: postgresql
   database: flux
