@@ -227,6 +227,7 @@ class ImagesController < ApplicationController
         format.html { redirect_to @image, notice: 'Image was successfully created.' }
         format.json { render json: @image, status: :created, location: @image }
       else
+        logger.debug "Image POST failure: " + @image.errors.to_hash(true).to_s
         format.html { render action: "new" }
         format.json { render json: @image.errors, status: :unprocessable_entity }
       end
