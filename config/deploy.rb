@@ -2,15 +2,15 @@ require "rvm/capistrano"
 require "bundler/capistrano"
 require "capistrano/ext/multistage"
 
-set :stages, ["production", "testing"]
-set :default_stage, "production"
+set :stages, ["production", "staging", "testing"]
+set :default_stage, "testing"
 
 set :application, "SMLR Flux"
 set :repository,  "git@bitbucket.org:smlrteam/smlr_flux_webserver.git"
 set :branch, 'master'
 
 # if you want to clean up old releases on each deploy uncomment this:
-after "deploy:restart", "deploy:cleanup"
+# after "deploy:restart", "deploy:cleanup"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
