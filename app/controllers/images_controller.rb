@@ -126,23 +126,29 @@ class ImagesController < ApplicationController
   # GET /images/1/image
   def image
     @image = Image.find(params[:id])
-    path = @image.image.path(params[:size])
-    if (!path.nil?)
-      if (Rails.env == 'production') || (Rails.env == 'staging')
-         url = @image.image.expiring_url(5, params[:size])
-          fn = @image.image_file_name
-          ct = @image.image_content_type
-        data = open(url)
-        send_data data.read, filename: fn, type: ct, disposition: :attachment
-      else
-        send_file path, disposition: :attachment
-      end
-      
-#      send_file @image.image.url(params[:size]), disposition: :attachment
-        
+    if params[:size] = "binfeatures"
+      params[:size] = "original"
+      self.features
     else
-      respond_to do |format|
-        format.json { head :no_content }
+      path = @image.image.path(params[:size])
+    
+      if (!path.nil?)
+        if (Rails.env == 'production') || (Rails.env == 'staging')
+           url = @image.image.expiring_url(5, params[:size])
+            fn = @image.image_file_name
+            ct = @image.image_content_type
+          data = open(url)
+          send_data data.read, filename: fn, type: ct, disposition: :attachment
+        else
+          send_file path, disposition: :attachment
+        end
+        
+  #      send_file @image.image.url(params[:size]), disposition: :attachment
+          
+      else
+        respond_to do |format|
+          format.json { head :no_content }
+        end
       end
     end
   end
@@ -205,7 +211,6 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
     path = @image.features.path(params[:size])
     if (!path.nil?)
-#      send_file @image.historical.url(params[:size]), disposition: :attachment
       url = @image.features.expiring_url(5, params[:size])
        fn = @image.features_file_name
        ct = @image.features_content_type
