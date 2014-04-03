@@ -128,7 +128,7 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
     path = @image.image.path(params[:size])
     if (!path.nil?)
-      if (Rails.env == 'production')
+      if (Rails.env == 'production') || (Rails.env == 'staging')
          url = @image.image.expiring_url(5, params[:size])
           fn = @image.image_file_name
           ct = @image.image_content_type
@@ -153,7 +153,7 @@ class ImagesController < ApplicationController
     path = @image.historical.path(params[:size])
     if (!path.nil?)
 #      send_file @image.historical.url(params[:size]), disposition: :attachment
-      if (Rails.env == 'production')
+      if (Rails.env == 'production') || (Rails.env == 'staging')
          url = @image.historical.expiring_url(5, params[:size])
           fn = @image.historical_file_name
           ct = @image.historical_content_type
@@ -186,7 +186,7 @@ class ImagesController < ApplicationController
       ct = @image.historical_content_type
     end
 
-    if (Rails.env == 'production')
+    if (Rails.env == 'production') || (Rails.env == 'staging')
       #    send_file url, disposition: :attachment
       data = open(url)
       send_data data.read, filename: fn, type: ct, disposition: :attachment

@@ -67,5 +67,14 @@ Web::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
+config.paperclip_defaults = {
+  :storage => :s3,
+  :s3_credentials => {
+    :bucket => 'worldinflux.flux.imagery01'
+  },
+  :path => "Staging/:class/:attachment/:id_partition/:style/:filename",
+  :s3_permissions => :private
+}
+
 APNS.pem  = 'config/certs/apn_development.pem'
 end
