@@ -126,7 +126,7 @@ class ImagesController < ApplicationController
   # GET /images/1/image
   def image
     @image = Image.find(params[:id])
-    if params[:size] = "binfeatures"
+    if params[:size] == "binfeatures"
       params[:size] = "original"
       self.features
     else
