@@ -4,7 +4,7 @@ class ImageMatchesController < ApplicationController
     before_filter :authenticate_user!
     authorize_resource
   
-    # GET /image/matches/1
+    # GET /image/1/matches?auth_token=...
     def getmatches
       @matches = ImageMatch.where({image_id: params[:id]})
 
