@@ -128,6 +128,7 @@ class ImagesController < ApplicationController
     @image = Image.find(params[:id])
     if params[:size] == "binfeatures"
       params[:size] = "original"
+      logger.debug 'jumping to features() with size ' + params[:size]
       self.features
     else
       path = @image.image.path(params[:size])

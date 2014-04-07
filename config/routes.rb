@@ -95,4 +95,12 @@ Web::Application.routes.draw do
     end
   end
   
+#  resources :image_matches do
+#    collection do
+#    end
+#    member do
+#      get 'matches'
+#    end
+#  end
+
 end
