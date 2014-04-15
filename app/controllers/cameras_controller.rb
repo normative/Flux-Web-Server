@@ -59,6 +59,17 @@ class CamerasController < ApplicationController
   def create
 #    @camera = Camera.new(camera_params)
     @camera = Camera.where(deviceid: camera_params[:deviceid]).first_or_create(camera_params)
+    if (!camera_params[:app_version].nil?)
+      if (@camera[:app_version] != camera_params[:app_version])
+        # update the version...
+        if (@camera[:app_version].nil?)
+          logger.debug "old app version: nil, new version: " + camera_params[:app_version]
+        else
+          logger.debug "old app version: " + @camera[:app_version] + ", new version: " + camera_params[:app_version]
+        end
+        @camera.update_attributes(camera_params)
+      end
+    end
 
     respond_to do |format|
       if @camera.save
@@ -105,6 +116,6 @@ class CamerasController < ApplicationController
     # params.require(:person).permit(:name, :age)
     # Also, you can specialize this method with per-user checking of permissible attributes.
     def camera_params
-      params.require(:camera).permit(:description, :deviceid, :model, :nickname, :user_id)
+      params.require(:camera).permit(:description, :deviceid, :model, :nickname, :user_id, :app_version)
     end
 end
