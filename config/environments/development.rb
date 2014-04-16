@@ -13,9 +13,21 @@ Web::Application.configure do
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send
-  config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default_url_options = { :host => 'localhost:3101' }
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => '192.168.2.12:3101' }
   
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: ENV["FLUX_EMAIL_DOMAIN"] ,
+    authentication: "plain",
+    enable_starttls_auto: true,
+    user_name: ENV["FLUX_EMAIL_USERNAME"],
+    password: ENV["FLUX_EMAIL_PASSWORD"]
+    }
+
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
 
@@ -28,6 +40,7 @@ Web::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
-APNS.pem  = 'config/certs/apn_development.pem'
+  # set the certificate for Apple push notifications
+  APNS.pem  = 'config/certs/apn_development.pem'
 
 end

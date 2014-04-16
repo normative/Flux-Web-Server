@@ -50,8 +50,22 @@ Web::Application.configure do
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
 
-  # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
+  # Don't care if the mailer can't send
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => '54.83.61.163' }
+
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: ENV["FLUX_EMAIL_DOMAIN"] ,
+    authentication: "plain",
+    enable_starttls_auto: true,
+    user_name: ENV["FLUX_EMAIL_USERNAME"],
+    password: ENV["FLUX_EMAIL_PASSWORD"]
+    }
+
 
   # Enable threaded mode
   # config.threadsafe!
