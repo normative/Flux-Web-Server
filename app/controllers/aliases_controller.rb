@@ -266,16 +266,11 @@ class AliasesController < ApplicationController
     end
   end
   
-  def create_or_update_alias user, aname, serviceid    
+  def self.create_or_update_alias user, aname, serviceid
+    ap = Hash.new    
     ap[:user_id] = user[:id]
     ap[:alias_name] = aname
     ap[:service_id] = serviceid
-
-    if (ap[:service_id].to_i == 3)
-      # special handling for facebook - convert everything to identifier
-      ap[:alias_name] = ::FacebookClient.get_identifier(ap[:alias_name])
-      logger.debug "alias_name: " + ap[:alias_name] + ", new alias name: " + new_alias_name + ", service id: " + ap[:service_id]
-    end
 
     @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
 
