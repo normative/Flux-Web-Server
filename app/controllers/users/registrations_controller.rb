@@ -38,6 +38,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
 #  end
 #  
   def resource_params
-    params.require(:user).permit :email, :username, :name, :password, :bio, :follower_count, :following_count, :facebook, twitter: [:access_token, :access_token_secret]
+    params.require(:user).permit :email, :username, :name, :password, :bio, :follower_count, :following_count, :facebook, :avatar, twitter: [:access_token, :access_token_secret]
   end
 end
