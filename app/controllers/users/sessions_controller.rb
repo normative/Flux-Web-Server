@@ -1,6 +1,6 @@
 require 'facebook'
 require 'twitter_client'
-requre 'aliases_controller'
+require 'aliases_controller'
 
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
