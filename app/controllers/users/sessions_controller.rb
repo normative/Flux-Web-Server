@@ -8,9 +8,11 @@ class Users::SessionsController < Devise::SessionsController
     if params[:user].present? && params[:user][:facebook].present?
       fbuser = OAuth2::Facebook.lookup_by_token params[:user][:facebook]
       self.resource = User.find_from_facebook(fbuser)
+      Alias.create_or_update_alias self.resource, fbuser.identifier, 3    
     elsif params[:user].present? && params[:user][:twitter].present?
       twuser = TwitterClient.lookup_by_token params[:user][:twitter]
       self.resource = User.find_from_twitter(twuser)
+      Alias.create_or_update_alias self.resource, twuser.username, 2    
     else      
       self.resource = warden.authenticate!(auth_options)
     end
