@@ -241,8 +241,9 @@ class AliasesController < ApplicationController
   # POST /aliases.json
   def create
     logger.debug "Into Alias#create"
-    
+
     user = User.find_by_authentication_token(params[:auth_token])
+
     ap = alias_params
     ap[:user_id] = user[:id]
 
@@ -263,6 +264,17 @@ class AliasesController < ApplicationController
         format.json { render json: @alias.errors, status: :unprocessable_entity }
       end
     end
+  end
+  
+  def self.create_or_update_alias user, aname, serviceid
+    ap = Hash.new    
+    ap[:user_id] = user[:id]
+    ap[:alias_name] = aname
+    ap[:service_id] = serviceid
+
+    @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
+
+    return @alias.save
   end
 
   # PATCH/PUT /aliases/1
