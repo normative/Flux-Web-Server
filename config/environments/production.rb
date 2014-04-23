@@ -14,8 +14,6 @@ Web::Application.configure do
   config.serve_static_assets = false
 
   # Compress JavaScripts and CSS
-  config.assets.compress = true
-
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = false
 
@@ -52,8 +50,7 @@ Web::Application.configure do
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = true
-  #config.action_mailer.default_url_options = { :host => 'production.flux.smlr.is', :protocol => 'https' }
-  config.action_mailer.default_url_options = { :host => 'production.flux.smlr.is' }
+  config.action_mailer.default_url_options = { :host => 'production.flux.smlr.is', :protocol => 'https' }
 
   config.action_mailer.delivery_method = :smtp
 
