@@ -246,16 +246,13 @@ class AliasesController < ApplicationController
     ap = alias_params
     ap[:user_id] = user[:id]
 
-    new_alias_name = ap[:alias_name]
-            
-#    @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
-
-    if (ap[:service_id] == 3)
+    if (ap[:service_id].to_i == 3)
       # special handling for facebook - convert everything to identifier
-      new_alias_name = ::FacebookClient.get_identifier(ap[:alias_name])
+      ap[:alias_name] = ::FacebookClient.get_identifier(ap[:alias_name])
+      logger.debug "alias_name: " + ap[:alias_name] + ", new alias name: " + new_alias_name + ", service id: " + ap[:service_id]
     end
-    
-    @alias = Alias.where(user_id: ap[:user_id], alias_name: new_alias_name, service_id: ap[:service_id]).first_or_create(ap)
+
+    @alias = Alias.where(user_id: ap[:user_id], alias_name: ap[:alias_name], service_id: ap[:service_id]).first_or_create(ap)
 
     respond_to do |format|
       if @alias.save
@@ -305,5 +302,10 @@ class AliasesController < ApplicationController
   # Also, you can specialize this method with per-user checking of permissible attributes.
   def alias_params
     params.require(:alias).permit(:user_id, :alias_name, :service_id )
+  end
+  
+  
+  def is_number?(object)
+    true if Float(object) rescue false
   end
 end
