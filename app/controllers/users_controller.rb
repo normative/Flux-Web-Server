@@ -152,6 +152,27 @@ class UsersController < ApplicationController
     end
   end
   
+  def validateemail
+    @user = User.find(params[:id])
+      
+    if @user.email_validation_token == params[:email_token]
+      uph = {email_validation_token: '', email_state: 2}
+      respond_to do |format|
+        if @user.update_attributes(uph)
+          format.html { redirect_to @user, notice: 'Email successfully Validated.' }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to @user, notice: 'Email not Validated.' }
+          format.json { head :no_content }
+        end
+      end
+    else
+      format.html { redirect_to @user, notice: 'Invalid email validation.' }
+      format.json { head :no_content }
+    end
+  end
+  
+  
   def user_params
     params.require(:user).permit(:username, :name, :bio, :avatar, :apns_device_token)
   end

@@ -2,7 +2,7 @@ require 'facebook'
 require 'twitter_client'
 
 class User < ActiveRecord::Base
-  devise :database_authenticatable, :registerable, :recoverable, :validatable, :timeoutable
+  devise :database_authenticatable, :registerable, :recoverable, :validatable, :timeoutable, :confirmable
 
   include ActiveModel::ForbiddenAttributesProtection
 
