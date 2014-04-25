@@ -12,7 +12,11 @@ Web::Application.routes.draw do
 #  end
  
 #  scope :constraints => { :protocol => "https" } do   
-    devise_for :users, controllers: { sessions: "users/sessions", passwords: "users/passwords", registrations: "users/registrations", confirmations: "users/confirmations" }
+    devise_for :users, controllers: { sessions: "users/sessions", 
+                                      passwords: "users/passwords", 
+                                      confirmations: "users/confirmations",
+                                      registrations: "users/registrations" 
+                                    }
 
     devise_scope :user do
       get 'users/suggestuniqueuname', :to => "users/registrations#suggestuniqueuname"
