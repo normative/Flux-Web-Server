@@ -75,7 +75,7 @@ class ImagesController < ApplicationController
   # GET /images/getimagelistforuser?userid=...
   # GET /images/getimagelistforuser.json?userid=...
   def getimagelistforuser
-    @images = Image.joins(:user).where(user_id: params[:userid]).select("images.id, users.username, description, privacy").order("time_stamp DESC")
+    @images = Image.joins(:user).where(user_id: params[:userid]).select("images.id, users.username, description, privacy, time_stamp").order("time_stamp DESC")
 
     respond_to do |format|
       format.html { render 'index' }

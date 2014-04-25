@@ -7,7 +7,7 @@ set :default_stage, "testing"
 
 set :application, "SMLR Flux"
 set :repository,  "git@bitbucket.org:smlrteam/smlr_flux_webserver.git"
-set :branch, 'serverFeatureMatching'
+set :branch, 'master'
 
 # if you want to clean up old releases on each deploy uncomment this:
 # after "deploy:restart", "deploy:cleanup"
