@@ -97,6 +97,8 @@ class ConnectionsController < ApplicationController
   # POST /connections/follow.json
   def follow
     connparam = connection_params
+    
+    sendMessage = false
         
     cp = connparam
 
@@ -115,11 +117,16 @@ class ConnectionsController < ApplicationController
     if (@connection.nil?)
       # new request - create the record and send the request message
       @connection = Connection.new(cp)
-      ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
+      sendMessage = true
+#      ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
     end     
     
     respond_to do |format|
       if @connection.save
+        if sendMessage
+          ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
+        end
+        
  #       format.html { redirect_to @connection, notice: 'Connection was successfully created.' }
         format.json { render json: @connection, status: :created, location: @connection }
       else
