@@ -11,8 +11,7 @@ class ApnsClient
       return
     end
 
-#    badgecount = Connection.select("id").where("connections_id=:connid AND friend_state=1", connid: targetuserid).size
-    badgecount = 0
+#    badgecount = 0
     if (messagetype == 1) ||      # 1: new follower request
        (messagetype == 2)       # 2: follower request accepted
 #       (messagetype == 3)         # 3: following notification
@@ -23,6 +22,7 @@ class ApnsClient
 
       if (messagetype == 1)
         alertstr = "@%s sent you a follower request!" % [senderuser.username]
+        badgecount = Connection.select("id").where("connections_id=:connid AND follower_state=1", connid: targetuserid).size
       elsif (messagetype == 2)                        
         alertstr = "You are now following @%s!" % [senderuser.username]
       elsif (messagetype == 3)                        
