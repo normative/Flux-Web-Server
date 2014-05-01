@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140421145152) do
+ActiveRecord::Schema.define(version: 20140501122749) do
 
   create_table "aliases", force: true do |t|
     t.integer  "user_id"
@@ -46,6 +46,16 @@ ActiveRecord::Schema.define(version: 20140421145152) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "content_flags", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "image_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "content_flags", ["image_id"], name: "index_content_flags_on_image_id", using: :btree
+  add_index "content_flags", ["user_id"], name: "index_content_flags_on_user_id", using: :btree
 
   create_table "friends", force: true do |t|
     t.integer  "user_id",    null: false
