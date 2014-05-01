@@ -1,11 +1,11 @@
 Web::Application.routes.draw do
 
-#  MyApplication::Application.routes.draw do
 #    resources :sessions, :constraints => { :protocol => "https" }
 #  end
 #  Or if you need to force SSL for multiple routes:
 #  
 #  MyApplication::Application.routes.draw do
+  get "content_flags/new"
 #    scope :constraints => { :protocol => "https" } do 
 #      # All your SSL routes.
 #    end
@@ -57,6 +57,7 @@ Web::Application.routes.draw do
         get 'historical', :protocol => "http"
         get 'features', :protocol => "http"
         get 'matches',  :to => "image_matches#getmatches"   # return set of image match records for the specified image
+        put 'flag', :to => "content_flags#flag"
       end
     end
   
