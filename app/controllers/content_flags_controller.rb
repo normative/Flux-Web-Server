@@ -3,8 +3,8 @@ class ContentFlagsController < ApplicationController
   before_filter :authenticate_user!
   authorize_resource
 
-  # PUT /images/1/flag?auth_token=...
-  # PUT /images/1/flag.json?auth_token=...
+  # POST /images/1/flag?auth_token=...
+  # POST /images/1/flag.json?auth_token=...
   def flag 
     user = User.find_by_authentication_token(params[:auth_token])   
     newflag = { user_id: user[:id], image_id: params[:id] }
@@ -14,7 +14,8 @@ class ContentFlagsController < ApplicationController
     respond_to do |format|
       if @flag.save
         format.html { redirect_to @flag, notice: 'Content flag was successfully created.' }
-        format.json { render json: @flag, status: :created }
+#        format.json { render json: @flag, status: :created }
+        format.json { head :created }
       else
         format.html { render action: "new" }
         format.json { render json: @flag.errors, status: :unprocessable_entity }
