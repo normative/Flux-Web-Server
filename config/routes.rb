@@ -57,7 +57,7 @@ Web::Application.routes.draw do
         get 'historical', :protocol => "http"
         get 'features', :protocol => "http"
         get 'matches',  :to => "image_matches#getmatches"   # return set of image match records for the specified image
-        put 'flag', :to => "content_flags#flag"
+        post 'flag', :to => "content_flags#flag"
       end
     end
   
