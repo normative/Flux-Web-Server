@@ -279,6 +279,26 @@ class ImagesController < ApplicationController
     end
  end
   
+#PATCH/PUT /images/setdescription?description=...&auth_token=...
+#PATCH/PUT /images/setdescription.json?description=...&auth_token=... 
+def setdescription
+  @user = User.find_by_authentication_token(params[:auth_token])
+  
+  update_attrs = {description: params[:description]}
+  update_ids = params[:image_ids].split(",").map(&:to_i)
+    
+  update_ids.each do |uid|  
+    @image = Image.where({user_id: @user.id, id: uid}).first
+    if (!@image.nil?) 
+      @image.update_attributes(update_attrs)
+    end
+  end
+
+  respond_to do |format|
+    format.json { head :no_content }
+  end
+end
+
   # PATCH/PUT /images/1
   # PATCH/PUT /images/1.json
   def update

@@ -73,7 +73,7 @@ class CamerasController < ApplicationController
 
     respond_to do |format|
       if @camera.save
-        format.html { redirect_to @camera, notice: 'Camera was successfully created.' }
+        format.html { redirect_to @camera, notice: 'Camera was successfully created/updated.' }
         format.json { render json: @camera, status: :created, location: @camera }
       else
         format.html { render action: "new" }
