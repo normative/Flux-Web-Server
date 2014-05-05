@@ -21,6 +21,7 @@ Web::Application.routes.draw do
     devise_scope :user do
       get 'users/suggestuniqueuname', :to => "users/registrations#suggestuniqueuname"
       get 'users/passwordchanged', :to => "users/passwords#changed"
+      get 'users/emailconfirmed', :to=> "users/confirmations#emailconfirmed"
     end
 
 #  resources :users, only: [ :show, :update, :profile, :edit, :index ] do
