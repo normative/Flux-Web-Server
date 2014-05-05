@@ -285,13 +285,9 @@ def setdescription
   @user = User.find_by_authentication_token(params[:auth_token])
   
   update_attrs = {description: params[:description]}
-  update_ids = params[:image_ids].split(",").map(&:to_i)
-    
-  update_ids.each do |uid|  
-    @image = Image.where({user_id: @user.id, id: uid}).first
-    if (!@image.nil?) 
-      @image.update_attributes(update_attrs)
-    end
+  @image = Image.where({user_id: @user.id, id: params[:id]}).first
+  if (!@image.nil?) 
+    @image.update_attributes(update_attrs)
   end
 
   respond_to do |format|
