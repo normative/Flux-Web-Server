@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Welcome to Flux <%= @user.username %>!</h1>
+    <p>
+      You have successfully signed up to Flux. 
+    </p>
+    <p>
+      To complete your registration you must validate your email address by clicking 
+      			<%= link_to 'this link', confirmation_url(@resource, :confirmation_token => @token) %>.
+    </p>
+    <p>
+	  Confirmation allows other Flux users to find you using your email address.
+    </p>
+    <p>Thanks for joining and have a great day!</p>
+    <p>The Flux Team</p>
+  </body>
+</html>
