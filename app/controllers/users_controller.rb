@@ -94,8 +94,8 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST /users/invitetoflux
-  # POST /users/invitetoflux.json
+  # PUT /users/invitetoflux?auth_token=...[&to_email=...]
+  # PUT /users/invitetoflux.json?auth_token=...[&to_email=...]
   def invitetoflux
 #    logger.debug "Into Users#invitetoflux"
     # Invite a social contact to join Flux
@@ -107,6 +107,12 @@ class UsersController < ApplicationController
       
     if (service_id == 1)
       # email invite
+      user = User.find_by_authentication_token(params[:auth_token])
+      to_email = params[:to_email]
+      if (!user.nil?) && (!to_email.nil?)
+        UserMailer.invite_email(user, to_email)
+        result = :ok
+      end
     elsif (service_id == 2)
       # twitter invite
       invite = ::TwitterClient.invite_friend_to_flux params
