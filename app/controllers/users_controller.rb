@@ -105,28 +105,39 @@ class UsersController < ApplicationController
       
     # default result state
     result = :unprocessable_entity
+    e_message = "Invalid service id"
       
     if (service_id == 1)
       # email invite
       user = User.find_by_authentication_token(params[:auth_token])
       email_to = params[:email_to]
-      if (!user.nil?) && (!email_to.nil?)
+      if (user.confirmed_at.nil?)
+        e_message = "Sender email not confirmed"
+      elsif (user.nil?)
+        e_message = "Sending user not found" 
+      elsif (email_to.nil?)
+        e_message = "Missing parameter: email_to" 
+      else 
         UserMailer.invite_email(user, email_to)
         result = :ok
       end
     elsif (service_id == 2)
       # twitter invite
-      invite = ::TwitterClient.invite_friend_to_flux params
-      if (!invite.nil?)
-        result = :ok
-      end
+#      invite = ::TwitterClient.invite_friend_to_flux params
+#      if (!invite.nil?)
+#        result = :ok
+#      end
     elsif (service_id == 3)
       # facebook invite
     end
     
     respond_to do |format|
 #      format.html { redirect_to users_url }
-      format.json { head result }
+      if (result == :ok)
+        format.json { head result }
+      else
+        format.json { render json: {error_message: e_message}, status: result }           
+      end
     end
 
   end
