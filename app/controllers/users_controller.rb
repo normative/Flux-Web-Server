@@ -94,8 +94,8 @@ class UsersController < ApplicationController
     end
   end
 
-  # PUT /users/invitetoflux?auth_token=...[&to_email=...]
-  # PUT /users/invitetoflux.json?auth_token=...[&to_email=...]
+  # PUT /users/invitetoflux?service_id=[1|2|3]&auth_token=...[&to_email=...]
+  # PUT /users/invitetoflux.json?service_id=[1|2|3]&auth_token=...[&to_email=...]
   def invitetoflux
 #    logger.debug "Into Users#invitetoflux"
     # Invite a social contact to join Flux
@@ -103,7 +103,7 @@ class UsersController < ApplicationController
     service_id = params[:serviceid].to_i
       
     puts 'service_id = ' + service_id.to_s
-    result = :no_content
+    result = :unprocessable_entity
       
     if (service_id == 1)
       # email invite
