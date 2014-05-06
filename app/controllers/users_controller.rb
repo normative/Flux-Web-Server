@@ -101,16 +101,17 @@ class UsersController < ApplicationController
     # Invite a social contact to join Flux
     
     service_id = params[:serviceid].to_i
+ #   puts 'service_id = ' + service_id.to_s
       
-    puts 'service_id = ' + service_id.to_s
+    # default result state
     result = :unprocessable_entity
       
     if (service_id == 1)
       # email invite
       user = User.find_by_authentication_token(params[:auth_token])
-      to_email = params[:to_email]
-      if (!user.nil?) && (!to_email.nil?)
-        UserMailer.invite_email(user, to_email)
+      email_to = params[:email_to]
+      if (!user.nil?) && (!email_to.nil?)
+        UserMailer.invite_email(user, email_to)
         result = :ok
       end
     elsif (service_id == 2)
