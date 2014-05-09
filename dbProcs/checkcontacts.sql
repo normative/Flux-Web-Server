@@ -29,7 +29,6 @@ BEGIN
 	contactset := string_to_array(trim(both ' ' from contactlist), ',');
 	contactarraylen := array_length(contactset, 1);
 
---	CREATE TABLE mytable
 	CREATE TEMP TABLE mytable
 	ON COMMIT DROP
 	AS (
