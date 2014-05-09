@@ -119,7 +119,7 @@ class AliasesController < ApplicationController
                     profile_pic_URL: '',
                     social_id: r["user_id"],
                     user_id: r["user_id"], username: r["username"], 
-                    am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
+                    am_follower: r["am_follower"], is_following: r["is_following"]}
             # find if the user has an avatar then fetch the thumb path for it
             @user = User.find(r["user_id"])
             path = @user.avatar.path('thumb')
@@ -143,7 +143,7 @@ class AliasesController < ApplicationController
             nr = {alias_name: contacts[c_idx].username, profile_pic_URL: piu,
                     display_name: contacts[c_idx].name,
                     social_id: ident,
-                    user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+                    user_id: 0, username: '', am_follower: 0, is_following: 0}
             contactrows << nr
             c_idx = c_idx + 1
           end
@@ -154,7 +154,7 @@ class AliasesController < ApplicationController
                     profile_pic_URL: '',
                     social_id: '',
                     user_id: r["user_id"], username: r["username"], 
-                    am_follower: r["am_follower"], is_following: r["is_following"], friend_state: r["friend_state"]}
+                    am_follower: r["am_follower"], is_following: r["is_following"]}
             if (service_id == 2)
               if (contacts[c_idx].profile_image_uri?)
                 nr[:profile_pic_URL] = contacts[c_idx].profile_image_uri.to_s
@@ -188,7 +188,7 @@ class AliasesController < ApplicationController
           nr = {alias_name: contacts[c_idx].username, profile_pic_URL: piu,
                   display_name: contacts[c_idx].name,
                   social_id: ident,
-                  user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+                  user_id: 0, username: '', am_follower: 0, is_following: 0}
           contactrows << nr
           c_idx = c_idx + 1
         end
@@ -206,7 +206,7 @@ class AliasesController < ApplicationController
         nr = {alias_name: c.username, profile_pic_URL: piu,
                   display_name: c.name,
                   social_id: ident,
-                  user_id: 0, username: '', am_follower: 0, is_following: 0, friend_state: 0}
+                  user_id: 0, username: '', am_follower: 0, is_following: 0}
         contactrows << nr
       end
     end
