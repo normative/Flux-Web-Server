@@ -40,6 +40,7 @@ BEGIN
 		FROM	users u
 			INNER JOIN aliases a ON ((u.id = a.user_id) AND (a.service_id = serviceid))
 		WHERE	(a.alias_name = ANY(contactset))
+		  AND	u.id != my_id
 	);
 
 	FOR r IN

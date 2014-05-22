@@ -94,32 +94,50 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST /users/invitetoflux
-  # POST /users/invitetoflux.json
+  # PUT /users/invitetoflux?service_id=[1|2|3]&auth_token=...[&to_email=...]
+  # PUT /users/invitetoflux.json?service_id=[1|2|3]&auth_token=...[&to_email=...]
   def invitetoflux
 #    logger.debug "Into Users#invitetoflux"
     # Invite a social contact to join Flux
     
     service_id = params[:serviceid].to_i
+ #   puts 'service_id = ' + service_id.to_s
       
-    puts 'service_id = ' + service_id.to_s
-    result = :no_content
+    # default result state
+    result = :unprocessable_entity
+    e_message = "Invalid service id"
       
     if (service_id == 1)
       # email invite
-    elsif (service_id == 2)
-      # twitter invite
-      invite = ::TwitterClient.invite_friend_to_flux params
-      if (!invite.nil?)
+      user = User.find_by_authentication_token(params[:auth_token])
+      email_to = params[:email_to]
+      if (user.confirmed_at.nil?)
+        e_message = "Sender email not confirmed"
+      elsif (user.nil?)
+        e_message = "Sending user not found" 
+      elsif (email_to.nil?)
+        e_message = "Missing parameter: email_to" 
+      else 
+        UserMailer.invite_email(user, email_to)
         result = :ok
       end
+    elsif (service_id == 2)
+      # twitter invite
+#      invite = ::TwitterClient.invite_friend_to_flux params
+#      if (!invite.nil?)
+#        result = :ok
+#      end
     elsif (service_id == 3)
       # facebook invite
     end
     
     respond_to do |format|
 #      format.html { redirect_to users_url }
-      format.json { head result }
+      if (result == :ok)
+        format.json { head result }
+      else
+        format.json { render json: {error_message: e_message}, status: result }           
+      end
     end
 
   end
