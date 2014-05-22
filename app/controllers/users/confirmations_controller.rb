@@ -6,6 +6,8 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     end
   end
   
+  
+  
   protected
     # The path used after confirmation.
     def after_confirmation_path_for(resource_name, resource)
@@ -14,4 +16,16 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       "/users/emailconfirmed"
    end
   
+
+#  # from devis/models/confirmable.rb   
+#  # Send confirmation instructions by email
+#  def send_confirmation_instructions
+#    unless @raw_confirmation_token
+#      generate_confirmation_token!
+#    end
+#
+#    opts = pending_reconfirmation? ? { :to => unconfirmed_email } : { }
+#    send_devise_notification(:confirmation_instructions, @raw_confirmation_token, opts)
+#  end
+
 end
