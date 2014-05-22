@@ -246,6 +246,7 @@ class AliasesController < ApplicationController
         else
           fr[:profile_pic_URL] = user.avatar.url('thumb')
         end
+      end
     end
 
     # sort the flux rows and contact rows, then concatenate together
@@ -355,6 +356,6 @@ class AliasesController < ApplicationController
   
   
   def is_number?(object)
-    true if Float(object) rescue false end
+    true if Float(object) rescue false
   end
 end
