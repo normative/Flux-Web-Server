@@ -43,7 +43,7 @@ class AliasesController < ApplicationController
       logger.debug "service id = 1 (email contacts)"
       # contacts coming in as parameter as a comma-separated list already...
       contactlist = params[:contactlist]
-      contacts = contactlist.split(',')
+      contacts = contactlist.split(',').sort
     elsif (service_id == 2)
       # Twitter..
       logger.debug "service id = 2 (twitter contacts)"
@@ -91,9 +91,9 @@ class AliasesController < ApplicationController
     lastid = -1
     if (results.size > 0)
       results.each do |r|
-        if r[0] != lastid
+        if r["user_id"].to_i != lastid
           uniqresults << r
-          lastid = r[0]
+          lastid = r[0].to_i
         end
       end
     end
@@ -109,7 +109,12 @@ class AliasesController < ApplicationController
         if (service_id == 1)
           # email contacts...
           while (c_idx < contacts.size) && (contacts[c_idx].to_s < r["alias_name"].to_s)  do
-            # add rows to something to add into r later...
+            # contacts that are not in FLUX
+            nr = {alias_name: contacts[c_idx], profile_pic_URL: '',
+                    display_name: contacts[c_idx],
+                    social_id: contacts[c_idx],
+                    user_id: 0, username: '', am_follower: 0, is_following: 0}
+            contactrows << nr
             c_idx = c_idx + 1
           end
 
@@ -173,6 +178,14 @@ class AliasesController < ApplicationController
       # now do the rest in the contacts list...
       if (service_id == 1)
         # email contacts...
+        while (c_idx < contacts.size)  do
+          nr = {alias_name: contacts[c_idx], profile_pic_URL: '',
+                  display_name: contacts[c_idx],
+                  social_id: contacts[c_idx],
+                  user_id: 0, username: '', am_follower: 0, is_following: 0}
+          contactrows << nr
+          c_idx = c_idx + 1
+        end
       elsif ((service_id == 2) || (service_id == 3))
         # Twitter & Facebook contacts...
         piu = String.new
@@ -194,29 +207,53 @@ class AliasesController < ApplicationController
         end
       end      
       
-    elsif ((contacts.size > 0) && ((service_id == 2) || (service_id == 3)))
-      contacts.each do |c|
-        if (service_id == 2)
-          piu = c.profile_image_uri.to_s
-          ident = c.id
-        elsif (service_id ==3)
-          piu = 'http://graph.facebook.com/' + c.identifier + '/picture?type=small'
-          ident = c.identifier
-        end
-        nr = {alias_name: c.username, profile_pic_URL: piu,
-                  display_name: c.name,
-                  social_id: ident,
+    elsif (contacts.size > 0)
+      if (service_id == 1)
+        # email contacts...
+       contacts.each do |c|
+          nr = {alias_name: c, profile_pic_URL: '',
+                  display_name: c,
+                  social_id: c,
                   user_id: 0, username: '', am_follower: 0, is_following: 0}
-        contactrows << nr
+          contactrows << nr
+          c_idx = c_idx + 1
+        end 
+      elsif ((service_id == 2) || (service_id == 3))
+        contacts.each do |c|
+          if (service_id == 2)
+            piu = c.profile_image_uri.to_s
+            ident = c.id
+          elsif (service_id ==3)
+            piu = 'http://graph.facebook.com/' + c.identifier + '/picture?type=small'
+            ident = c.identifier
+          end
+          nr = {alias_name: c.username, profile_pic_URL: piu,
+                    display_name: c.name,
+                    social_id: ident,
+                    user_id: 0, username: '', am_follower: 0, is_following: 0}
+          contactrows << nr
+        end
       end
+    end
+    
+    # spin through the flux contacts and update the profile pic to the flux pic if it exists..
+    fluxrows.each do |fr|
+      user = User.find(fr[:user_id])
+      path = user.avatar.path('thumb')
+      if (!path.nil?)
+        if (Rails.env == 'production') || (Rails.env == 'staging')
+          fr[:profile_pic_URL] = user.avatar.expiring_url(10,'thumb')
+        else
+          fr[:profile_pic_URL] = user.avatar.url('thumb')
+        end
     end
 
     # sort the flux rows and contact rows, then concatenate together
     if (service_id == 2)
       # Twitter - sort by alias_name
-      finalresults = fluxrows.sort{|x| x[:alias_name].downcase} + contactrows.sort_by{|x| x[:alias_name].downcase}
+      finalresults = fluxrows.sort_by{|x| x[:alias_name].downcase} + contactrows.sort_by{|x| x[:alias_name].downcase}
     else
-      finalresults = fluxrows.sort{|x| x[:display_name].downcase} + contactrows.sort_by{|x| x[:display_name].downcase}
+      finalresults = fluxrows.sort_by{|x| x[:display_name].downcase} + contactrows.sort_by{|x| x[:display_name].downcase}
     end
 
     respond_to do |format|
@@ -318,6 +355,6 @@ class AliasesController < ApplicationController
   
   
   def is_number?(object)
-    true if Float(object) rescue false
+    true if Float(object) rescue false end
   end
 end
