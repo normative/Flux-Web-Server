@@ -35,15 +35,15 @@ end
 
 gem 'jquery-rails'
 gem 'capistrano', '~> 2.15.5'
-gem 'rvm-capistrano'
+gem 'rvm-capistrano', require: false
 
 gem 'awesome_print'
 gem 'rspec-rails'
 gem 'factory_girl_rails'
 
 group :development do
-  gem 'debugger'
-  gem 'debugger-completion'
+  # gem 'debugger'
+  # gem 'debugger-completion'
 end
 
 gem 'jtv-apns'

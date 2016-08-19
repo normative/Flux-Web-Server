@@ -38,8 +38,6 @@ GEM
       uuidtools (~> 2.1)
     bcrypt-ruby (3.1.2)
     bcrypt-ruby (3.1.2-java)
-    bond (0.4.3)
-    bond (0.4.3-java)
     buftok (0.2.0)
     builder (3.1.4)
     cancan (1.6.10)
@@ -60,16 +58,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.6.3)
-    columnize (0.3.6)
-    debugger (1.6.2)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.3)
-    debugger-completion (1.0.0)
-      bond (>= 0.4.2)
-      debugger (~> 1.1)
-    debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.3)
     descendants_tracker (0.0.3)
     devise (3.1.1)
       bcrypt-ruby (~> 3.0)
@@ -243,8 +231,6 @@ DEPENDENCIES
   cancan
   capistrano (~> 2.15.5)
   coffee-rails
-  debugger
-  debugger-completion
   devise (~> 3.1.1)
   factory_girl_rails
   fb_graph
@@ -263,3 +249,6 @@ DEPENDENCIES
   therubyracer
   twitter
   uglifier (>= 1.0.3)
+
+BUNDLED WITH
+   1.12.5
