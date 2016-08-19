@@ -5,10 +5,11 @@
 #   gem 'sqlite3'
 development:
   adapter: postgresql
-  database: flux_development
-  host: localhost
-  username: postgres
-  password: postgresA
+  database: dbcm7ilmjj7stv
+  host: ec2-54-235-125-172.compute-1.amazonaws.com
+  username: lrrcmlodpqnxcz
+  password: teievXkfti-RCPsTpikiGFcLuA
+  timeout: 5000
 
 testing:
   adapter: postgresql
