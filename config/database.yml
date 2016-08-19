@@ -19,10 +19,10 @@ testing:
 
 staging:
   adapter: postgresql
-  database: flux
-  host: localhost
-  username: postgres
-  password: postgres
+  database: dbcm7ilmjj7stv
+  host: ec2-54-235-125-172.compute-1.amazonaws.com
+  username: lrrcmlodpqnxcz
+  password: teievXkfti-RCPsTpikiGFcLuA
   timeout: 5000
 
 production:
