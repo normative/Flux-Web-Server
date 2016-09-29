@@ -29,8 +29,8 @@ group :assets do
 end
 
 group :staging do
-  gem 'therubyracer', platforms: :ruby
-  gem 'libv8', '~> 3.11.8'
+  # gem 'therubyracer', platforms: :ruby
+  # gem 'libv8', '~> 3.11.8'
 end
 
 gem 'jquery-rails'
