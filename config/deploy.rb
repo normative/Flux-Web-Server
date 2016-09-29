@@ -5,9 +5,11 @@ require "capistrano/ext/multistage"
 set :stages, ["production", "staging", "testing"]
 set :default_stage, "testing"
 
-set :application, "SMLR Flux"
-set :repository,  "git@bitbucket.org:smlrteam/smlr_flux_webserver.git"
+set :application, "Normative Flux"
+set :repository,  "git@github.com:normative/Flux-Web-Server.git"
 set :branch, 'master'
+
+set :default_environment, { 'PATH' => '$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH' }
 
 # if you want to clean up old releases on each deploy uncomment this:
 # after "deploy:restart", "deploy:cleanup"
