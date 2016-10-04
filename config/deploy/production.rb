@@ -5,4 +5,4 @@ set :use_sudo, false
 set :rvm_type, :user
 # set :rvm_ruby_string, 'ruby-1.9.3-p484'
 set :ssh_options, { forward_agent: true }
-server "ec2-54-70-65-128.us-west-2.compute.amazonaws.com", :web, :app, :db, primary: true
+server "fluxapp.normative.com", :web, :app, :db, primary: true
