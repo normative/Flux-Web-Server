@@ -1,0 +1,13 @@
+flux:
+  build: .
+  command: rails server -p 3101 -b '0.0.0.0'
+  volumes:
+    - .:/flux
+  ports:
+    - "3101:3101"
+  links:
+    - postgres
+postgres:
+  image: postgres:9.4
+  ports:
+    - "5432"
