@@ -62,7 +62,7 @@ Web::Application.configure do
     domain: "fluxapp.normative.com" ,
     authentication: "plain",
     user_name: "postmaster@fluxapp.normative.com",
-    password: "4d46d6157c15588765f4e556072305f3"
+    password: ENV["MAILGUN_PASSWORD"]
     }
 
 
