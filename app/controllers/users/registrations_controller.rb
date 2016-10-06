@@ -1,14 +1,17 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   respond_to :json
-  
+
   def create
+    puts 'CREATING REGISTRATION'
     build_resource(resource_params)
 
     if resource.save
+      puts 'SAVED'
       render json: resource.as_json(auth_token: resource.authentication_token, username: resource.username), status: 201
       return
     else
       clean_up_passwords resource
+      puts 'COULD NOT SAVE RESOURCE USER'
       warden.custom_failure!
       render json: resource.errors, status: 422
     end
@@ -21,7 +24,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render json: @result
     return
   end
-  
+
 #  # GET /users/profile/1.json
 #  def profile
 #    #    @profile = User.getprofile(params[:auth_token], params[:id])
@@ -32,11 +35,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 #    # It also returns a simple Hash, which is significantly more efficient than a
 #    # full blown ActiveRecord model.
 #    results = ActiveRecord::Base.connection.select_all(query)
-#    #=> [{"id" => 1, "member_since" => 2013-02-26 01:28:08 UTC}, etc...]    
+#    #=> [{"id" => 1, "member_since" => 2013-02-26 01:28:08 UTC}, etc...]
 #    render json: results
 #    return
 #  end
-#  
+#
   def resource_params
     params.require(:user).permit :email, :username, :name, :password, :bio, :follower_count, :following_count, :avatar, :facebook, twitter: [:access_token, :access_token_secret]
   end
