@@ -52,18 +52,18 @@ Web::Application.configure do
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.default_url_options = { :host => 'staging.flux.smlr.is', :protocol => 'https' }
+  config.action_mailer.default_url_options = { :host => 'fluxapp.normative.com', :protocol => 'https' }
 
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-    address: "smtp.gmail.com",
+    address: "209.61.151.224",
     port: 587,
-    domain: ENV["FLUX_EMAIL_DOMAIN"] ,
+    domain: "fluxapp.normative.com" ,
     authentication: "plain",
     enable_starttls_auto: true,
-    user_name: ENV["FLUX_EMAIL_USERNAME"],
-    password: ENV["FLUX_EMAIL_PASSWORD"]
+    user_name: "postmaster@fluxapp.normative.com",
+    password: "4d46d6157c15588765f4e556072305f3"
     }
 
 
