@@ -59,7 +59,7 @@ Web::Application.configure do
   config.action_mailer.smtp_settings = {
     address: "209.61.151.224",
     port: 587,
-    domain: "smtp.mailgun.org" ,
+    domain: "fluxapp.normative.com" ,
     authentication: "plain",
     user_name: "postmaster@fluxapp.normative.com",
     password: "4d46d6157c15588765f4e556072305f3"
