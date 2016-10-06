@@ -14,6 +14,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       puts 'COULD NOT SAVE RESOURCE USER'
       warden.custom_failure!
       render json: resource.errors, status: 422
+      return
     end
   end
 
