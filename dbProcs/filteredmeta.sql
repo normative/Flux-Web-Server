@@ -1,7 +1,7 @@
 ﻿
 
 DROP FUNCTION filteredmeta(mytoken text,
-					lat double precision, lon double precision, radius double precision, 
+					lat double precision, lon double precision, radius double precision,
 					minalt double precision, maxalt double precision,
 					mintime timestamp, maxtime timestamp,
 					taglist text,
@@ -14,7 +14,7 @@ DROP FUNCTION filteredmeta(mytoken text,
 
 
 CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
-					lat double precision, lon double precision, radius double precision, 
+					lat double precision, lon double precision, radius double precision,
 					minalt double precision, maxalt double precision,
 					mintime timestamp, maxtime timestamp,
 					taglist text,
@@ -23,9 +23,9 @@ CREATE OR REPLACE FUNCTION filteredmeta(mytoken text,
 					followingpics integer,
 					maxcount integer
 					)
-RETURNS table (id bigint, time_stamp timestamp, user_id integer, description character varying, 
+RETURNS table (id int, time_stamp timestamp, user_id integer, description character varying, 
 			username character varying, camera_model character varying,
-			latitude double precision, longitude double precision, altitude double precision, 
+			latitude double precision, longitude double precision, altitude double precision,
 			heading double precision, yaw double precision, pitch double precision, roll double precision,
 			qw double precision, qx double precision, qy double precision, qz double precision)
 AS $$
@@ -47,20 +47,20 @@ BEGIN
 
 	skipsocial = NOT (mypics = 1 OR followingpics = 1);
 
-	SELECT u.id INTO my_id 
-	FROM users AS u 
+	SELECT u.id INTO my_id
+	FROM users AS u
 	WHERE authentication_token = mytoken;
 
 	tagset = string_to_array(trim(both ' ' from taglist), ' ');
 	tagarraylen = array_length(tagset, 1);
-	
+
 	userset = string_to_array(trim(both ' ' from userlist), ' ');
 	userarraylen = array_length(userset, 1);
-	
+
 	IF (mintime IS NULL) THEN
 		mintime = '-infinity'::timestamp;
 	END IF;
-		
+
 	IF (maxtime IS NULL) THEN
 		maxtime = 'infinity'::timestamp;
 	END IF;
@@ -68,8 +68,8 @@ BEGIN
 	CREATE TEMP TABLE imagesinbox
 	ON COMMIT DROP
 	AS
-	(	
-		SELECT	i.id, 
+	(
+		SELECT	i.id,
 			i.privacy,
 			i.user_id,
 			u.username as username
@@ -85,9 +85,9 @@ BEGIN
 
 	CREATE TEMP TABLE imageset
 	ON COMMIT DROP
-	AS 
+	AS
 	(
-		SELECT	DISTINCT i.* 
+		SELECT	DISTINCT i.*
 		FROM	imagesinbox i
 			INNER JOIN users u ON (i.user_id = u.id)
 			LEFT OUTER JOIN connections c ON ((c.user_id = my_id) AND (c.connections_id = u.id))
@@ -104,7 +104,7 @@ BEGIN
 RETURN QUERY
 	SELECT	i.id, i.time_stamp, i.user_id, i.description, ims.username as username, c.model as camera_model,
 				i.best_latitude as latitude, i.best_longitude as longitude, i.best_altitude as altitude,
-				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll, 
+				i.heading, i.best_yaw as yaw, i.best_pitch as pitch, i.best_roll as roll,
 				i.best_qw as qw, i.best_qx as qx, i.best_qy as qy, i.best_qz as qz
 	FROM	imageset ims
 		INNER JOIN images i ON (ims.id = i.id)
