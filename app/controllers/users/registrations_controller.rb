@@ -6,8 +6,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     if resource.save
       result = resource.as_json(auth_token: resource.authentication_token, username: resource.username)
-      result.auth_token = resource.authentication_token
-      result.username = resource.username
+      result.merge!('auth_token' => resource.authentication_token)
+      result.merge!('username' => resource.username)
       render json: result, status: 201
       return
     else
