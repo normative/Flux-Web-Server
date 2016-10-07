@@ -5,7 +5,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
     build_resource(resource_params)
 
     if resource.save
-      render json: resource.as_json(auth_token: resource.authentication_token, username: resource.username), status: 201
+      puts resource.as_json
+      puts "test"
+      puts resource.authentication_token
+      result = resource.as_json(auth_token: resource.authentication_token, username: resource.username)
+      puts result
+      render json: result, status: 201
       return
     else
       clean_up_passwords resource
