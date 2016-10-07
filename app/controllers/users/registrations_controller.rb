@@ -6,10 +6,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     if resource.save
       puts resource.as_json
-      puts "test"
-      puts resource.authentication_token
+      logger.info "test"
+      logger.info resource.authentication_token
       result = resource.as_json(auth_token: resource.authentication_token, username: resource.username)
-      puts result
+      logger.info result
       render json: result, status: 201
       return
     else
