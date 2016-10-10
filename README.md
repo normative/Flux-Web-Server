@@ -93,12 +93,9 @@ From a terminal:
 4. Update line #23
 
    ```
-   define _AWSProductionServerURL  @"http://localhost:3103/"
+   #define _yourServerURL  @"http://localhost:3101/"
    ```
 
-   ```
-   define _AWSSecureProductionServerURL  @"https://localhost:3101/"
-   ```
 
 5. Build the Xcode project on a device connected to the same network as your backend application and your good to go.
 
