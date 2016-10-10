@@ -89,5 +89,7 @@ config.paperclip_defaults = {
   :s3_permissions => :private
 }
 
+Paperclip.options[:command_path] = "/usr/bin/"
+
 APNS.pem  = 'config/certs/apn_development.pem'
 end
