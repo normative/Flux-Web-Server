@@ -34,6 +34,7 @@ Web::Application.routes.draw do
         get 'followerrequests', :to => "connections#followerrequests"
         put 'updateapnstoken'
         put 'invitetoflux', :to =>"users#invitetoflux"
+        get 'invitetoflux', :to =>"users#invitetoflux"
       end
       member do
         get 'profile'
