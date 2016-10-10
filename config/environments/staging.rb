@@ -83,7 +83,7 @@ Web::Application.configure do
 config.paperclip_defaults = {
   :storage => :s3,
   :s3_credentials => {
-    :bucket => 'worldinflux.flux.imagery01'
+    :bucket => 'flux-assets'
   },
   :path => "Staging/:class/:attachment/:id_partition/:style/:filename",
   :s3_permissions => :private
