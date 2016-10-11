@@ -195,8 +195,6 @@ class ImagesController < ApplicationController
 
     if (Rails.env == 'production') || (Rails.env == 'staging')
       #    send_file url, disposition: :attachment
-      Rails.logger.info('TRYING TO LOAD');
-      Rails.logger.info(url)
       data = open(url)
       send_data data.read, filename: fn, type: ct, disposition: :attachment
     elsif (!path.nil?)
