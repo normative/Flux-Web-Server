@@ -83,7 +83,7 @@ config.paperclip_defaults = {
   :s3_credentials => {
     :bucket => 'flux-assets'
   },
-  :path => "Production/:class/:attachment/:id_partition/:style/:filename",
+  :path => ":class/:attachment/:id_partition/:style/:filename",
   :s3_permissions => :private
 }
 
