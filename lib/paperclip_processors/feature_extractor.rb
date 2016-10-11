@@ -20,9 +20,9 @@ class FeatureExtractor < Paperclip::Processor
 #    logger.debug "Into FeatureExtractor#make"
     src = @file
     dst = Tempfile.new([@basename, @format ? ".#{@format}" : ""])
-    
+
 #    if @cvt_to_xml
-#      dst = Tempfile.new([@basename, ".xml"])      
+#      dst = Tempfile.new([@basename, ".xml"])
 #    else
 #      dst = Tempfile.new([@basename, ".bin"])
 #    end
@@ -48,6 +48,7 @@ class FeatureExtractor < Paperclip::Processor
     rescue Cocaine::ExitStatusError => e
       raise Paperclip::Error, "There was an error processing the extraction for @basename"
     rescue Cocaine::CommandNotFoundError => e
+      Rails.logger.info(e)
       raise Paperclip::Errors::CommandNotFoundError.new("Could not run the `feature_extract` command. Please install.")
     end
 
