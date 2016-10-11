@@ -31,7 +31,7 @@ class Image < ActiveRecord::Base
 #                                                  :cvt_to_xml => true,
 #                                                  :chain_to => :binfeatures,
 #                                                  :processors => [:chainable, :feature_extractor]
-#                                                } 
+#                                                }
                                     },
                          dependent: :destroy,
                    convert_options: { oriented: "-auto-orient" }
@@ -47,12 +47,9 @@ class Image < ActiveRecord::Base
 
   # this attachment is actually created/setup by the feature compute node.
   # paperclip is attachment is defined to allow download through standard API
-  # has_attached_file :features, styles: { bin: { :format => :bin,
-  #                                               :processors => :feature_extractor
-  #                                             }
-  #                                       },
-  #                        dependent: :destroy,
-  #                  convert_options: { oriented: "-auto-orient" }
+  has_attached_file :features, styles: { },
+                         dependent: :destroy,
+                   convert_options: { oriented: "-auto-orient" }
 
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,
