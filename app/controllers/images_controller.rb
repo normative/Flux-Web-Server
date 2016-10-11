@@ -25,16 +25,16 @@ class ImagesController < ApplicationController
     if mypics.nil?
       mypics = 0;
     end
-    
+
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0;
     end
-  
-    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
-                                params[:altmin], params[:altmax], 
-                                params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], 
+
+    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius],
+                                params[:altmin], params[:altmax],
+                                params[:timemin], params[:timemax],
+                                params[:taglist], params[:userlist],
                                 mypics, followingpics, params[:maxcount])
 
     respond_to do |format|
@@ -54,16 +54,16 @@ class ImagesController < ApplicationController
     if mypics.nil?
       mypics = 0
     end
-    
+
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0
     end
-  
-    @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius], 
-                                params[:altmin], params[:altmax], 
-                                params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], 
+
+    @images = Image.filteredcontent(params[:auth_token], params[:lat], params[:long], params[:radius],
+                                params[:altmin], params[:altmax],
+                                params[:timemin], params[:timemax],
+                                params[:taglist], params[:userlist],
                                 mypics, followingpics, params[:maxcount])
 
     respond_to do |format|
@@ -71,7 +71,7 @@ class ImagesController < ApplicationController
       format.json { render json: @images }
     end
   end
-  
+
   # GET /images/getimagelistforuser?userid=...
   # GET /images/getimagelistforuser.json?userid=...
   def getimagelistforuser
@@ -82,7 +82,7 @@ class ImagesController < ApplicationController
       format.json { render json: @images }
     end
   end
-  
+
   # GET /images/filteredimgcounts?lat=...&long=...&radius=...&minalt=...&maxalt=...
   #                     &mintime=...&maxtime=...
   #                     &taglist="tag1 tag2 tag3...tagN"
@@ -93,16 +93,16 @@ class ImagesController < ApplicationController
     if mypics.nil?
       mypics = 0
     end
-    
+
     followingpics = params[:followingpics]
     if followingpics.nil?
       followingpics = 0
     end
-  
-    query = ::Image.filteredimgcounts(params[:auth_token], params[:lat], params[:long], params[:radius], 
-                                params[:altmin], params[:altmax], 
-                                params[:timemin], params[:timemax], 
-                                params[:taglist], params[:userlist], 
+
+    query = ::Image.filteredimgcounts(params[:auth_token], params[:lat], params[:long], params[:radius],
+                                params[:altmin], params[:altmax],
+                                params[:timemin], params[:timemax],
+                                params[:taglist], params[:userlist],
                                 mypics, followingpics)
     # This will issue a query, but only with the attributes we selected above.
     # It also returns a simple Hash, which is significantly more efficient than a
@@ -110,8 +110,8 @@ class ImagesController < ApplicationController
     results = ActiveRecord::Base.connection.select_all(query)
     render json: results
   end
-  
-  
+
+
   # GET /images/1
   # GET /images/1.json
   def show
@@ -132,7 +132,7 @@ class ImagesController < ApplicationController
       self.features
     else
       path = @image.image.path(params[:size])
-    
+
       if (!path.nil?)
         if (Rails.env == 'production') || (Rails.env == 'staging')
            url = @image.image.expiring_url(5, params[:size])
@@ -143,9 +143,9 @@ class ImagesController < ApplicationController
         else
           send_file path, disposition: :attachment
         end
-        
+
   #      send_file @image.image.url(params[:size]), disposition: :attachment
-          
+
       else
         respond_to do |format|
           format.json { head :no_content }
@@ -169,7 +169,7 @@ class ImagesController < ApplicationController
       else
         send_file path, disposition: :attachment
       end
-        
+
     else
       respond_to do |format|
         format.json { head :no_content }
@@ -195,6 +195,8 @@ class ImagesController < ApplicationController
 
     if (Rails.env == 'production') || (Rails.env == 'staging')
       #    send_file url, disposition: :attachment
+      Rails.logger.info('TRYING TO LOAD');
+      Rails.logger.info(url)
       data = open(url)
       send_data data.read, filename: fn, type: ct, disposition: :attachment
     elsif (!path.nil?)
@@ -204,9 +206,9 @@ class ImagesController < ApplicationController
         format.json { head :no_content }
       end
     end
-    
-  end  
-  
+
+  end
+
   # GET /images/1/features
   def features
     @image = Image.find(params[:id])
@@ -217,7 +219,7 @@ class ImagesController < ApplicationController
        ct = @image.features_content_type
      data = open(url)
      send_data data.read, filename: fn, type: ct, disposition: :attachment
-        
+
     else
       respond_to do |format|
         format.json { head :no_content }
@@ -260,16 +262,16 @@ class ImagesController < ApplicationController
   end
 
   #PATCH/PUT /images/setprivacy?privacy=<1|0>&imageids=<CSV list of image ids>&auth_token=...
-  #PATCH/PUT /images/setprivacy.json?privacy=<1|0>&imageids=<CSV list of image ids>&auth_token=... 
+  #PATCH/PUT /images/setprivacy.json?privacy=<1|0>&imageids=<CSV list of image ids>&auth_token=...
   def setprivacy
     @user = User.find_by_authentication_token(params[:auth_token])
-    
+
     update_attrs = {privacy: params[:privacy]}
     update_ids = params[:image_ids].split(",").map(&:to_i)
-      
-    update_ids.each do |uid|  
+
+    update_ids.each do |uid|
       @image = Image.where({user_id: @user.id, id: uid}).first
-      if (!@image.nil?) 
+      if (!@image.nil?)
         @image.update_attributes(update_attrs)
       end
     end
@@ -278,15 +280,15 @@ class ImagesController < ApplicationController
       format.json { head :no_content }
     end
  end
-  
+
 #PATCH/PUT /images/setdescription?description=...&auth_token=...
-#PATCH/PUT /images/setdescription.json?description=...&auth_token=... 
+#PATCH/PUT /images/setdescription.json?description=...&auth_token=...
 def setdescription
   @user = User.find_by_authentication_token(params[:auth_token])
-  
+
   update_attrs = {description: params[:description]}
   @image = Image.where({user_id: @user.id, id: params[:id]}).first
-  if (!@image.nil?) 
+  if (!@image.nil?)
     @image.update_attributes(update_attrs)
   end
 
@@ -338,9 +340,9 @@ end
   end
 
   #  def filteredmeta
-  #    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius], 
-  #                                params[:altmin], params[:altmax], 
-  #                                params[:timemin], params[:timemax], 
+  #    @images = Image.filteredmeta(params[:auth_token], params[:lat], params[:long], params[:radius],
+  #                                params[:altmin], params[:altmax],
+  #                                params[:timemin], params[:timemax],
   #                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
   #
   #    respond_to do |format|
@@ -359,11 +361,11 @@ end
   #      format.json { render json: @images }
   #    end
   #  end
-    
+
   #  def filteredtimebucket
-  #    @images = Image.filteredtimebucket(params[:lat], params[:long], params[:radius], 
-  #                                params[:altmin], params[:altmax], 
-  #                                params[:timemin], params[:timemax], 
+  #    @images = Image.filteredtimebucket(params[:lat], params[:long], params[:radius],
+  #                                params[:altmin], params[:altmax],
+  #                                params[:timemin], params[:timemax],
   #                                params[:taglist], params[:userlist], params[:catlist], params[:maxcount])
   #
   #    respond_to do |format|
@@ -371,7 +373,7 @@ end
   #      format.json { render json: @images }
   #    end
   #  end
-      
+
   #  def extendedmeta
   #    @images = Image.extendedmeta(params[:idlist]).limit(100)
   #
@@ -387,12 +389,12 @@ end
   # params.require(:person).permit(:name, :age)
   # Also, you can specialize this method with per-user checking of permissible attributes.
   def image_params
-    params.require(:image).permit(:altitude, :latitude, :longitude, :pitch, :roll, :yaw, :qw, :qx, :qy, :qz,  
-                                  :raw_altitude, :raw_latitude, :raw_longitude, :raw_pitch, :raw_roll, :raw_yaw, 
+    params.require(:image).permit(:altitude, :latitude, :longitude, :pitch, :roll, :yaw, :qw, :qx, :qy, :qz,
+                                  :raw_altitude, :raw_latitude, :raw_longitude, :raw_pitch, :raw_roll, :raw_yaw,
                                   :raw_qw, :raw_qx, :raw_qy, :raw_qz,
-                                  :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw, 
+                                  :best_altitude, :best_latitude, :best_longitude, :best_pitch, :best_roll, :best_yaw,
                                   :best_qw, :best_qx, :best_qy, :best_qz,
-                                  :camera_id, :category_id, :description, :heading, :image, 
+                                  :camera_id, :category_id, :description, :heading, :image,
                                   :user_id, :time_stamp, :horiz_accuracy, :vert_accuracy,
                                   :privacy, :historical, :features )
   end
