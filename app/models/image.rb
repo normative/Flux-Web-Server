@@ -5,57 +5,57 @@ class Image < ActiveRecord::Base
   belongs_to :camera
   belongs_to :category
   has_and_belongs_to_many :tags
-#  has_attached_file :image, styles: { thumb: "200x200", 
-#                                  quarterhd: "960x960", 
-#                                   oriented: '100%', 
+#  has_attached_file :image, styles: { thumb: "200x200",
+#                                  quarterhd: "960x960",
+#                                   oriented: '100%',
 #                                   features: {:processors => [:feature_extractor], :format => :xml}
-#                                    }, 
-#  has_attached_file :image, styles: { thumb: "200x200", 
-#                                  quarterhd: "960x960", 
-#                                   oriented: '100%', 
+#                                    },
+#  has_attached_file :image, styles: { thumb: "200x200",
+#                                  quarterhd: "960x960",
+#                                   oriented: '100%',
 #                                   features: { :format => :xml,
 #                                               :chain_to => :oriented,
 #                                               :processors => [:chainable, :feature_extractor]
-#                                             } 
-#                                    }, 
-  has_attached_file :image, styles: { thumbcrop: "184x184#", 
-                                  quarterhdcrop: "540x540#", 
- #                                         thumb: "200x200", 
- #                                     quarterhd: "960x960", 
-                                       oriented: '100%', 
+#                                             }
+#                                    },
+  has_attached_file :image, styles: { thumbcrop: "184x184#",
+                                  quarterhdcrop: "540x540#",
+ #                                         thumb: "200x200",
+ #                                     quarterhd: "960x960",
+                                       oriented: '100%',
                                     binfeatures: { :format => :bin,
                                                    :chain_to => :oriented,
-                                                   :processors => [:chainable, :feature_extractor]
-                                                }#, 
+                                                   :processors => [:chainable] #, :feature_extractor]
+                                                }#,
 #                                      features: { :format => :xml,
 #                                                  :cvt_to_xml => true,
 #                                                  :chain_to => :binfeatures,
 #                                                  :processors => [:chainable, :feature_extractor]
 #                                                } 
-                                    }, 
-                         dependent: :destroy, 
+                                    },
+                         dependent: :destroy,
                    convert_options: { oriented: "-auto-orient" }
-                              
-  has_attached_file :historical, styles: { thumbcrop: "184x184#", 
-                                  quarterhdcrop: "540x540#", 
-#                                          thumb: "200x200", 
-#                                      quarterhd: "960x960", 
-                                       oriented: '100%' 
-                                    }, 
-                         dependent: :destroy, 
+
+  has_attached_file :historical, styles: { thumbcrop: "184x184#",
+                                  quarterhdcrop: "540x540#",
+#                                          thumb: "200x200",
+#                                      quarterhd: "960x960",
+                                       oriented: '100%'
+                                    },
+                         dependent: :destroy,
                    convert_options: { oriented: "-auto-orient" }
-                              
+
   # this attachment is actually created/setup by the feature compute node.
   # paperclip is attachment is defined to allow download through standard API
-  has_attached_file :features, styles: { bin: { :format => :bin,
-                                                :processors => :feature_extractor
-                                              } 
-                                        }, 
-                         dependent: :destroy, 
-                   convert_options: { oriented: "-auto-orient" }
-                              
+  # has_attached_file :features, styles: { bin: { :format => :bin,
+  #                                               :processors => :feature_extractor
+  #                                             }
+  #                                       },
+  #                        dependent: :destroy,
+  #                  convert_options: { oriented: "-auto-orient" }
+
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
-                        :raw_qw, :raw_qx, :raw_qy, :raw_qz,  
+                        :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                         :user, :camera, :heading, :image, :time_stamp
 
   def as_json(options = {})
@@ -68,7 +68,7 @@ class Image < ActiveRecord::Base
 #                        methods: [ :latitude, :longitude, :altitude, :yaw, :pitch, :roll,
 #                                    :qw, :qx, :qy, :qz ]
                         ))
-    
+
   end
 
  # def latitude; best_latitude; end
@@ -94,20 +94,20 @@ class Image < ActiveRecord::Base
   def qz= qz; self.raw_qz = self.best_qz = qz; end
 
   def self.filtered myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist
-    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, 0, 0, 0, 100)") 
+    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, 0, 0, 0, 100)")
   end
 
   def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
  #   select("*").from(      "filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})")
-    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})") 
+    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})")
   end
 
   def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
-    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})") 
+    select("*").from("filteredmeta('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})")
   end
 
   def self.filteredimgcounts myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics
-    select("*").from("filteredimgcounts('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics})") 
+    select("*").from("filteredimgcounts('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics})")
   end
 
   def to_s; image.original_filename; end
@@ -115,7 +115,7 @@ class Image < ActiveRecord::Base
   # still used for nuke
   def self.within lat, lng, radius
 #    where("(6371000 * acos(cos(radians(#{lat})) * cos(radians(best_latitude)) * cos(radians(best_longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(best_latitude)))) < #{radius}")
-    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, 1000)") 
+    select("*").from("filteredmeta(#{myid}, #{lat}, #{lng}, #{radius}, -100000, 100000, NULL, NULL, NULL, NULL, 1000)")
   end
 
 #  def self.oldwithin lat, lng, radius
@@ -123,11 +123,11 @@ class Image < ActiveRecord::Base
 #  end
 
 #  def self.filteredtimebucket myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, catlist, maxcount
-#    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})") 
+#    select("*").from("filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist}, #{maxcount})")
 #  end
 
 #  def self.extendedmeta idlist
-#    select("*").from("getextendedmeta(#{idlist})") 
+#    select("*").from("getextendedmeta(#{idlist})")
 #  end
 
 end
