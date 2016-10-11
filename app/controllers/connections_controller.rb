@@ -48,7 +48,7 @@ class ConnectionsController < ApplicationController
       format.json { render json: @connections }
     end
   end
-  
+
   # GET /connections/followers
   # GET /connections/followers.json
   def followers
@@ -59,7 +59,7 @@ class ConnectionsController < ApplicationController
       format.json { render json: @connections }
     end
   end
-  
+
   # GET /connections/followerrequests
   # GET /connections/followerrequests.json
   def followerrequests
@@ -82,24 +82,24 @@ class ConnectionsController < ApplicationController
 #        self.localaddfriend connection_params
 #      else
 #        respond_to do |format|
-#          format.json { render json: {error_message: "invalid connection type"}, status: :unprocessable_entity }           
+#          format.json { render json: {error_message: "invalid connection type"}, status: :unprocessable_entity }
 #        end
 #      end
 #    else
 #      respond_to do |format|
-#        format.json { render json: {error_mesage: "missing connection type"}, status: :unprocessable_entity }           
+#        format.json { render json: {error_mesage: "missing connection type"}, status: :unprocessable_entity }
 #      end
 #    end
   end
-  
-    
+
+
   # POST /connections/follow
   # POST /connections/follow.json
   def follow
     connparam = connection_params
-    
+
     sendMessage = false
-        
+
     cp = connparam
 
     fs = cp[:following_state]
@@ -110,23 +110,23 @@ class ConnectionsController < ApplicationController
     end
 
     # first, search for an existing connection from "me" to "them"
-    @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-                                      userid: connparam[:user_id], 
+    @connection = Connection.where("user_id = :userid AND connections_id = :connid",
+                                      userid: connparam[:user_id],
                                       connid: connparam[:connections_id]).first
-    
+
     if (@connection.nil?)
       # new request - create the record and send the request message
       @connection = Connection.new(cp)
       sendMessage = true
 #      ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
-    end     
-    
+    end
+
     respond_to do |format|
       if @connection.save
         if sendMessage
-          ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
+          # ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
         end
-        
+
  #       format.html { redirect_to @connection, notice: 'Connection was successfully created.' }
         format.json { render json: @connection, status: :created, location: @connection }
       else
@@ -136,14 +136,14 @@ class ConnectionsController < ApplicationController
     end
 
   end
-  
+
 #  def localfollow connparam
 ##    logger.debug "Into Connection#follow"
 #
 #    if connparam.nil?
 #      connparam = connection_params  # grab a copy of the hash from the function
 #    end
-#    
+#
 #    cp = connparam.except(:connection_type)
 #
 #    af = cp[:am_following]
@@ -152,7 +152,7 @@ class ConnectionsController < ApplicationController
 #    elsif
 #      cp.merge!( am_following: 1)
 #    end
-#    
+#
 #    fs = cp[:friend_state]
 #    if (fs.nil?)
 #      cp[:friend_state] = 0
@@ -160,11 +160,11 @@ class ConnectionsController < ApplicationController
 #      cp.merge!( friend_state: 0)
 #    end
 #
-#    @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-#                                    userid: connparam[:user_id], 
+#    @connection = Connection.where("user_id = :userid AND connections_id = :connid",
+#                                    userid: connparam[:user_id],
 #                                    connid: connparam[:connections_id]).first_or_create(cp)
 #
-#    # may need to update if the record already exists                    
+#    # may need to update if the record already exists
 #    if (!@connection.nil?)
 #      if (@connection.am_following != 1)
 #        cp.merge!( friend_state: @connection.friend_state)
@@ -172,7 +172,7 @@ class ConnectionsController < ApplicationController
 #      end
 #    end
 #
-#    # notify the user being followed...    
+#    # notify the user being followed...
 #    ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 3)
 #
 #    respond_to do |format|
@@ -191,14 +191,14 @@ class ConnectionsController < ApplicationController
 #  def addfollow
 #    self.localaddfollower connection_params
 #  end
-#  
+#
 #  def localfollow connparam
 ##    logger.debug "Into Connection#follow"
 #
 #    if connparam.nil?
 #      connparam = connection_params  # grab a copy of the hash from the function
 #    end
-#        
+#
 #    cp = connparam.except(:connection_type)
 #
 #    fs = cp[:following_state]
@@ -209,15 +209,15 @@ class ConnectionsController < ApplicationController
 #    end
 #
 #    # first, create the connection from "me" to "them"
-#    @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-#                                      userid: connparam[:user_id], 
+#    @connection = Connection.where("user_id = :userid AND connections_id = :connid",
+#                                      userid: connparam[:user_id],
 #                                      connid: connparam[:connections_id]).first
-#    
+#
 #    if (@connection.nil?)
 #      @connection = Connection.new(cp)
 #      ApnsClient.sendmessage(@connection.user_id, @connection.connections_id, 1)
-#    end     
-#    
+#    end
+#
 #    respond_to do |format|
 #      if @connection.save
 # #       format.html { redirect_to @connection, notice: 'Connection was successfully created.' }
@@ -233,24 +233,24 @@ class ConnectionsController < ApplicationController
   # PUT /connections/respondtofollower.json
   def respondtofollowrequest
 #    @connection = Connection.find(params[:id])
-              
+
     conparam = Hash.new
 
     # find the requesting connection (reciprocal to POST payload)
-    @connection = Connection.where("user_id = :connid AND connections_id = :userid", 
-                                      userid: connection_params[:user_id], 
+    @connection = Connection.where("user_id = :connid AND connections_id = :userid",
+                                      userid: connection_params[:user_id],
                                       connid: connection_params[:connections_id]).first
-    
+
     if (!connection_params[:following_state].nil?)
       if (connection_params[:following_state].to_i > 0)
 #        conparam[:user_id] = connection_params[:user_id]
 #        conparam[:connections_id] = connection_params[:connections_id]
-          
+
         respond_to do |format|
           conparam[:following_state] = 2
           if @connection.update_attributes(conparam)
             logger.debug("Send follower accepted to other user")
-            ApnsClient.sendmessage(@connection.connections_id, @connection.user_id, 2)
+            # ApnsClient.sendmessage(@connection.connections_id, @connection.user_id, 2)
 #           format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
             format.json { head :no_content }
           else
@@ -258,7 +258,7 @@ class ConnectionsController < ApplicationController
             format.json { render json: @connection.errors, status: :unprocessable_entity }
           end
         end
-        
+
       else
         @connection.destroy
 
@@ -270,7 +270,7 @@ class ConnectionsController < ApplicationController
       respond_to do |format|
         format.json { render json: {error_message: "missing following_state"}, status: :unprocessable_entity }
       end
-      
+
     end
   end
 
@@ -296,8 +296,8 @@ class ConnectionsController < ApplicationController
   def disconnect
 #    @connection = Connection.find(params[:id])
 
-    @connection = Connection.where("user_id = :userid AND connections_id = :connid", 
-                                      userid: connection_params[:user_id], 
+    @connection = Connection.where("user_id = :userid AND connections_id = :connid",
+                                      userid: connection_params[:user_id],
                                       connid: connection_params[:connections_id]).first
 
     if (@connection.nil?)
@@ -307,7 +307,7 @@ class ConnectionsController < ApplicationController
       end
       return
     end
-    
+
     respond_to do |format|
       if @connection.destroy
  #       format.html { redirect_to @connection, notice: 'Connection was successfully updated.' }
@@ -319,7 +319,7 @@ class ConnectionsController < ApplicationController
     end
   end
 
-  
+
   # DELETE /connections/1
   # DELETE /connections/1.json
   def destroy
@@ -330,8 +330,8 @@ class ConnectionsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
-  
+
+
   private
 
   # Use this method to whitelist the permissible parameters. Example:
