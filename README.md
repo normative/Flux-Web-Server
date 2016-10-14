@@ -24,12 +24,13 @@ Flux is available as an open source github library, comprising of the backend ( 
 
 1. Download the github repo [from github](https://github.com/normative/Flux-Web-Server)
 2. Install [Docker](https://www.docker.com/) && Docker Compose
+3. Install [OpenCV libraries](http://opencv.org/)
 
 From a terminal:
 
 1. Go to the project directory
 
-   ``` 
+   ```
    $ cd ~/Flux-Web-Server
    ```
 
@@ -77,6 +78,20 @@ From a terminal:
          ```
 
          Paste the stored procedures into the command line to load.
+4. Build the OpenCV libraries
+  1. Go to the opencv_scripts directory
+  ```
+  $ cd opencv_scripts/OpenCV_Sandbox/command_line_utils/ubuntu
+  ```
+
+  2. Build
+  ```
+  $ cmake .
+  ```
+  ```
+  $ make
+  ```
+  3. Link your binaries.  In the appropriate 'config/environments' file, update the paperclip command_path to 'opencv_scripts/OpenCV_Sandbox/command_line_utils/ubuntu', 
 
 4. Visit *localhost:3101* , and you should see a Rails welcome message.  Your backend server is up and running!
 
@@ -98,4 +113,3 @@ From a terminal:
 
 
 5. Build the Xcode project on a device connected to the same network as your backend application and your good to go.
-
