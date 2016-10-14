@@ -25,7 +25,7 @@ class Image < ActiveRecord::Base
                                        oriented: '100%',
                                     binfeatures: { :format => :bin,
                                                    :chain_to => :oriented,
-                                                   :processors => [:chainable] #, :feature_extractor]
+                                                   :processors => [:chainable, :feature_extractor]
                                                 }#,
 #                                      features: { :format => :xml,
 #                                                  :cvt_to_xml => true,
@@ -47,7 +47,9 @@ class Image < ActiveRecord::Base
 
   # this attachment is actually created/setup by the feature compute node.
   # paperclip is attachment is defined to allow download through standard API
-  has_attached_file :features, styles: { },
+  has_attached_file :features, styles: { bin: { :format => :bin,
+                                                   :processors => :feature_extractor
+                                                 } },
                          dependent: :destroy,
                    convert_options: { oriented: "-auto-orient" }
 
