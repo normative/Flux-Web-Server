@@ -167,7 +167,7 @@ class Image < ActiveRecord::Base
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(predictions)
+    Rails.logger.info(self.image.url)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
         tag = Tag.create!(:tagtext => concept.name)
