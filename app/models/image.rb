@@ -168,8 +168,11 @@ class Image < ActiveRecord::Base
     data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/#{self.id}/renderimage?size=oriented"
     request.body = data.to_json
     response = http.request(request)
+    Rails.logger.info("RESPONSE IS")
     predictions = JSON.parse(response.body)
     Rails.logger.info(predictions)
+    Rails.logger.info("LOOKING FOR KEY")
+    Rails.logger.info(predictions.key?("outputs"))
     if predictions.key?("outputs")
       Rails.logger.info("FOUND DATA")
       predictions.outputs[0].data.concepts.each do |concept|
