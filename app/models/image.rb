@@ -161,7 +161,7 @@ class Image < ActiveRecord::Base
         {
           data: => {
             image: => {
-              url: => self.image.url
+              url: => "%{self.image.url}"
             }
           }
         }
