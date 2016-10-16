@@ -152,7 +152,8 @@ class Image < ActiveRecord::Base
     # https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs
     uri = URI.parse("https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs")
     http = Net::HTTP.new(uri.host, uri.port)
-
+    http.use_ssl = true
+    
     request = Net::HTTP::Get.new(uri.request_uri)
 
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
