@@ -1,11 +1,8 @@
 require 'net/http'
 require 'uri'
-require 'base64'
 
 class Image < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
-
-  after_create :generate_tags
 
   belongs_to :user
   belongs_to :camera
@@ -62,6 +59,8 @@ class Image < ActiveRecord::Base
   validates_presence_of :raw_latitude, :raw_longitude, :raw_altitude, :raw_yaw, :raw_pitch, :raw_roll,
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                         :user, :camera, :heading, :image, :time_stamp
+
+  after_post_process :generate_tags
 
   def as_json(options = {})
     super(options.merge(
@@ -164,11 +163,12 @@ class Image < ActiveRecord::Base
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["base64"] = Base64.encode64(File.open(self.image.url).to_a.join)
+    data["inputs"][0]["data"]["image"]["url"] = self.image.path(:oriented)
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(self.image.url)
+    Rails.logger.info(self.image.path(:oriented))
+    Rails.logger.info(predictions)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
         tag = Tag.create!(:tagtext => concept.name)
