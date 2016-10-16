@@ -1,5 +1,9 @@
+require 'net/http'
+
 class Image < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
+
+  after_create :generate_tags
 
   belongs_to :user
   belongs_to :camera
@@ -98,7 +102,7 @@ class Image < ActiveRecord::Base
 
   def self.filteredcontent myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
  #   select("*").from(      "filteredquery(#{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{catlist})")
-    select("*").from("filteredcontentquery('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})")
+    select("*").from(" ('#{myid}', #{lat}, #{lng}, #{radius}, #{minalt}, #{maxalt}, #{mintime}, #{maxtime}, #{taglist}, #{userlist}, #{mypics}, #{followingpics}, #{maxcount})")
   end
 
   def self.filteredmeta myid, lat, lng, radius, minalt, maxalt, mintime, maxtime, taglist, userlist, mypics, followingpics, maxcount
@@ -128,5 +132,48 @@ class Image < ActiveRecord::Base
 #  def self.extendedmeta idlist
 #    select("*").from("getextendedmeta(#{idlist})")
 #  end
+  def generate_tags
+    #   curl -X POST \
+    # -H 'Authorization: Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO' \
+    # -H "Content-Type: application/json" \
+    # -d '
+    # {
+    #   "inputs": [
+    #     {
+    #       "data": {
+    #         "image": {
+    #           "url": "https://samples.clarifai.com/metro-north.jpg"
+    #         }
+    #       }
+    #     }
+    #   ]
+    # }'\
+    # https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs
+    uri = URI.parse("https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs")
+    http = Net::HTTP.new(uri.host, uri.port)
 
+    request = Net::HTTP::Get.new(uri.request_uri)
+
+    request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
+    request.add_field("Content-Type","application/json")
+    request.body({
+      "inputs": [
+        {
+          "data": {
+            "image": {
+              "url": self.image.url
+            }
+          }
+        }
+      ]
+    })
+
+    predictions = JSON.parse http.request(request)
+    predictions.data.concepts.each do |concept|
+      if concept.value > 0.6
+        tag = Tag.create! (tagtext: concept.name)
+        self.tags << tag
+      end
+    end
+  end
 end
