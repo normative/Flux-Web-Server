@@ -162,7 +162,7 @@ class Image < ActiveRecord::Base
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
     data["inputs"][0]["data"]["image"]["url"] = self.image.url
-    request.body(JSON.generate(data))
+    request.body(data.to_json)
 
     predictions = JSON.parse http.request(request)
     predictions.data.concepts.each do |concept|
