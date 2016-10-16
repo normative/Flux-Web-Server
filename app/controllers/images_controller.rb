@@ -193,7 +193,7 @@ class ImagesController < ApplicationController
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/params[:id]/renderimage?size=oriented"
+    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/#{params[:id]}/renderimage?size=oriented"
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
