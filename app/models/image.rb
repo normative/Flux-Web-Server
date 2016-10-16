@@ -158,16 +158,21 @@ class Image < ActiveRecord::Base
 
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
+
+    path = self.image.historical.path(:oriented)
+    if(path.nil?)
+      path = self.image.expiring_url(500, :oriented)
+    end
     data = Hash.new
     data["inputs"] = Array.new
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = self.image.path(:oriented)
+    data["inputs"][0]["data"]["image"]["url"] = path
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(self.image.path(:oriented))
+    Rails.logger.info(path)
     Rails.logger.info(predictions)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
