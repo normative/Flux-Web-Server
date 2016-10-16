@@ -180,8 +180,8 @@ class Image < ActiveRecord::Base
         Delayed::Worker.logger.debug(output)
         output['data']['concepts'].each do |concept|
           Delayed::Worker.logger.debug(concept)
-          Delayed::Worker.logger.debug(concept[:value])
-          if (concept[:value] > 0.5)
+          Delayed::Worker.logger.debug(concept['value'])
+          if (concept['value'] > 0.5)
             Delayed::Worker.logger.debug("CREATING TAG FOR #{concept[:name]}")
             @tag = Tag.find_or_create_by(tagtext: concept[:name])
             self.tags << @tag
