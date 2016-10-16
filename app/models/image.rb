@@ -173,8 +173,7 @@ class Image < ActiveRecord::Base
       ct = self.historical_content_type
     end
 
-    ActiveSupport::Base64.encode64(open(url) { |io|
-      data = io.read })
+    data = Base64.encode64(File.open(url, "rb").read)
     # data = Base64.encode(File.open(url))
 
     data = Hash.new
