@@ -171,7 +171,7 @@ class Image < ActiveRecord::Base
     predictions = JSON.parse http.request(request)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
-        tag = Tag.create! (tagtext: concept.name)
+        tag = Tag.create!(:tagtext => concept.name)
         self.tags << tag
       end
     end
