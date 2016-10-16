@@ -61,7 +61,7 @@ class Image < ActiveRecord::Base
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                         :user, :camera, :heading, :image, :time_stamp
 
-  after_post_process :generate_tags
+  after_create :generate_tags
 
   def as_json(options = {})
     super(options.merge(
