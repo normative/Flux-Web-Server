@@ -7,6 +7,7 @@ gem 'rails', '~> 4.0.0'
 
 gem 'pg'
 gem 'paperclip'
+gem 'clarifai_ruby'
 
 # Authentication
 gem 'devise', '~> 3.1.1'
