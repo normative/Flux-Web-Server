@@ -6,6 +6,7 @@ gem 'rails', '~> 4.0.0'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'delayed_job_active_record'
+gem 'daemons'
 gem 'pg'
 gem 'paperclip'
 gem 'clarifai_ruby'
