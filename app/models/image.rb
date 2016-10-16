@@ -175,12 +175,15 @@ class Image < ActiveRecord::Base
     Delayed::Worker.logger.debug(predictions.key?("outputs"))
     if predictions.key?("outputs")
       Delayed::Worker.logger.debug("FOUND DATA")
-      predictions[:outputs][0][:data][:concepts].each do |concept|
-        Delayed::Worker.logger.debug(concept)
-        if concept.value > 0.5
-          Delayed::Worker.logger.debug("CREATING TAG FOR #{concept.name}")
-          @tag = Tag.find_or_create_by(tagtext: concept.name)
-          self.tags << @tag
+      predictions[:outputs].each do |output|
+        Delayed::Worker.logger.debug(output)
+        output[:data][:concepts].each do |concept|
+          Delayed::Worker.logger.debug(concept)
+          if concept.value > 0.5
+            Delayed::Worker.logger.debug("CREATING TAG FOR #{concept.name}")
+            @tag = Tag.find_or_create_by(tagtext: concept.name)
+            self.tags << @tag
+          end
         end
       end
       self.save
