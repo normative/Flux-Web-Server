@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require 'base64'
 
 class Image < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
@@ -163,11 +164,11 @@ class Image < ActiveRecord::Base
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = self.image.expiring_url(500, :oriented)
+    data["inputs"][0]["data"]["image"]["base64"] = Base64.encode64(open(self.image.path(:oriented)).to_a.join)
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(self.image.expiring_url(500, :oriented))
+    Rails.logger.info(self.image.path(:oriented))
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
         tag = Tag.create!(:tagtext => concept.name)
