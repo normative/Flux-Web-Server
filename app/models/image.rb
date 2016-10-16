@@ -156,17 +156,12 @@ class Image < ActiveRecord::Base
 
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
-    data = {
-      :inputs => [
-        {
-          data: => {
-            image: => {
-              url: => "%{self.image.url}"
-            }
-          }
-        }
-      ]
-    }
+    data = Hash.new
+    data["inputs"] = Array.new
+    data["inputs"][0] = Hash.new
+    data["inputs"][0]["data"] = Hash.new
+    data["inputs"][0]["data"]["image"] = Hash.new
+    data["inputs"][0]["data"]["image"]["url"] = self.image.url
     request.body(JSON.generate(data))
 
     predictions = JSON.parse http.request(request)
