@@ -135,6 +135,7 @@ class Image < ActiveRecord::Base
 #    select("*").from("getextendedmeta(#{idlist})")
 #  end
   def generate_tags
+    sleep 10
     #   curl -X POST \
     # -H 'Authorization: Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO' \
     # -H "Content-Type: application/json" \
