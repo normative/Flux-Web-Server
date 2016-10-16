@@ -1,3 +1,6 @@
+require 'net/http'
+require 'uri'
+
 class ImagesController < ApplicationController
 
   before_filter :authenticate_user_from_token!
@@ -187,6 +190,9 @@ class ImagesController < ApplicationController
 
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
+
+    Rails.logger.info("REQUSTING PREDICTION")
+    Rails.logger.info("https://fluxapp.normative.com/images/#{params[:id]}/renderimage?size=oriented")
 
     data = Hash.new
     data["inputs"] = Array.new
