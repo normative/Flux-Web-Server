@@ -175,7 +175,7 @@ class Image < ActiveRecord::Base
     Delayed::Worker.logger.debug(predictions.key?("outputs"))
     if predictions.key?("outputs")
       Delayed::Worker.logger.debug("FOUND DATA")
-      Delayed::Worker.logger.debug(predictions[:outputs])
+      # Delayed::Worker.logger.debug(predictions[:outputs])
       predictions.outputs.each do |output|
         Delayed::Worker.logger.debug(output)
         output.data.concepts.each do |concept|
