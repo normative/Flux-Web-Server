@@ -61,7 +61,7 @@ class Image < ActiveRecord::Base
                         :raw_qw, :raw_qx, :raw_qy, :raw_qz,
                         :user, :camera, :heading, :image, :time_stamp
 
-  # after_create :generate_tags
+  after_create :generate_tags
 
   def as_json(options = {})
     super(options.merge(
@@ -151,6 +151,35 @@ class Image < ActiveRecord::Base
     #   ]
     # }'\
     # https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs
+    uri = URI.parse("https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
 
+    request = Net::HTTP::Post.new(uri.request_uri)
+
+    request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
+    request.add_field("Content-Type","application/json")
+
+    data = Hash.new
+    data["inputs"] = Array.new
+    data["inputs"][0] = Hash.new
+    data["inputs"][0]["data"] = Hash.new
+    data["inputs"][0]["data"]["image"] = Hash.new
+    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/#{self.id}/renderimage?size=oriented"
+    request.body = data.to_json
+    response = http.request(request)
+    predictions = JSON.parse(response.body)
+    Rails.logger.info(data)
+    Rails.logger.info(predictions)
+    if predictions.key?("data")
+      predictions.data.concepts.each do |concept|
+        if concept.value > 0.6
+          tag = Tag.create!(:tagtext => concept.name)
+          self.tags << tag
+        end
+      end
+      self.save
+    end
   end
+  handle_asynchronously :generate_tags, :run_at => Proc.new { 5.seconds.from_now }
 end
