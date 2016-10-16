@@ -157,11 +157,11 @@ class Image < ActiveRecord::Base
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
     request.body({
-      "inputs": [
+      "inputs" => [
         {
-          "data": {
-            "image": {
-              "url": self.image.url
+          "data" => {
+            "image"=> {
+              "url"=> self.image.url
             }
           }
         }
