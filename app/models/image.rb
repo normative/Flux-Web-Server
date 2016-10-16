@@ -156,17 +156,18 @@ class Image < ActiveRecord::Base
 
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
-    request.body({
-      "inputs" => [
+    data = {
+      :inputs => [
         {
-          "data" => {
-            "image"=> {
-              "url"=> self.image.url
+          data: => {
+            image: => {
+              url: => self.image.url
             }
           }
         }
       ]
-    })
+    }
+    request.body(JSON.generate(data))
 
     predictions = JSON.parse http.request(request)
     predictions.data.concepts.each do |concept|
