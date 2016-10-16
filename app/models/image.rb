@@ -169,10 +169,10 @@ class Image < ActiveRecord::Base
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(data)
-    if predictions.key?("data")
+    Rails.logger.info(predictions)
+    if predictions.key?("outputs")
       Rails.logger.info("FOUND DATA")
-      predictions.data.concepts.each do |concept|
+      predictions.outputs[0].data.concepts.each do |concept|
         Rails.logger.info(JSON.parse(concept))
         if concept.value > 0.5
           Rails.logger.info("CREATING TAG FOR #{concept.name}")
