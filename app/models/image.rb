@@ -163,7 +163,7 @@ class Image < ActiveRecord::Base
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = self.image.image.expiring_url(500, :oriented)
+    data["inputs"][0]["data"]["image"]["url"] = self.image.expiring_url(500, :oriented)
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
