@@ -1,6 +1,3 @@
-require 'net/http'
-require 'uri'
-
 class ImagesController < ApplicationController
 
   before_filter :authenticate_user_from_token!
@@ -181,7 +178,7 @@ class ImagesController < ApplicationController
 
   # GET /images/1/renderimage
   def renderimage
-
+    @image = Image.find(params[:id])
     path = @image.historical.path(params[:size])
 
     if (path.nil?)
