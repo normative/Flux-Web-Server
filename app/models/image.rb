@@ -166,7 +166,7 @@ class Image < ActiveRecord::Base
       url = self.image.expiring_url(100, :oriented)
       fn = self.image_file_name
       ct = self.image_content_type
-      path = self.image.path(params[:size])
+      path = self.image.path(:oriented)
     else
       url = self.historical.expiring_url(100, :oriented)
       fn = self.historical_file_name
