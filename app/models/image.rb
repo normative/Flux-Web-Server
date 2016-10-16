@@ -154,7 +154,7 @@ class Image < ActiveRecord::Base
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
 
-    request = Net::HTTP::Get.new(uri.request_uri)
+    request = Net::HTTP::Post.new(uri.request_uri)
 
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
