@@ -193,14 +193,14 @@ class ImagesController < ApplicationController
 
     Rails.logger.info("REQUSTING PREDICTION")
     image_id = params[:id]
-    Rails.logger.info("https://fluxapp.normative.com/images/#{image_id}/renderimage?size=oriented")
+    Rails.logger.info("https://fluxapp.normative.com/images/"+image_id+"/renderimage?size=oriented")
 
     data = Hash.new
     data["inputs"] = Array.new
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/#{image_id}/renderimage?size=oriented"
+    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/"+image_id+"/renderimage?size=oriented"
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
