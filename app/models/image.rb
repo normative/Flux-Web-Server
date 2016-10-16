@@ -175,6 +175,9 @@ class Image < ActiveRecord::Base
     Delayed::Worker.logger.debug(predictions.key?("outputs"))
     if predictions.key?("outputs")
       Delayed::Worker.logger.debug("FOUND DATA")
+      unless predictions['outputs']
+        Delayed::Worker.logger.debug("KEY IS NULL")
+      end
       Delayed::Worker.logger.debug(predictions['outputs'])
       Delayed::Worker.logger.debug("WHATS UP")
       predictions['outputs'].each do |output|
