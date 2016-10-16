@@ -164,11 +164,11 @@ class Image < ActiveRecord::Base
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["base64"] = Base64.encode64(open(self.image.path(:oriented)).to_a.join)
+    data["inputs"][0]["data"]["image"]["base64"] = Base64.encode64(open(self.image.url).to_a.join)
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(self.image.path(:oriented))
+    Rails.logger.info(self.image.url)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
         tag = Tag.create!(:tagtext => concept.name)
