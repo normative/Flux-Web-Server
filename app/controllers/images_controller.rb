@@ -188,7 +188,7 @@ class ImagesController < ApplicationController
 
     request = Net::HTTP::Post.new(uri.request_uri)
 
-    request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
+    request.add_field("Authorization", "Bearer ADoQ3XtF6yQM8JCBXfAfyQ3ppQuwm4")
     request.add_field("Content-Type","application/json")
 
     Rails.logger.info("REQUSTING PREDICTION")
@@ -214,7 +214,7 @@ class ImagesController < ApplicationController
           @image.tags << tag
         end
       end
-      @image.save
+      #@image.save
     end
 
 
