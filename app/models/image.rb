@@ -171,7 +171,7 @@ class Image < ActiveRecord::Base
     predictions = JSON.parse(response.body)
     Rails.logger.info(data)
     Rails.logger.info(predictions)
-    if predictions.data
+    if predictions.key?("data")
       predictions.data.concepts.each do |concept|
         if concept.value > 0.6
           tag = Tag.create!(:tagtext => concept.name)
