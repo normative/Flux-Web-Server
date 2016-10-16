@@ -173,7 +173,7 @@ class Image < ActiveRecord::Base
     Rails.logger.info(predictions)
     if predictions.key?("data")
       predictions.data.concepts.each do |concept|
-        if concept.value > 0.6
+        if concept.value > 0.5
           tag = Tag.create!(:tagtext => concept.name)
           self.tags << tag
         end
