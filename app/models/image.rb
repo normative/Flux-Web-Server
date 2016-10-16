@@ -160,7 +160,7 @@ class Image < ActiveRecord::Base
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
 
-    path = self.historical.path(params[:size])
+    path = self.historical.path(:oriented)
 
     if (path.nil?)
       url = self.image.expiring_url(100, :oriented)
