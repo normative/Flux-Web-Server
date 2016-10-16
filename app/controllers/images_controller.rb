@@ -182,42 +182,6 @@ class ImagesController < ApplicationController
   # GET /images/1/renderimage
   def renderimage
 
-    uri = URI.parse("https://api.clarifai.com/v2/models/d3e9606952c34878b143f3b2f625ca68/outputs")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-
-    request.add_field("Authorization", "Bearer ADoQ3XtF6yQM8JCBXfAfyQ3ppQuwm4")
-    request.add_field("Content-Type","application/json")
-
-    Rails.logger.info("REQUSTING PREDICTION")
-    image_id = params[:id]
-    Rails.logger.info("https://fluxapp.normative.com/images/"+image_id+"/renderimage?size=oriented")
-
-    data = Hash.new
-    data["inputs"] = Array.new
-    data["inputs"][0] = Hash.new
-    data["inputs"][0]["data"] = Hash.new
-    data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/"+image_id+"/renderimage?size=oriented"
-    request.body = data.to_json
-    response = http.request(request)
-    predictions = JSON.parse(response.body)
-    Rails.logger.info(data)
-    Rails.logger.info(predictions)
-    @image = Image.find(params[:id])
-    if predictions.key?("data")
-      predictions.data.concepts.each do |concept|
-        if concept.value > 0.6
-          tag = Tag.create!(:tagtext => concept.name)
-          @image.tags << tag
-        end
-      end
-      #@image.save
-    end
-
-
     path = @image.historical.path(params[:size])
 
     if (path.nil?)
