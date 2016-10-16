@@ -160,32 +160,16 @@ class Image < ActiveRecord::Base
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
 
-    path = self.historical.path(:oriented)
-
-    if (path.nil?)
-      url = self.image.expiring_url(100, :oriented)
-      fn = self.image_file_name
-      ct = self.image_content_type
-      path = self.image.path(:oriented)
-    else
-      url = self.historical.expiring_url(100, :oriented)
-      fn = self.historical_file_name
-      ct = self.historical_content_type
-    end
-
-    data = Base64.encode64(File.open(url, "rb").read)
-    # data = Base64.encode(File.open(url))
-
     data = Hash.new
     data["inputs"] = Array.new
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["base64"] = data
+    data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/%{self.id}/renderimage?size=oriented"
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(url)
+    Rails.logger.info(data)
     Rails.logger.info(predictions)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6

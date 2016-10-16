@@ -1,7 +1,7 @@
 class ImagesController < ApplicationController
 
   before_filter :authenticate_user_from_token!
-  before_filter :authenticate_user!
+  before_filter :authenticate_user! except: [ :renderimage ]
   authorize_resource
 
   # GET /images
