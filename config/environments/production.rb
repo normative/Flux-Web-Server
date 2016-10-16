@@ -83,7 +83,7 @@ config.paperclip_defaults = {
     :bucket => 'flux-assets'
   },
   :path => ":class/:attachment/:id_partition/:style/:filename",
-  :s3_permissions => :public
+  :s3_permissions => :private
 }
 
 Paperclip.options[:command_path] = "/usr/bin/"
