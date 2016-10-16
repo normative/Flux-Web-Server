@@ -168,17 +168,17 @@ class Image < ActiveRecord::Base
     data["inputs"][0]["data"]["image"]["url"] = "https://fluxapp.normative.com/images/#{self.id}/renderimage?size=oriented"
     request.body = data.to_json
     resp = http.request(request)
-    Delayed::Worker.logger.info("RESPONSE IS")
+    Delayed::Worker.logger.debug("RESPONSE IS")
     predictions = JSON.parse(resp.body)
-    Delayed::Worker.logger.info(predictions)
-    Delayed::Worker.logger.info("LOOKING FOR KEY")
-    Delayed::Worker.logger.info(predictions.key?("outputs"))
+    Delayed::Worker.logger.debug(predictions)
+    Delayed::Worker.logger.debug("LOOKING FOR KEY")
+    Delayed::Worker.logger.debug(predictions.key?("outputs"))
     if predictions.key?("outputs")
-      Delayed::Worker.logger.info("FOUND DATA")
+      Delayed::Worker.logger.debug("FOUND DATA")
       predictions.outputs[0].data.concepts.each do |concept|
-        Delayed::Worker.logger.info(JSON.parse(concept))
+        Delayed::Worker.logger.debug(JSON.parse(concept))
         if concept.value > 0.5
-          Delayed::Worker.logger.info("CREATING TAG FOR #{concept.name}")
+          Delayed::Worker.logger.debug("CREATING TAG FOR #{concept.name}")
           @tag = Tag.find_or_create_by(tagtext: concept.name)
           self.tags << @tag
         end
