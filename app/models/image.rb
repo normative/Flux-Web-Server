@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require 'base64'
 
 class Image < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
@@ -159,20 +160,33 @@ class Image < ActiveRecord::Base
     request.add_field("Authorization", "Bearer ICgn5t1EZkhRuPbH4mO2on0D7h7dZO")
     request.add_field("Content-Type","application/json")
 
-    path = self.expiring_url(500, :oriented)
-    if(path.nil?)
-      path = self.expiring_url(500, :oriented)
+    path = self.historical.path(params[:size])
+
+    if (path.nil?)
+      url = self.image.expiring_url(100, :oriented)
+      fn = self.image_file_name
+      ct = self.image_content_type
+      path = self.image.path(params[:size])
+    else
+      url = self.historical.expiring_url(100, :oriented)
+      fn = self.historical_file_name
+      ct = self.historical_content_type
     end
+
+    ActiveSupport::Base64.encode64(open(url) { |io|
+      data = io.read })
+    # data = Base64.encode(File.open(url))
+
     data = Hash.new
     data["inputs"] = Array.new
     data["inputs"][0] = Hash.new
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
-    data["inputs"][0]["data"]["image"]["url"] = path
+    data["inputs"][0]["data"]["image"]["base64"] = data
     request.body = data.to_json
     response = http.request(request)
     predictions = JSON.parse(response.body)
-    Rails.logger.info(path)
+    Rails.logger.info(url)
     Rails.logger.info(predictions)
     predictions.data.concepts.each do |concept|
       if concept.value > 0.6
