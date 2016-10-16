@@ -179,8 +179,8 @@ class Image < ActiveRecord::Base
         Delayed::Worker.logger.info(JSON.parse(concept))
         if concept.value > 0.5
           Delayed::Worker.logger.info("CREATING TAG FOR #{concept.name}")
-          tag = Tag.create!(:tagtext => concept.name)
-          self.tags << tag
+          @tag = Tag.find_or_create_by(tagtext: concept.name)
+          self.tags << @tag
         end
       end
       self.save
