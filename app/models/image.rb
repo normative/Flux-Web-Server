@@ -1,4 +1,5 @@
 require 'net/http'
+require 'uri'
 
 class Image < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
@@ -162,6 +163,7 @@ class Image < ActiveRecord::Base
     data["inputs"][0]["data"] = Hash.new
     data["inputs"][0]["data"]["image"] = Hash.new
     data["inputs"][0]["data"]["image"]["url"] = self.image.url
+    Rails.logger.info(data.to_json)
     request.body(data.to_json)
 
     predictions = JSON.parse http.request(request)
